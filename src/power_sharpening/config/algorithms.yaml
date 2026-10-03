@@ -1,0 +1,142 @@
+# Canonical algorithm (sampler) definitions for config-driven backend runners.
+#
+# Each block is one power-sharpening sampler with its DEFAULT hyperparameters. Power sampling draws from the sharpened
+# target p(x)^alpha; LARGER alpha => sharper (peakier) target.  The natural proposal temperature is tau = 1/alpha (so
+# alpha=4.0 => temperature 0.25).
+#
+# The `default` block holds hyperparameters inherited by every algorithm block below (each may override any of them).
+# The power-sharpening samplers (smc, power_mcmc, multi_try, calderhead_power_mcmc) use all of alpha / temperature /
+# max_new_tokens; `low_temp` uses temperature / max_new_tokens and ignores the inherited `alpha`. EntropyCut
+# additionally uses the fixed proposal temperature 1/alpha plus its cut-law settings. Per-dataset run settings
+# (batch_size, seed) live in dataset.yaml, and any value can be changed from the CLI with --override.
+
+# Shared defaults inherited by every algorithm block below.
+default:
+  alpha: 4.0             # power-sharpening exponent; target is p(x)^alpha
+  temperature: 0.25      # initial temperature; -1 => 1/alpha
+  max_new_tokens: 3072   # generation budget (tokens); chunks = max_new_tokens // block_size
+  gpu_memory_utilization: 0.90
+  dtype: auto         # vLLM model/activation dtype: auto, float16, bfloat16, or float32
+
+# Sequential Monte Carlo over p(x)^alpha (run_custom_smc.py).
+smc:
+  n_particles: 16        # SMC population kept per prompt
+  block_size: 128        # tokens generated between resampling steps
+  ess_threshold: 0.5     # resample when ESS < 0.5 * n_particles
+  alpha_ramp_tokens: 400 # ramp alpha 1 -> 4.0 over the first 400 tokens
+  min_new_tokens: 100    # suppress early EOS for the first 100 generated tokens
+  temperature_schedule_type: const
+  top_p: 0.9             # nucleus sampling on the proposal; matches Power-SMC's
+                         # SMCSamplingConfig default (never overridden upstream)
+  top_k: 0               # 0 = disabled; matches upstream default
+  repetition_penalty: 1.0 # 1.0 = disabled; matches upstream default
+
+# Low-temperature baseline (run_low_temp.py; --algorithm low_temp | best_of_n).
+# best_of_n mode reports best-of-n accuracy for each n in best_of_N; the single default ladder below is what example
+# scripts sweep other ladders / temperature around (temperature is inherited from `default`).
+low_temp:
+  best_of_N: [4, 2, 1]   # N-ladder for best_of_n mode (max drives #candidates)
+
+# Blockwise Metropolis-Hastings targeting p(x)^alpha (run_power_mh.py).
+power_mcmc:
+  mcmc_steps: 10         # MH steps per block
+  num_blocks: 16
+  max_samples: null      # null runs the complete selected dataset
+  temperature_schedule_type: const
+  # Shared cut law from common/cut_distribution.py: uniform or entropy. Entropy cuts keep a predictive-entropy cache and
+  # include their forward/reverse cut-probability correction in every MH transition.
+  cut_dist_type: uniform
+  cut_power: 4.0         # entropy only: beta in Delta_m(x)^beta
+
+# Multiple-Try Metropolis with uniform suffix cuts. Shared by the dedicated HF and vLLM run_multi_try_mh.py runners;
+# each uses its existing backend sampler.
+multi_try:
+  mcmc_steps: 10
+  num_blocks: 16
+  num_tries: 4           # candidate suffixes per MH transition
+  proposal_temperatures: [0.25, 0.5, 1.0] # suffix mixture; null uses the scalar temperature
+  scoring_batch_size: 128 # vLLM only: requests per extra temperature-scoring call
+  max_samples: null      # null runs the complete selected dataset
+  temperature_schedule_type: const # explicit temperature lists require const
+  cut_dist_type: uniform
+
+# MultiTryMH v2 (vLLM only): identical MTM transitions, but proposal scores at every listed temperature come from
+# engine-cached logsumexp(log p / T) (REPPS-style), so no extra token-scoring requests are made.
+multi_try_v2:
+  mcmc_steps: 10
+  num_blocks: 16
+  num_tries: 4           # candidate suffixes per MH transition
+  proposal_temperatures: [0.25, 0.5, 1.0] # required explicit suffix mixture; also passed to the engine
+  max_samples: null      # null runs the complete selected dataset
+  temperature_schedule_type: const
+  cut_dist_type: uniform
+
+# Shared-prefix prefetching of complete MultiTryMH transitions (HF/vLLM). The budget counts generated suffix requests:
+# floor(prefetch_budget/num_tries) complete bundles fit; a budget equal to num_tries gives sequential MTM.
+subtree_prefetching_multi_try_mh:
+  mcmc_steps: 10
+  num_blocks: 16
+  num_tries: 4
+  prefetch_budget: 16
+  proposal_temperatures: [0.25, 0.5, 1.0] # null uses the scalar temperature
+  scoring_batch_size: 128 # vLLM only: extra token-scoring requests per call
+  max_samples: null
+  temperature_schedule_type: const # fixed scalar or fixed suffix mixture
+  cut_dist_type: uniform # state-dependent cuts cannot be prefetched this way
+  rank_fn: longest_path_first
+  print_tree: false
+  stop_on_eos: true
+
+# Subtree-prefetching MultiTryMH v2 (vLLM only): same tree scheduler and MTM rule, with REPPS-style engine-cached
+# proposal scores (see multi_try_v2), so no extra token-scoring requests are made.
+subtree_prefetching_multi_try_mh_v2:
+  mcmc_steps: 10
+  num_blocks: 16
+  num_tries: 4
+  prefetch_budget: 16
+  proposal_temperatures: [0.25, 0.5, 1.0] # required explicit suffix mixture; also passed to the engine
+  max_samples: null
+  temperature_schedule_type: const
+  cut_dist_type: uniform
+  rank_fn: longest_path_first
+  print_tree: false
+  stop_on_eos: true
+
+# EntropyCut MH: choose suffix-regeneration cuts from positive jumps in the base model's token entropy, with the
+# state-dependent cut probability included in the MH correction (run_entropy_cut_mh.py).
+entropy_cut_mh:
+  mcmc_steps: 10
+  num_blocks: 16
+  temperature: -1        # paper proposal q uses tau = 1/alpha
+  temperature_schedule_type: const
+  cut_power: 4.0         # beta in lambda_beta(m; x) proportional to Delta_m^beta
+  entropy_mode: topk     # public SGLang approximation; exact needs scalar entropy output
+  entropy_top_k: 64
+  max_samples: null      # null runs the complete selected dataset
+
+# Subtree-prefetching Metropolis-Hastings, shared by the HF and vLLM runners
+# (runners/{hf,vllm}/run_subtree_prefetching_mh.py). The vLLM runner also reads the inherited `temperature` (its
+# proposal temperature, -1 => 1/alpha) and steps `temperature_schedule_type` once per block when one is set.
+subtree_prefetching_mh:
+  mcmc_steps: 10
+  num_blocks: 8
+  prefetch_budget: 10
+  max_samples: 10        # keep the historical short HF run default
+  print_tree: false      # print each prefetched proposal tree in the run log
+  # RANK_FNS modes from power_sharpening.common.prefetch_rank:
+  # accept_first / reject_first / longest_first / smallest_cut_diff / longest_path_first / bfs_accept_first /
+  # bfs_reject_first
+  rank_fn: longest_path_first
+  # Cut law used for proposal indices: uniform or entropy. "entropy" is state-dependent and activates extra
+  # entropy/cut-ratio plumbing on HF and the custom vLLM engine, including one vocabulary-wide softmax per generated
+  # position. The standalone SGLang EntropyCut sampler uses a top-K approximation and does not read this subtree
+  # configuration block.
+  cut_dist_type: uniform
+  cut_dist_param: null   # entropy cut power; null uses 4.0
+
+# Calderhead multiple-proposal MH (run_calderhead_mh.py).
+calderhead_power_mcmc:
+  mcmc_steps: 10
+  num_blocks: 16
+  num_proposals: 4       # Calderhead proposals evaluated per step
+  temperature_schedule_type: const

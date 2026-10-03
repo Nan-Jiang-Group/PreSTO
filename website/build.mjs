@@ -1,0 +1,10 @@
+import './build-animation.mjs';
+import {build} from 'esbuild';
+import { cpSync, rmSync, readFileSync, writeFileSync } from 'node:fs';
+await build({entryPoints:['public/paper-trees.mjs'],bundle:true,minify:true,format:'esm',outfile:'public/tree-build/paper-trees.js'});
+const styles=['styles.css','experiments.css','taste.css','edge-certainty.css','showcase.css'].map(file=>readFileSync(`public/${file}`,'utf8')).join('\n');
+const {transform}=await import('esbuild');
+writeFileSync('public/page.css',(await transform(styles,{loader:'css',minify:true})).code);
+rmSync('dist', { recursive: true, force: true });
+cpSync('public', 'dist', { recursive: true });
+console.log('Static site built in dist/');
