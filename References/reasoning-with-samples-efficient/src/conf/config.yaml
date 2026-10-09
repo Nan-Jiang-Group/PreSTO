@@ -1,0 +1,127 @@
+# Hydra configuration for sampling benchmarks
+# Usage: python run_benchmark.py [overrides]
+# Example: python run_benchmark.py mcmc.steps=5 mcmc.alpha=2.0 benchmark.num_problems=20
+
+defaults:
+  - _self_
+
+# Model configuration
+# Provider: "xai", "ollama", "vllm", or "runpod"
+model:
+  provider: vllm  # Options: xai, ollama, vllm, runpod
+
+  # X.AI settings (used when provider: xai)
+  # Requires XAI_API_KEY environment variable
+  xai:
+    name: grok-3-mini
+    base_url: https://api.x.ai/v1
+
+  # Ollama settings (used when provider: ollama)
+  # Install: curl -fsSL https://ollama.com/install.sh | sh
+  # Pull model: ollama pull smollm2:1.7b
+  # Ollama provides proper logprobs at all temperatures (unlike X.AI)
+  # Note: Ollama ignores n parameter - no true GPU batching
+  ollama:
+    name: smollm2:1.7b
+    base_url: http://localhost:11434/v1
+
+  # vLLM settings (used when provider: vllm)
+  # Install: pip install vllm
+  # Start server: vllm serve HuggingFaceTB/SmolLM2-1.7B-Instruct --port 8000
+  # vLLM provides: real logprobs, n parameter support, true GPU batching
+  # vllm:
+  #   name: HuggingFaceTB/SmolLM2-1.7B-Instruct
+  #   base_url: http://localhost:8000/v1
+
+  # vLLM settings (used when provider: vllm)
+  # Install: pip install vllm
+  # Start server: vllm serve Qwen/Qwen3-8B --port 8000
+  # vLLM provides: real logprobs, n parameter support, true GPU batching
+  vllm:
+    # name: Qwen/Qwen3-8B
+    name: Qwen/Qwen2.5-7B
+    # name: HuggingFaceTB/SmolLM2-1.7B-Instruct
+    # name: HuggingFaceTB/SmolLM2-135M-Instruct
+    base_url: http://localhost:8000/v1
+
+  # RunPod settings (used when provider: runpod)
+  # Self-hosted Qwen 3.8B on RunPod instance
+  # Requires RUNPOD_ENDPOINT environment variable
+  # RunPod typically runs vLLM backend with OpenAI-compatible API
+  runpod:
+    name: Qwen/Qwen3-8B
+    base_url: null  # Set via RUNPOD_ENDPOINT env var
+
+# Benchmark configuration
+benchmark:
+  name: humaneval # Options: humaneval, swebench, swebench-verified, gsm8k, gsm8k-train, mmlu, mmlu-stem, mmlu-humanities, mmlu-social, arcagi2, arcagi2-train
+  num_problems: 30
+  max_tokens: 4_096 # Max tokens for final completion (applied everywhere)
+  seed: 42 # Random seed for reproducibility (null to disable)
+
+# Prompt customization
+prompt:
+  prefix: "" # Text to add before the benchmark prompt
+  # suffix: "\n\nThink deeply and show your work, step by step" # Text to add after the benchmark prompt
+  suffix: ""
+
+# MCMC sampling configuration (serial, single proposal per step)
+mcmc:
+  enabled: false
+  alpha: 4.0 # Power factor for target distribution pi(x) = p(x)^alpha
+  steps: 10 # Number of MCMC refinement steps
+  top_logprobs: 5 # Number of top log probabilities to retrieve
+  proposal_temperature: 0.25 # Temperature for proposal distribution, should be alpha^(-1)
+  restrict_to_last_n: null # Only resample last N blocks (null = disabled, int = enabled)
+  block_size: 256 # Block size B for block-wise generation (paper default)
+  debug: true # Print debug info during MCMC (acceptance/rejection, log_r, etc.)
+
+# Parallel MCMC sampling configuration (multiple proposals per step)
+# Based on: "A general construction for parallelizing Metropolis-Hastings algorithms" (Calderhead 2014, PNAS)
+mcmc_parallel:
+  enabled: false
+  alpha: 4.0 # Power factor for target distribution pi(x) = p(x)^alpha
+  steps: 1 # MCMC refinement steps per block (1 is typical with N parallel proposals)
+  top_logprobs: 10 # Number of top log probabilities to retrieve
+  proposal_temperature: 0.1 # Temperature for proposal distribution, should be alpha^(-1)
+  block_size: 256 # Block size B for block-wise generation (match mcmc.block_size)
+  debug: true # Print debug info
+  use_length_penalty: false # Whether to apply length normalization
+  length_penalty: 0.6 # Length penalty exponent (like beam search)
+  # Parallel-specific parameters:
+  num_proposals: 10 # N proposals per MCMC step (includes current state)
+  max_concurrent: 100 # Max concurrent API requests
+  timeout: 60.0 # Per-request timeout (seconds)
+  max_retries: 3 # Retry count for failed requests
+
+# Beam search sampling configuration
+beam_search:
+  enabled: false
+  alpha: 4.0 # Power factor for target distribution pi(x) = p(x)^alpha
+  max_concurrent: 100 # Max concurrent API requests
+  timeout: 300.0 # Timeout in seconds (increase for local servers like vLLM)
+  beam_width: 5 # Number of parallel beams to maintain (top-k after pruning)
+  n_per_beam: 7 # Generate n continuations per beam (enables true beam search)
+  tokens_per_step: 512 # Generate this many tokens per expansion
+  use_length_penalty: true # Whether to apply length normalization (set false to disable)
+  length_penalty: 0.6 # Length normalization exponent (0.6 = Google NMT, only used if use_length_penalty=true)
+  proposal_temperature: 0.1 # Temperature for proposal distribution, higher temp = more "exploration"
+  top_logprobs: 15 # Number of top log probabilities to retrieve
+  debug: false # Print debug info during beam search
+
+# Temperature sampling configuration
+temperature_sampling:
+  enabled: false
+  temperature: 0.8
+
+# Greedy sampling configuration
+greedy:
+  enabled: true
+  suffix: "" # Text to add after the benchmark prompt
+  # suffix: "\n\nThink deeply and show your work, step by step" # Text to add after the benchmark prompt
+
+# Output configuration
+output:
+  verbose: true
+  save_results: false
+  results_dir: ./results

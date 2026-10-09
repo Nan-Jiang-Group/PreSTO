@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff"><meta name="description" content="Power sampling improves large language model (LLM) reasoning at test time by sampling from a sharpened distribution over the base model.">
+  <title>PreSTO: Predictive Subtree Prefetching for Fast LLM Power Sampling · Tree Explorer</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2340619F'/%3E%3Cpath d='M16 8v7M8 24v-6l8-3 8 3v6' stroke='white' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+  <link rel="preload" href="./fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./page.css"><script type="module" src="./method-tabs.js"></script>
+  <script type="module" src="./showcase.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#abstract-title">Skip to the method</a>
+  <header class="site-header"><nav class="site-nav" aria-label="Page sections"><a href="#abstract-title">Method</a><a href="#tree-explorer">Trees</a><a href="#experiments-title">Results</a><a href="#bibtex-title">Citation</a></nav></header>
+  <main>
+    <section class="paper-intro" aria-labelledby="paper-title">
+      <div class="paper-hero">
+        <div class="paper-hero-content"><div class="hero-composition"><div class="hero-copy">
+          <h1 id="paper-title"><span class="hero-wordmark">PreSTO</span><span class="hero-paper-title"><span class="title-accent">Pre</span>dictive <span class="title-accent">S</span>ub<span class="title-accent">T</span>ree Prefetching for Fast LLM Power Sampling</span></h1>
+          <nav class="paper-links" aria-label="Paper resources">
+            <span class="paper-button paper-primary paper-forthcoming" aria-label="Paper forthcoming"><svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.8423 0a1.0037 1.0037 0 0 0-.922.6078c-.1536.3687-.0438.6275.2938 1.1113l6.9185 8.3597-1.0223 1.1058a1.0393 1.0393 0 0 0 .003 1.4229l1.2292 1.3135-5.4391 6.4444c-.2803.299-.4538.823-.2971 1.1986a1.0253 1.0253 0 0 0 .9585.635.9133.9133 0 0 0 .6891-.3405l5.783-6.126 7.4902 8.0051a.8527.8527 0 0 0 .6835.2597.9575.9575 0 0 0 .8777-.6138c.1577-.377-.017-.7502-.306-1.1407l-7.0518-8.3418 1.0632-1.13a.9626.9626 0 0 0 .0089-1.3165L4.6336.4639s-.3733-.4535-.768-.463zm0 .272h.0166c.2179.0052.4874.2715.5644.3639l.005.006.0052.0055 10.169 10.9905a.6915.6915 0 0 1-.0072.945l-1.0666 1.133-1.4982-1.7724-8.5994-10.39c-.3286-.472-.352-.6183-.2592-.841a.7307.7307 0 0 1 .6704-.4401Zm14.341 1.5701a.877.877 0 0 0-.6554.2418l-5.6962 6.1584 1.6944 1.8319 5.3089-6.5138c.3251-.4335.479-.6603.3247-1.0292a1.1205 1.1205 0 0 0-.9763-.689zm-7.6557 12.2823 1.3186 1.4135-5.7864 6.1295a.6494.6494 0 0 1-.4959.26.7516.7516 0 0 1-.706-.4669c-.1119-.2682.0359-.6864.2442-.9083l.0051-.0055.0047-.0055z"/></svg><span>Paper forthcoming</span></span>
+            <a class="paper-button paper-code" href="https://github.com/jiangnanhugo/PreSTO"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 16"/></svg><span>Code</span></a>
+          </nav>
+          <div class="hero-authorship">          <ul class="paper-authors" aria-label="Authors">
+            <li><a href="mailto:njiang@utep.edu">Nan Jiang</a></li>
+            <li><a href="mailto:ptheodor3@gatech.edu">Panagiotis Theodoropoulos</a></li>
+            <li><a href="mailto:weideng056@gmail.com">Wei Deng</a></li>
+          </ul>
+          <ul class="paper-affiliations" aria-label="Affiliations">
+            <li>University of Texas at El Paso</li>
+            <li>Georgia Institute of Technology</li>
+            <li>Morgan Stanley</li>
+          </ul>
+          <ul class="paper-emails" aria-label="Author emails">
+            <li><a href="mailto:njiang@utep.edu">njiang@utep.edu</a></li>
+            <li><a href="mailto:ptheodor3@gatech.edu">ptheodor3@gatech.edu</a></li>
+            <li><a href="mailto:weideng056@gmail.com">weideng056@gmail.com</a></li>
+          </ul>
+</div></div><figure class="hero-tree" aria-labelledby="hero-tree-caption"><div class="hero-tree-toolbar"><button class="motion-control" id="motion-control" type="button" aria-pressed="false">Pause motion</button></div><div class="hero-tree-art"><svg viewBox="0 0 500 510" role="img" aria-label="Recorded prefetched tree for prompt zero, with sampled path v0 to v1 to v4 to v9 to v19."><title>Recorded subtree: prompt 0, tree 1</title><path class="hero-edge is-path" style="--delay:0.0s" d="M246.3125 54 L105.125 97" pathLength="1" stroke-dasharray="none"/><path class="hero-edge " style="--delay:0s" d="M246.3125 54 L387.5 97" pathLength="1" stroke-dasharray="0.035 0.025"/><path class="hero-edge " style="--delay:0s" d="M105.125 121 L32 164" pathLength="1" stroke-dasharray="none"/><path class="hero-edge is-path" style="--delay:0.28s" d="M105.125 121 L178.25 164" pathLength="1" stroke-dasharray="0.035 0.025"/><path class="hero-edge " style="--delay:0s" d="M387.5 121 L356 164" pathLength="1" stroke-dasharray="none"/><path class="hero-edge " style="--delay:0s" d="M387.5 121 L419.0 164" pathLength="1" stroke-dasharray="0.035 0.025"/><path class="hero-edge is-path" style="--delay:0.56s" d="M178.25 188 L95.0 231" pathLength="1" stroke-dasharray="none"/><path class="hero-edge " style="--delay:0s" d="M178.25 188 L261.5 231" pathLength="1" stroke-dasharray="0.035 0.025"/><path class="hero-edge " style="--delay:0s" d="M419.0 188 L392 231" pathLength="1" stroke-dasharray="none"/><path class="hero-edge " style="--delay:0s" d="M419.0 188 L446.0 231" pathLength="1" stroke-dasharray="0.035 0.025"/><path class="hero-edge is-path" style="--delay:0.8400000000000001s" d="M95.0 255 L68 298" pathLength="1" stroke-dasharray="none"/><path class="hero-edge " style="--delay:0s" d="M95.0 255 L122.0 298" pathLength="1" stroke-dasharray="0.035 0.025"/><path class="hero-edge " style="--delay:0s" d="M261.5 255 L221.0 298" pathLength="1" stroke-dasharray="none"/><path class="hero-edge " style="--delay:0s" d="M261.5 255 L302.0 298" pathLength="1" stroke-dasharray="0.035 0.025"/><path class="hero-edge " style="--delay:0s" d="M446.0 255 L428 298" pathLength="1" stroke-dasharray="none"/><path class="hero-edge " style="--delay:0s" d="M446.0 255 L464 298" pathLength="1" stroke-dasharray="0.035 0.025"/><path class="hero-edge " style="--delay:0s" d="M122.0 322 L104 365" pathLength="1" stroke-dasharray="none"/><path class="hero-edge " style="--delay:0s" d="M122.0 322 L140 365" pathLength="1" stroke-dasharray="0.035 0.025"/><path class="hero-edge " style="--delay:0s" d="M221.0 322 L194.0 365" pathLength="1" stroke-dasharray="none"/><path class="hero-edge " style="--delay:0s" d="M221.0 322 L248 365" pathLength="1" stroke-dasharray="0.035 0.025"/><path class="hero-edge " style="--delay:0s" d="M302.0 322 L284 365" pathLength="1" stroke-dasharray="none"/><path class="hero-edge " style="--delay:0s" d="M302.0 322 L320 365" pathLength="1" stroke-dasharray="0.035 0.025"/><path class="hero-edge " style="--delay:0s" d="M194.0 389 L176 432" pathLength="1" stroke-dasharray="none"/><path class="hero-edge " style="--delay:0s" d="M194.0 389 L212 432" pathLength="1" stroke-dasharray="0.035 0.025"/><g class="hero-node is-path is-rounded" style="--delay:0.0s"><title>Node v0, cut index 1024</title><rect x="231.3125" y="30" width="30" height="24" rx="5" /><text x="246.3125" y="46">v<tspan baseline-shift="sub" font-size="7">0</tspan></text></g><g class="hero-node is-path is-rounded" style="--delay:0.28s"><title>Node v1, cut index 1020</title><rect x="90.125" y="97" width="30" height="24" rx="5" /><text x="105.125" y="113">v<tspan baseline-shift="sub" font-size="7">1</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v2, cut index 1024</title><rect x="372.5" y="97" width="30" height="24" rx="5" stroke-dasharray="3 2"/><text x="387.5" y="113">v<tspan baseline-shift="sub" font-size="7">2</tspan></text></g><g class="hero-node  is-rounded" style="--delay:0s"><title>Node v3, cut index 535</title><rect x="17" y="164" width="30" height="24" rx="5" /><text x="32" y="180">v<tspan baseline-shift="sub" font-size="7">3</tspan></text></g><g class="hero-node is-path is-rounded" style="--delay:0.56s"><title>Node v4, cut index 1020</title><rect x="163.25" y="164" width="30" height="24" rx="5" stroke-dasharray="3 2"/><text x="178.25" y="180">v<tspan baseline-shift="sub" font-size="7">4</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v5, cut index 611</title><rect x="341" y="164" width="30" height="24" rx="5" /><text x="356" y="180">v<tspan baseline-shift="sub" font-size="7">5</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v6, cut index 1024</title><rect x="404.0" y="164" width="30" height="24" rx="5" stroke-dasharray="3 2"/><text x="419.0" y="180">v<tspan baseline-shift="sub" font-size="7">6</tspan></text></g><g class="hero-node is-path is-rounded" style="--delay:0.8400000000000001s"><title>Node v9, cut index 446</title><rect x="80.0" y="231" width="30" height="24" rx="5" /><text x="95.0" y="247">v<tspan baseline-shift="sub" font-size="7">9</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v10, cut index 1020</title><rect x="246.5" y="231" width="30" height="24" rx="5" stroke-dasharray="3 2"/><text x="261.5" y="247">v<tspan baseline-shift="sub" font-size="7">10</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v13, cut index 1</title><rect x="377" y="231" width="30" height="24" rx="5" /><text x="392" y="247">v<tspan baseline-shift="sub" font-size="7">13</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v14, cut index 1024</title><rect x="431.0" y="231" width="30" height="24" rx="5" stroke-dasharray="3 2"/><text x="446.0" y="247">v<tspan baseline-shift="sub" font-size="7">14</tspan></text></g><g class="hero-node is-path is-rounded" style="--delay:1.12s"><title>Node v19, cut index 296</title><rect x="53" y="298" width="30" height="24" rx="5" /><text x="68" y="314">v<tspan baseline-shift="sub" font-size="7">19</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v20, cut index 446</title><rect x="107.0" y="298" width="30" height="24" rx="5" stroke-dasharray="3 2"/><text x="122.0" y="314">v<tspan baseline-shift="sub" font-size="7">20</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v21, cut index 751</title><rect x="206.0" y="298" width="30" height="24" rx="5" /><text x="221.0" y="314">v<tspan baseline-shift="sub" font-size="7">21</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v22, cut index 1020</title><rect x="287.0" y="298" width="30" height="24" rx="5" stroke-dasharray="3 2"/><text x="302.0" y="314">v<tspan baseline-shift="sub" font-size="7">22</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v29, cut index 404</title><rect x="413" y="298" width="30" height="24" rx="5" /><text x="428" y="314">v<tspan baseline-shift="sub" font-size="7">29</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v30, cut index 1024</title><rect x="449" y="298" width="30" height="24" rx="5" stroke-dasharray="3 2"/><text x="464" y="314">v<tspan baseline-shift="sub" font-size="7">30</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v41, cut index 170</title><rect x="89" y="365" width="30" height="24" rx="5" /><text x="104" y="381">v<tspan baseline-shift="sub" font-size="7">41</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v42, cut index 446</title><rect x="125" y="365" width="30" height="24" rx="5" stroke-dasharray="3 2"/><text x="140" y="381">v<tspan baseline-shift="sub" font-size="7">42</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v43, cut index 576</title><rect x="179.0" y="365" width="30" height="24" rx="5" /><text x="194.0" y="381">v<tspan baseline-shift="sub" font-size="7">43</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v44, cut index 751</title><rect x="233" y="365" width="30" height="24" rx="5" stroke-dasharray="3 2"/><text x="248" y="381">v<tspan baseline-shift="sub" font-size="7">44</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v45, cut index 114</title><rect x="269" y="365" width="30" height="24" rx="5" /><text x="284" y="381">v<tspan baseline-shift="sub" font-size="7">45</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v46, cut index 1020</title><rect x="305" y="365" width="30" height="24" rx="5" stroke-dasharray="3 2"/><text x="320" y="381">v<tspan baseline-shift="sub" font-size="7">46</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v87, cut index 550</title><rect x="161" y="432" width="30" height="24" rx="5" /><text x="176" y="448">v<tspan baseline-shift="sub" font-size="7">87</tspan></text></g><g class="hero-node  " style="--delay:0s"><title>Node v88, cut index 576</title><rect x="197" y="432" width="30" height="24" rx="5" stroke-dasharray="3 2"/><text x="212" y="448">v<tspan baseline-shift="sub" font-size="7">88</tspan></text></g></svg></div><figcaption id="hero-tree-caption"><span>One batch. Multiple MH transitions.</span><a href="#tree-explorer">Prompt 0 · Tree 1 <span aria-hidden="true">↗</span></a></figcaption></figure></div>
+        </div>
+      </div>
+      <div class="paper-abstract paper-goal" aria-labelledby="abstract-title">
+        <h2 id="abstract-title">Goal</h2>
+        <p class="goal-lead">Sample from the LLM’s power-sharpened distribution:</p>
+        <div class="goal-equation">
+          <math display="block" aria-label="pi alpha of x one through n given x zero is proportional to p zero of x one through n given x zero, raised to alpha, with alpha greater than one">
+            <mrow><msub><mi>π</mi><mi>α</mi></msub><mo>(</mo><msub><mi mathvariant="bold">x</mi><mrow><mn>1</mn><mo>:</mo><mi>n</mi></mrow></msub><mo>|</mo><msub><mi mathvariant="bold">x</mi><mn>0</mn></msub><mo>)</mo><mo>∝</mo><msup><mrow><msub><mi>p</mi><mn>0</mn></msub><mo>(</mo><msub><mi mathvariant="bold">x</mi><mrow><mn>1</mn><mo>:</mo><mi>n</mi></mrow></msub><mo>|</mo><msub><mi mathvariant="bold">x</mi><mn>0</mn></msub><mo>)</mo></mrow><mi>α</mi></msup><mo>,</mo><mspace width="1em"/><mi>α</mi><mo>&gt;</mo><mn>1</mn></mrow>
+          </math>
+        </div>
+        <p class="goal-definition">• <i>p</i><sub>0</sub> is the base model.<br>• <b>x</b><sub>1:n</sub> is the continuation, and <b>x</b><sub>0</sub> is the prompt.<br>Raising sequence probabilities to α favors higher-likelihood continuations.</p>
+        <p class="goal-tldr"><strong>TL;DR:</strong> We present PreSTO, which preserves the same MH chain while running much faster.</p>
+        <div class="goal-method-tabs" role="tablist" aria-label="Sampling method">
+          <button type="button" id="method-tab-powermh" role="tab" aria-selected="false" aria-controls="method-panel-powermh" tabindex="-1">PowerMH</button>
+          <button type="button" id="method-tab-presto" role="tab" aria-selected="true" aria-controls="method-panel-presto" tabindex="0">PreSTO</button>
+        </div>
+        <div class="goal-methods">
+          <div id="method-panel-powermh" role="tabpanel" aria-labelledby="method-tab-powermh" tabindex="0" hidden><h3>PowerMH · one step at a time</h3><ol class="presto-steps"><li><strong>Step 1.</strong> Draw a cut position and resample the suffix to generate a proposal.</li><li><strong>Step 2.</strong> Accept or reject the proposal using the Metropolis–Hastings rule, then return to Step 1.</li></ol>
+            <figure class="goal-animation native-animation">
+              <div id="powermh-animation" aria-busy="false"><span>Loading animation…</span></div>
+            </figure>
+          </div>
+          <div id="method-panel-presto" role="tabpanel" aria-labelledby="method-tab-presto" tabindex="0"><h3>PreSTO: execute several MH transitions per call</h3>
+            <ol class="presto-steps">
+              <li><strong>Step 1.</strong> Collect feasible requests from a subtree of possible accept/reject outcomes, using prefixes that are already available.</li>
+              <li><strong>Step 2.</strong> Generate and score the proposals together in one batched model call.</li>
+              <li><strong>Step 3.</strong> Walk down the tree using MH acceptance rule</li>
+            </ol>
+        <figure class="goal-animation native-animation">
+          <div id="presto-animation" aria-busy="false"><span>Loading animation…</span></div>
+        </figure>
+          </div>
+        </div>
+
+      </div>
+    </section>
+    <section id="tree-explorer" class="explorer-section" aria-labelledby="page-title">
+      <div class="explorer-container">
+    <section class="intro" aria-labelledby="page-title"><div><h2 id="page-title">PreSTO in Action</h2></div></section>
+    <div class="workspace" id="tree-workspace" >
+      <aside class="panel controls" aria-label="Recorded tree controls">
+        <div class="panel-heading"><h2>Configuration</h2></div>
+        <div id="paper-tree-controls"><label class="field-label" for="paper-prompt">Prompt</label><div class="filter-select preset-select"><select id="paper-prompt"></select></div><textarea id="paper-prompt-text" class="paper-prompt-text" readonly aria-label="Selected prompt question" spellcheck="false"></textarea><label class="field-label spaced" for="paper-tree">Prefetched subtree</label><div class="filter-select preset-select"><select id="paper-tree"></select></div><h3 class="field-label" style="margin:20px 0 -12px">Experiment settings:</h3><p class="paper-run-note">Base LLM: Qwen3.5-9B<br>dataset: LCB V6<br>Prefetch Budget: 20</p></div>
+      </aside>
+      <section class="panel tree-panel" aria-labelledby="paper-tree-title">
+        <div id="paper-tree-view"><div class="tree-heading"><h2 id="paper-tree-title">Recorded subtree</h2><div class="tree-actions"><button id="paper-previous" class="small-button">Previous</button><button id="paper-next" class="small-button">Next</button><button id="paper-zoom-out" class="icon-button" aria-label="Zoom recorded tree out">−</button><button id="paper-zoom-in" class="icon-button" aria-label="Zoom recorded tree in">+</button><button id="paper-fit" class="small-button">Fit</button></div></div><div class="paper-tree-scroll"><svg id="paper-tree-svg" role="group" aria-label="Recorded prefetched subtree; select a node to inspect it"></svg><div id="paper-node-inspector" class="node-inspector" aria-live="polite" hidden></div></div><div class="tree-legend"><span><i class="legend-node paper-rounded"></i>Rounded subtree · ε = 0.01</span><span><i class="legend-line"></i>Sampled path</span><span><i class="legend-node unscheduled"></i>Other prefetched nodes</span></div><p id="paper-tree-error" class="paper-tree-caption" role="alert" hidden></p></div>
+      </section>
+    </div>
+      </div>
+    </section>
+    <section id="experiments-title" class="experiments-section" aria-label="Experiments">
+      <div class="experiments-container">
+        <h2 class="experiments-title">Experiments</h2>
+        <nav class="experiment-nav" aria-label="Experiment sections"><a href="#figure-one">Main benchmark</a><a href="#case1">1 · Efficiency</a><a href="#case2">2 · Sparse tree</a><a href="#case3">3 · Likelihood</a><a href="#case4">4 · Budget</a></nav>
+        <article id="figure-one" class="experiment-block" aria-labelledby="speedup-title">
+          <div class="experiment-heading"><div><h3 id="speedup-title">Main benchmark</h3><p id="figure-one-caption">Across 92 sampler–LLM–dataset settings, PreSTO (ours) speeds up PowerMH, EntropyCut, and MultiTryMH by a median of 1.71×, 1.88×, and 2.45×, respectively.</p></div></div>
+          <div class="scatter-controls">
+            <div class="filter-field"><label for="figure-model">Base model</label><div class="filter-select"><select id="figure-model"><option value="all">All models</option></select></div></div>
+            <div class="filter-field"><label for="figure-dataset">Dataset</label><div class="filter-select"><select id="figure-dataset"><option value="all">All datasets</option></select></div></div>
+            <button type="button" id="figure-reset">Reset filters</button><span id="figure-count" aria-live="polite"></span>
+          </div>
+          <figure class="interactive-figure" aria-describedby="figure-one-caption">
+            <div id="figure-panels" class="scatter-panels"></div>
+            <div class="scatter-legends"><div class="scatter-legend" role="group" data-figure-legend="models" aria-label="Model color legend"></div><div class="scatter-legend" role="group" data-figure-legend="datasets" aria-label="Dataset shape legend"></div></div>
+            <div id="figure-inspector" class="scatter-inspector" aria-live="polite" aria-atomic="true"></div><p id="figure-point-note" class="scatter-point-note" hidden></p>
+          </figure>
+
+        </article>
+
+        <article id="case1" class="experiment-block" aria-labelledby="case1-title">
+          <div class="experiment-heading"><div><h3 id="case1-title">Case 1 · Model-call efficiency</h3></div></div>
+          <p class="experiment-note case1-conclusion">At 100 transitions, cumulative time falls from <strong>481.02 to 253.29 seconds</strong>. Calls do more work, but the reduction in their number outweighs their higher cost.</p>
+          <div class="case-controls"><div class="case-range"><label for="case1-k">Inspect transition <output id="case1-k-value" for="case1-k">100</output></label><input id="case1-k" type="range" min="1" max="100" step="1" value="100"></div><div class="case-trace-select"><label for="case1-trace">Inspect series</label><div class="filter-select"><select id="case1-trace"><option value="mean">Mean ± SD</option></select></div></div></div>
+          <div class="case-grid three">
+            <figure><h4>Cumulative model-call time</h4><div class="case-canvas" data-case1="totalTime"></div></figure>
+            <figure><h4>MH transitions per call</h4><div class="case-canvas" data-case1="transitions"></div></figure>
+            <figure><h4>Time per model call</h4><div class="case-canvas" data-case1="timePerCall"></div></figure>
+          </div>
+          <div class="case-legend"><span><i style="--series:#2e5bea"></i>PreSTO-PowerMH</span><span><i style="--series:#8b96ab"></i>PowerMH</span><span>Shading: ±1 SD</span></div>
+          <p class="experiment-note">Qwen3.5-9B · LiveCodeBench · Prefetch budget 10 · BFS default Traversal</p>
+
+        </article>
+
+        <article id="case2" class="experiment-block" aria-labelledby="case2-title">
+          <div class="experiment-heading"><h3 id="case2-title">Case 2 · Our observation: the prefetched tree is sparse</h3></div>
+          <p class="experiment-note" id="certainty-appendix-caption">Across seven datasets, approximately 67%–84% of edges are ε-certain in the prefetched trees (PreSTO-PowerMH, Qwen3.5-9B).</p>
+          <figure id="certainty-appendix" class="certainty-figure" aria-labelledby="case2-title" aria-describedby="certainty-appendix-caption">
+            <div data-certainty="appendix"></div>
+          </figure>
+          <div class="experiment-heading case4-traversal-heading"><div><h4>Predictive traversal vs. BFS</h4></div><div class="case-trace-select traversal-sampler"><label for="case4-sampler">Sampler</label><div class="filter-select"><select id="case4-sampler"><option value="all">Both samplers</option><option>PowerMH</option><option>EntropyCut</option></select></div></div></div>
+          <p class="experiment-note">Predictive traversal raises mean speedup in all six settings, reaching <strong>2.46×</strong>. The largest time reductions occur for EntropyCut at budgets 4–12; the smaller gains fall within one standard deviation of cumulative time.</p>
+          <div class="case-grid three"><figure><h4>Speedup over PowerMH</h4><p class="chart-setting">Higher is better</p><div class="case-canvas" data-case4="speedup"></div></figure><figure><h4>MH transitions per call</h4><p class="chart-setting">Higher is better</p><div class="case-canvas" data-case4="transitions"></div></figure><figure><h4>Cumulative model-call time</h4><p class="chart-setting">Seconds · mean ± SD</p><div class="case-canvas" data-case4="totalTime"></div></figure></div>
+          <div class="case-legend"><span><i style="--series:#2e5bea"></i>Predictive traversal</span><span><i style="--series:#8b96ab"></i>BFS default Traversal</span></div>
+          <p class="experiment-note">Qwen3.5-9B · LCB V6 · 100 MH transitions</p>
+        </article>
+
+        <article id="case3" class="experiment-block" aria-labelledby="case3-title">
+          <div class="experiment-heading"><div><h3 id="case3-title">Case 3 · Likelihood and confidence</h3></div></div>
+          <p class="experiment-note">Paired TOST establishes equivalence in <strong>12 of 16 PowerMH tests</strong> and <strong>17 of 18 EntropyCut tests</strong>. Both samplers are equivalent when pooled, within ±0.2 baseline standard deviations.</p>
+          <div class="case-controls"><div class="case-trace-select"><label for="case3-method">Method</label><div class="filter-select"><select id="case3-method"><option value="PowerMH">PowerMH</option><option value="EntropyCut">EntropyCut</option><option value="all">Both methods</option></select></div></div><div class="case-trace-select"><label for="case3-model">Base LLM</label><div class="filter-select"><select id="case3-model"><option value="all">All models</option></select></div></div><label class="case-check"><input id="case3-prompts" type="checkbox">Show individual data points</label></div>
+          <div class="case-grid two quality-grid">
+            <figure><h4>(a) PowerMH · Token log-likelihood</h4><div class="case-canvas" data-case3="PowerMH-log_likelihood"></div></figure>
+            <figure><h4>(b) PowerMH · Token confidence</h4><div class="case-canvas" data-case3="PowerMH-confidence"></div></figure>
+            <figure><h4>(c) EntropyCut · Token log-likelihood</h4><div class="case-canvas" data-case3="EntropyCut-log_likelihood"></div></figure>
+            <figure><h4>(d) EntropyCut · Token confidence</h4><div class="case-canvas" data-case3="EntropyCut-confidence"></div></figure>
+          </div>
+          <div class="case-legend"><span><i style="--series:#0072B2"></i>Base sampler</span><span><i style="--series:#009E73"></i>PreSTO variant</span><span><i class="shade"></i>Equivalence established (TOST p &lt; 0.05)</span></div>
+          <p class="experiment-note">Boxes show per-prompt terminal-trace distributions under p₀ for eight PowerMH pairs and nine EntropyCut pairs, with prefetch budget 20. Shaded rows establish equivalence; paired TOST p-values appear at right.</p>
+        </article>
+
+        <article id="case4" class="experiment-block" aria-labelledby="case4-title">
+          <div class="experiment-heading"><div><h3 id="case4-title">Case 4 · Effect of prefetch budget</h3></div></div>
+          <p class="experiment-note">Speedup peaks at <strong>1.94× with budget 16</strong>, using 5.01% of the preallocated KV pool. Larger budgets increase uncached work without a consistent speedup gain.</p>
+          <div class="case-table-scroll" role="region" aria-label="Prefetch budget results; scroll horizontally on small screens" tabindex="0"><table class="case-budget-table"><caption>Sequential PowerMH and PreSTO at five prefetch budgets</caption><thead><tr><th scope="col" rowspan="2">Metric</th><th scope="col" rowspan="2">PowerMH</th><th scope="colgroup" colspan="5">PreSTO · Prefetch budget</th></tr><tr><th scope="col">4</th><th scope="col">8</th><th scope="col">12</th><th scope="col">16</th><th scope="col">20</th></tr></thead><tbody id="case2-table-body"></tbody></table></div>
+          <p class="experiment-note">Qwen3.5-9B · LiveCodeBench · BFS default Traversal · One seed per budget</p>
+        </article>
+        <p id="experiment-error" class="experiment-note" hidden>Charts could not load. Please reload the page to try again.</p>
+        <noscript><p class="experiment-note">Enable JavaScript to explore the results.</p></noscript>
+      </div>
+    </section>
+    <div class="paper-ending">
+    <section class="citation-section" aria-labelledby="bibtex-title">
+      <div class="citation-heading"><h2 id="bibtex-title">BibTeX</h2><button id="copy-citation" type="button">Copy citation</button></div>
+      <pre tabindex="0" aria-label="BibTeX citation"><code id="bibtex-code">@misc{jiang2026presto,
+  title  = {{PreSTO}: Predictive Subtree Prefetching for Fast {LLM} Power Sampling},
+  author = {Jiang, Nan and Theodoropoulos, Panagiotis and Deng, Wei},
+  year   = {2026}
+}</code></pre>
+    </section>
+    <footer><a class="footer-wordmark" href="#paper-title">PreSTO</a><span>This page was built using OpenAI Codex.</span><a href="#paper-title">Back to top ↗</a></footer>
+    </div>
+  </main><div id="toast" class="toast" role="status"></div>
+
+</body></html>
