@@ -1,0 +1,3765 @@
+method,base_llm,question,correct_answer,pred_answer,completion,prediction,is_correct,justification,alpha,mcmc_steps,prefetch_budget,evict_subtree_cache,rank_fn,cut_dist_type,cut_dist_param,num_blocks,max_new_tokens,init_temperature,temperature_schedule_type,max_model_len,dtype,num_response_tokens,log_likelihood,confidence,acceptance_ratio,total_workload,total_nfe,total_acceptances,peak_gpu_memory_gib,loaded_gpu_memory_gib,peak_llm_generate_gpu_memory_gib,peak_llm_generate_gpu_memory_delta_gib,llm_generate_calls,peak_kv_cache_occupancy,kv_cache_allocated_blocks,kv_cache_evicted_blocks,kv_cache_eviction_rate,prefix_cache_hit_rate,prefix_cache_queried_tokens
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"Among the 81 integers that appear in the 9-by-9 multiplication table, find the sum of those that are not X.
+
+There is a grid of size 9 by 9.
+Each cell of the grid contains an integer: the cell at the i-th row from the top and the j-th column from the left contains i \times j.
+You are given an integer X. Among the 81 integers written in this grid, find the sum of those that are not X. If the same value appears in multiple cells, add it for each cell.
+
+Input
+
+The input is given from Standard Input in the following format:
+X
+
+Output
+
+Print the sum of the integers that are not X among the 81 integers written in the grid.
+
+Constraints
+
+
+- X is an integer between 1 and 81, inclusive.
+
+Sample Input 1
+
+1
+
+Sample Output 1
+
+2024
+
+The only cell with 1 in the grid is the cell at the 1st row from the top and 1st column from the left. Summing all integers that are not 1 yields 2024.
+
+Sample Input 2
+
+11
+
+Sample Output 2
+
+2025
+
+There is no cell containing 11 in the grid. Thus, the answer is 2025, the sum of all 81 integers.
+
+Sample Input 3
+
+24
+
+Sample Output 3
+
+1929",abc387_b,"<think>
+The user wants a Python program to solve a specific problem.
+
+**Problem Statement:**
+Calculate the sum of all integers in a 9x9 multiplication table that are *not* equal to a given integer $X$.
+The grid is defined such that the cell at row $i$ and column $j$ (1-indexed) contains the value $i \times j$.
+The total number of cells is $9 \times 9 = 81$.
+If a value $X$ appears multiple times, it should be excluded from the sum for each occurrence.
+
+**Input:**
+An integer $X$ ($1 \le X \le 81$).
+
+**Output:**
+The sum of integers in the grid excluding those equal to $X$.
+
+**Constraints:**
+$X$ is between 1 and 81.
+
+**Algorithm:**
+1. Initialize a variable `total_sum` to 0.
+2. Iterate through row index $i$ from 1 to 9.
+3. Iterate through column index $j$ from 1 to 9.
+4. Calculate the value $v = i \times j$.
+5. Add $v$ to `total_sum`.
+6. Alternatively, calculate the sum of all numbers in the grid first, then subtract the occurrences of $X$.
+   - Sum of all numbers = $\sum_{i=1}^{9} \sum_{j=1}^{9} (i \times j)$.
+   - Count of $X$ in the grid = number of pairs $(i, j)$ such that $i \times j = X$.
+   - Result = (Sum of all numbers) - (Count of $X$ $\times$ $X$).
+
+Let's check the sum of all numbers first.
+$\sum_{i=1}^{9} \sum_{j=1}^{9} (i \times j) = \sum_{i=1}^{9} i \times \sum_{j=1}^{9} j = (\sum_{i=1}^{9} i) \times (\sum_{j=1}^{9} j)$.
+$\sum_{k=1}^{9} k = \frac{9 \times 10}{2} = 45$.
+Total sum = $45 \times 45 = 2025$.
+
+So, the sum of all integers in the grid is 2025.
+The problem asks for the sum of integers *not* equal to $X$.
+This is equivalent to $2025 - (\text{count of } X \text{ in grid}) \times X$.
+
+Let's verify with Sample 1: $X = 1$.
+Pairs $(i, j)$ such that $i \times j = 1$:
+$(1, 1)$.
+Count = 1.
+Result = $2025 - 1 \times 1 = 2024$. Matches Sample 1.
+
+Sample 2: $X = 11$.
+Pairs $(i, j)$ such that $i \times j = 11$:
+Since 11 is prime, factors are 1, 11.
+$i$ goes 1..9, $j$ goes 1..9.
+Possible pairs: $(1, 11)$ - $j$ out of range. $(11, 1)$ - $i$ out of range.
+Count = 0.
+Result = $2025 - 0 = 2025$. Matches Sample 2.
+
+Sample 3: $X = 24$.
+Pairs $(i, j)$ such that $i \times j = 24$:
+Factors of 24: 1, 2, 3, 4, 6, 8, 12, 24.
+Valid $i, j \in [1, 9]$:
+1. $i=1, j=24$ (No)
+2. $i=2, j=12$ (No)
+3. $i=3, j=8$ (Yes) -> $(3, 8)$
+4. $i=4, j=6$ (Yes) -> $(4, 6)$
+5. $i=6, j=4$ (Yes) -> $(6, 4)$
+6. $i=8, j=3$ (Yes) -> $(8, 3)$
+7. $i=12, j=2$ (No)
+8. $i=24, j=1$ (No)
+Count = 4.
+Result = $2025 -","
+
+<think>
+The user wants a Python program to solve a specific problem.
+
+**Problem Statement:**
+Calculate the sum of all integers in a 9x9 multiplication table that are *not* equal to a given integer $X$.
+The grid is defined such that the cell at row $i$ and column $j$ (1-indexed) contains the value $i \times j$.
+The total number of cells is $9 \times 9 = 81$.
+If a value $X$ appears multiple times, it should be excluded from the sum for each occurrence.
+
+**Input:**
+An integer $X$ ($1 \le X \le 81$).
+
+**Output:**
+The sum of integers in the grid excluding those equal to $X$.
+
+**Constraints:**
+$X$ is between 1 and 81.
+
+**Algorithm:**
+1. Initialize a variable `total_sum` to 0.
+2. Iterate through row index $i$ from 1 to 9.
+3. Iterate through column index $j$ from 1 to 9.
+4. Calculate the value $v = i \times j$.
+5. Add $v$ to `total_sum`.
+6. Alternatively, calculate the sum of all numbers in the grid first, then subtract the occurrences of $X$.
+   - Sum of all numbers = $\sum_{i=1}^{9} \sum_{j=1}^{9} (i \times j)$.
+   - Count of $X$ in the grid = number of pairs $(i, j)$ such that $i \times j = X$.
+   - Result = (Sum of all numbers) - (Count of $X$ $\times$ $X$).
+
+Let's check the sum of all numbers first.
+$\sum_{i=1}^{9} \sum_{j=1}^{9} (i \times j) = \sum_{i=1}^{9} i \times \sum_{j=1}^{9} j = (\sum_{i=1}^{9} i) \times (\sum_{j=1}^{9} j)$.
+$\sum_{k=1}^{9} k = \frac{9 \times 10}{2} = 45$.
+Total sum = $45 \times 45 = 2025$.
+
+So, the sum of all integers in the grid is 2025.
+The problem asks for the sum of integers *not* equal to $X$.
+This is equivalent to $2025 - (\text{count of } X \text{ in grid}) \times X$.
+
+Let's verify with Sample 1: $X = 1$.
+Pairs $(i, j)$ such that $i \times j = 1$:
+$(1, 1)$.
+Count = 1.
+Result = $2025 - 1 \times 1 = 2024$. Matches Sample 1.
+
+Sample 2: $X = 11$.
+Pairs $(i, j)$ such that $i \times j = 11$:
+Since 11 is prime, factors are 1, 11.
+$i$ goes 1..9, $j$ goes 1..9.
+Possible pairs: $(1, 11)$ - $j$ out of range. $(11, 1)$ - $i$ out of range.
+Count = 0.
+Result = $2025 - 0 = 2025$. Matches Sample 2.
+
+Sample 3: $X = 24$.
+Pairs $(i, j)$ such that $i \times j = 24$:
+Factors of 24: 1, 2, 3, 4, 6, 8, 12, 24.
+Valid $i, j \in [1, 9]$:
+1. $i=1, j=24$ (No)
+2. $i=2, j=12$ (No)
+3. $i=3, j=8$ (Yes) -> $(3, 8)$
+4. $i=4, j=6$ (Yes) -> $(4, 6)$
+5. $i=6, j=4$ (Yes) -> $(6, 4)$
+6. $i=8, j=3$ (Yes) -> $(8, 3)$
+7. $i=12, j=2$ (No)
+8. $i=24, j=1$ (No)
+Count = 4.
+Result = $2025 - ","<think>
+The user wants a Python program to solve a specific problem.
+
+**Problem Statement:**
+Calculate the sum of all integers in a 9x9 multiplication table that are *not* equal to a given integer $X$.
+The grid is defined such that the cell at row $i$ and column $j$ (1-indexed) contains the value $i \times j$.
+The total number of cells is $9 \times 9 = 81$.
+If a value $X$ appears multiple times, it should be excluded from the sum for each occurrence.
+
+**Input:**
+An integer $X$ ($1 \le X \le 81$).
+
+**Output:**
+The sum of integers in the grid excluding those equal to $X$.
+
+**Constraints:**
+$X$ is between 1 and 81.
+
+**Algorithm:**
+1. Initialize a variable `total_sum` to 0.
+2. Iterate through row index $i$ from 1 to 9.
+3. Iterate through column index $j$ from 1 to 9.
+4. Calculate the value $v = i \times j$.
+5. Add $v$ to `total_sum`.
+6. Alternatively, calculate the sum of all numbers in the grid first, then subtract the occurrences of $X$.
+   - Sum of all numbers = $\sum_{i=1}^{9} \sum_{j=1}^{9} (i \times j)$.
+   - Count of $X$ in the grid = number of pairs $(i, j)$ such that $i \times j = X$.
+   - Result = (Sum of all numbers) - (Count of $X$ $\times$ $X$).
+
+Let's check the sum of all numbers first.
+$\sum_{i=1}^{9} \sum_{j=1}^{9} (i \times j) = \sum_{i=1}^{9} i \times \sum_{j=1}^{9} j = (\sum_{i=1}^{9} i) \times (\sum_{j=1}^{9} j)$.
+$\sum_{k=1}^{9} k = \frac{9 \times 10}{2} = 45$.
+Total sum = $45 \times 45 = 2025$.
+
+So, the sum of all integers in the grid is 2025.
+The problem asks for the sum of integers *not* equal to $X$.
+This is equivalent to $2025 - (\text{count of } X \text{ in grid}) \times X$.
+
+Let's verify with Sample 1: $X = 1$.
+Pairs $(i, j)$ such that $i \times j = 1$:
+$(1, 1)$.
+Count = 1.
+Result = $2025 - 1 \times 1 = 2024$. Matches Sample 1.
+
+Sample 2: $X = 11$.
+Pairs $(i, j)$ such that $i \times j = 11$:
+Since 11 is prime, factors are 1, 11.
+$i$ goes 1..9, $j$ goes 1..9.
+Possible pairs: $(1, 11)$ - $j$ out of range. $(11, 1)$ - $i$ out of range.
+Count = 0.
+Result = $2025 - 0 = 2025$. Matches Sample 2.
+
+Sample 3: $X = 24$.
+Pairs $(i, j)$ such that $i \times j = 24$:
+Factors of 24: 1, 2, 3, 4, 6, 8, 12, 24.
+Valid $i, j \in [1, 9]$:
+1. $i=1, j=24$ (No)
+2. $i=2, j=12$ (No)
+3. $i=3, j=8$ (Yes) -> $(3, 8)$
+4. $i=4, j=6$ (Yes) -> $(4, 6)$
+5. $i=6, j=4$ (Yes) -> $(6, 4)$
+6. $i=8, j=3$ (Yes) -> $(8, 3)$
+7. $i=12, j=2$ (No)
+8. $i=24, j=1$ (No)
+Count = 4.
+Result = $2025 -",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.10983120556222,-0.22148554492096584,0.2,266,27,20,91.400390625,91.3984375,91.400390625,0.001953125,28,0.021196732170457033,2200,0,0.0,0.6915394329009299,191642
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"You are given positive integers N, M, and a sequence A = (A_1, A_2, \dots, A_N) of length N, each element being an integer between 1 and N, inclusive.
+Find the number, modulo 998244353, of sequences x = (x_1, x_2, \dots, x_N) of length N, each element being an integer between 1 and M, inclusive, that satisfy the following condition:
+
+- x_i \leq x_{A_i} for every i (1 \leq i \leq N).
+
+Input
+
+The input is given from Standard Input in the following format:
+N M
+A_1 A_2 \dots A_N
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 1 \leq N, M \leq 2025
+- 1 \leq A_i \leq N
+- All input values are integers.
+
+Sample Input 1
+
+3 3
+2 1 1
+
+Sample Output 1
+
+6
+
+The sequences x=(1,1,1),(2,2,1),(2,2,2),(3,3,1),(3,3,2),(3,3,3) satisfy the condition.
+
+Sample Input 2
+
+4 9
+1 1 1 1
+
+Sample Output 2
+
+2025
+
+Sample Input 3
+
+10 5
+9 4 5 5 4 2 1 5 7 2
+
+Sample Output 3
+
+10010",abc387_f,"<think>
+The problem asks us to find the number of sequences $x = (x_1, x_2, \dots, x_N)$ such that $1 \leq x_i \leq M$ for all $i$, and $x_i \leq x_{A_i}$ for all $1 \leq i \leq N$. We need to output the answer modulo 998244353.
+
+Let's analyze the condition $x_i \leq x_{A_i}$. This looks like a dependency graph. If we consider the indices $1, \dots, N$ as nodes, and for each $i$, we have a directed edge from $i$ to $A_i$. Since each node has exactly one outgoing edge, this graph is a collection of functional components. Each component consists of a cycle with some trees rooted on the cycle nodes and directed towards the cycle.
+
+Wait, the condition is $x_i \leq x_{A_i}$. This means the value at $i$ is constrained by the value at $A_i$.
+Let's trace the dependencies. $x_i$ depends on $x_{A_i}$, $x_{A_i}$ depends on $x_{A_{A_i}}$, and so on.
+If we follow the path $i \to A_i \to A_{A_i} \dots$, eventually we must enter a cycle because the graph is finite.
+If there is a cycle in the dependency graph, say $c_1 \to c_2 \to \dots \to c_k \to c_1$, then the conditions imply $x_{c_1} \leq x_{c_2} \leq \dots \leq x_{c_k} \leq x_{c_1}$. This implies $x_{c_1} = x_{c_2} = \dots = x_{c_k}$.
+If there are no cycles, the graph is a forest of trees directed towards roots (where roots point to themselves or something? No, $A_i$ is a permutation? No, $A_i$ is just an integer between 1 and $N$).
+Actually, since each node $i$ has exactly one outgoing edge $i \to A_i$, the graph is a collection of components. Each component contains exactly one cycle.
+If there is a cycle, the values on the cycle must be equal. Let's say the cycle is $C$. Then for any node $u$ that can reach the cycle (i.e., $u$ is in the tree part leading to the cycle), the condition $x_u \leq x_{A_u}$ propagates.
+Wait, if $x_i \leq x_{A_i}$, then $x_i$ is smaller or equal to its successor.
+If we have a cycle $c_1 \to c_2 \to \dots \to c_k \to c_1$, then $x_{c_1} \leq x_{c_2} \leq \dots \leq x_{c_k} \leq x_{c_1}$. This forces $x_{c_1} = x_{c_2} = \dots = x_{c_k}$.
+Let this common value be $v$. Then for any node $u$ that eventually leads to a node in the cycle, say $u \to \dots \to c_j$, we have $x_u \leq x_{A_u} \leq \dots \leq x_{c_j} = v$.
+So, if there is a cycle, the values on the cycle must be equal. Let's call the set of nodes in the cycle $S$. For all $u \in S$, $x_u = v$. For any $u$ not in $S$, let $d(u)$ be the distance to the cycle (number of steps to reach a node in $S$). Then $x_u \leq x_{A_u} \leq \dots \leq v$.
+Actually, the condition is $x_i \leq x_{A_i}$.
+Let's re-read carefully.
+$x_i \leq x_{A_i}$.
+If we have a cycle $c_1 \to c_2 \to \dots \to c_k \to c_1$, then $x_{c_1} \leq x_{c_2} \leq \dots \leq x_{c_k} \leq x_{c_1}$.
+This implies $x_{c_1} = x_{c_2} = \dots = x_{c_k}$.
+Let this value be $v$.
+Then for any node $u$ such that the path from $u$ eventually hits the cycle, say $u","
+
+<think>
+The problem asks us to find the number of sequences $x = (x_1, x_2, \dots, x_N)$ such that $1 \leq x_i \leq M$ for all $i$, and $x_i \leq x_{A_i}$ for all $1 \leq i \leq N$. We need to output the answer modulo 998244353.
+
+Let's analyze the condition $x_i \leq x_{A_i}$. This looks like a dependency graph. If we consider the indices $1, \dots, N$ as nodes, and for each $i$, we have a directed edge from $i$ to $A_i$. Since each node has exactly one outgoing edge, this graph is a collection of functional components. Each component consists of a cycle with some trees rooted on the cycle nodes and directed towards the cycle.
+
+Wait, the condition is $x_i \leq x_{A_i}$. This means the value at $i$ is constrained by the value at $A_i$.
+Let's trace the dependencies. $x_i$ depends on $x_{A_i}$, $x_{A_i}$ depends on $x_{A_{A_i}}$, and so on.
+If we follow the path $i \to A_i \to A_{A_i} \dots$, eventually we must enter a cycle because the graph is finite.
+If there is a cycle in the dependency graph, say $c_1 \to c_2 \to \dots \to c_k \to c_1$, then the conditions imply $x_{c_1} \leq x_{c_2} \leq \dots \leq x_{c_k} \leq x_{c_1}$. This implies $x_{c_1} = x_{c_2} = \dots = x_{c_k}$.
+If there are no cycles, the graph is a forest of trees directed towards roots (where roots point to themselves or something? No, $A_i$ is a permutation? No, $A_i$ is just an integer between 1 and $N$).
+Actually, since each node $i$ has exactly one outgoing edge $i \to A_i$, the graph is a collection of components. Each component contains exactly one cycle.
+If there is a cycle, the values on the cycle must be equal. Let's say the cycle is $C$. Then for any node $u$ that can reach the cycle (i.e., $u$ is in the tree part leading to the cycle), the condition $x_u \leq x_{A_u}$ propagates.
+Wait, if $x_i \leq x_{A_i}$, then $x_i$ is smaller or equal to its successor.
+If we have a cycle $c_1 \to c_2 \to \dots \to c_k \to c_1$, then $x_{c_1} \leq x_{c_2} \leq \dots \leq x_{c_k} \leq x_{c_1}$. This forces $x_{c_1} = x_{c_2} = \dots = x_{c_k}$.
+Let this common value be $v$. Then for any node $u$ that eventually leads to a node in the cycle, say $u \to \dots \to c_j$, we have $x_u \leq x_{A_u} \leq \dots \leq x_{c_j} = v$.
+So, if there is a cycle, the values on the cycle must be equal. Let's call the set of nodes in the cycle $S$. For all $u \in S$, $x_u = v$. For any $u$ not in $S$, let $d(u)$ be the distance to the cycle (number of steps to reach a node in $S$). Then $x_u \leq x_{A_u} \leq \dots \leq v$.
+Actually, the condition is $x_i \leq x_{A_i}$.
+Let's re-read carefully.
+$x_i \leq x_{A_i}$.
+If we have a cycle $c_1 \to c_2 \to \dots \to c_k \to c_1$, then $x_{c_1} \leq x_{c_2} \leq \dots \leq x_{c_k} \leq x_{c_1}$.
+This implies $x_{c_1} = x_{c_2} = \dots = x_{c_k}$.
+Let this value be $v$.
+Then for any node $u$ such that the path from $u$ eventually hits the cycle, say $u","<think>
+The problem asks us to find the number of sequences $x = (x_1, x_2, \dots, x_N)$ such that $1 \leq x_i \leq M$ for all $i$, and $x_i \leq x_{A_i}$ for all $1 \leq i \leq N$. We need to output the answer modulo 998244353.
+
+Let's analyze the condition $x_i \leq x_{A_i}$. This looks like a dependency graph. If we consider the indices $1, \dots, N$ as nodes, and for each $i$, we have a directed edge from $i$ to $A_i$. Since each node has exactly one outgoing edge, this graph is a collection of functional components. Each component consists of a cycle with some trees rooted on the cycle nodes and directed towards the cycle.
+
+Wait, the condition is $x_i \leq x_{A_i}$. This means the value at $i$ is constrained by the value at $A_i$.
+Let's trace the dependencies. $x_i$ depends on $x_{A_i}$, $x_{A_i}$ depends on $x_{A_{A_i}}$, and so on.
+If we follow the path $i \to A_i \to A_{A_i} \dots$, eventually we must enter a cycle because the graph is finite.
+If there is a cycle in the dependency graph, say $c_1 \to c_2 \to \dots \to c_k \to c_1$, then the conditions imply $x_{c_1} \leq x_{c_2} \leq \dots \leq x_{c_k} \leq x_{c_1}$. This implies $x_{c_1} = x_{c_2} = \dots = x_{c_k}$.
+If there are no cycles, the graph is a forest of trees directed towards roots (where roots point to themselves or something? No, $A_i$ is a permutation? No, $A_i$ is just an integer between 1 and $N$).
+Actually, since each node $i$ has exactly one outgoing edge $i \to A_i$, the graph is a collection of components. Each component contains exactly one cycle.
+If there is a cycle, the values on the cycle must be equal. Let's say the cycle is $C$. Then for any node $u$ that can reach the cycle (i.e., $u$ is in the tree part leading to the cycle), the condition $x_u \leq x_{A_u}$ propagates.
+Wait, if $x_i \leq x_{A_i}$, then $x_i$ is smaller or equal to its successor.
+If we have a cycle $c_1 \to c_2 \to \dots \to c_k \to c_1$, then $x_{c_1} \leq x_{c_2} \leq \dots \leq x_{c_k} \leq x_{c_1}$. This forces $x_{c_1} = x_{c_2} = \dots = x_{c_k}$.
+Let this common value be $v$. Then for any node $u$ that eventually leads to a node in the cycle, say $u \to \dots \to c_j$, we have $x_u \leq x_{A_u} \leq \dots \leq x_{c_j} = v$.
+So, if there is a cycle, the values on the cycle must be equal. Let's call the set of nodes in the cycle $S$. For all $u \in S$, $x_u = v$. For any $u$ not in $S$, let $d(u)$ be the distance to the cycle (number of steps to reach a node in $S$). Then $x_u \leq x_{A_u} \leq \dots \leq v$.
+Actually, the condition is $x_i \leq x_{A_i}$.
+Let's re-read carefully.
+$x_i \leq x_{A_i}$.
+If we have a cycle $c_1 \to c_2 \to \dots \to c_k \to c_1$, then $x_{c_1} \leq x_{c_2} \leq \dots \leq x_{c_k} \leq x_{c_1}$.
+This implies $x_{c_1} = x_{c_2} = \dots = x_{c_k}$.
+Let this value be $v$.
+Then for any node $u$ such that the path from $u$ eventually hits the cycle, say $u",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.21297767125215777,-0.4168384147230621,0.35,270,28,35,91.400390625,91.3984375,91.400390625,0.001953125,29,0.01678074630161186,1868,0,0.0,0.7001310676262963,260934
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"You are given two positive integers A and B.
+Output the square of A + B.
+
+Input
+
+The input is given from Standard Input in the following format:
+A B
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 1 \leq A,B \leq 2025
+- All input values are integers.
+
+Sample Input 1
+
+20 25
+
+Sample Output 1
+
+2025
+
+(20+25)^2=2025.
+
+Sample Input 2
+
+30 25
+
+Sample Output 2
+
+3025
+
+Sample Input 3
+
+45 11
+
+Sample Output 3
+
+3136
+
+Sample Input 4
+
+2025 1111
+
+Sample Output 4
+
+9834496",abc387_a,"a, b = map(int, input().split())
+print((a + b) ** 2)","
+
+<think>
+The user wants a Python program to solve a simple math problem.
+
+**Problem Statement:**
+Given two positive integers $A$ and $B$, calculate $(A + B)^2$.
+
+**Input Format:**
+Two integers $A$ and $B$ separated by space.
+
+**Output Format:**
+Print the result of $(A + B)^2$.
+
+**Constraints:**
+$1 \leq A, B \leq 2025$.
+
+**Steps:**
+1. Read the input line.
+2. Split the line into two parts.
+3. Convert parts to integers $A$ and $B$.
+4. Calculate $(A + B)^2$.
+5. Print the result.
+
+**Example 1:**
+Input: `20 25`
+$A = 20, B = 25$
+$A + B = 45$
+$(A + B)^2 = 45^2 = 2025$
+Output: `2025`
+
+**Example 2:**
+Input: `30 25`
+$A = 30, B = 25$
+$A + B = 55$
+$(A + B)^2 = 55^2 = 3025$
+Output: `3025`
+
+**Implementation details:**
+- Use `input().split()` to get the strings.
+- Use `map(int, ...)` or `int()` to convert.
+- Use `** 2` or `*` for squaring.
+- Print using `print()`.
+
+**Code Structure:**
+```python
+import sys
+
+def main():
+    # Read from standard input
+    input_str = sys.stdin.read().split()
+    if not input_str:
+        return
+    
+    # Parse integers
+    a = int(input_str[0])
+    b = int(input_str[1])
+    
+    # Calculate square of sum
+    result = (a + b) ** 2
+    
+    # Print result
+    print(result)
+
+if __name__ == '__main__':
+    main()
+```
+Or simpler:
+```python
+a, b = map(int, input().split())
+print((a + b) ** 2)
+```
+The simpler version is standard for competitive programming tasks unless there are specific input reading requirements (like multiple lines or large inputs), but here it's a single line.
+
+Let's double check constraints. $A, B \le 2025$. Max sum is $4050$. Square is $4050^2 \approx 1.6 \times 10^7$, which fits easily in standard integer types (Python handles arbitrarily large integers anyway).
+
+The prompt asks to enclose the code within delimiters.
+
+```python
+import sys
+
+def solve():
+    # Reading input from stdin
+    # The input format is ""A B"" on a single line
+    try:
+        line = sys.stdin.read().split()
+        if not line:
+            return
+        a = int(line[0])
+        b = int(line[1])
+        
+        # Calculating (A + B)^2
+        ans = (a + b) ** 2
+        
+        # Printing the answer
+        print(ans)
+    except Exception:
+        pass
+
+if __name__ == '__main__':
+    solve()
+```
+Actually, `input().split()` is sufficient.
+
+```python
+a, b = map(int, input().split())
+print((a + b) ** 2)
+```
+This is robust enough for the given constraints and format.
+
+Let's verify the sample inputs.
+Sample 1: `20 25` -> `(20+25)**2` -> `45**2` -> `2025`. Correct.
+Sample 4: `2025 1111` -> `(2025+1111)**2` -> `3136**2` -> `9834496`. Correct.
+
+I will write the code now.
+
+```python
+import sys
+
+def main():
+    # Read A and B from standard input
+    # Using sys.stdin.read().split() handles whitespace (spaces, newlines) robustly
+    input_data = sys.stdin.read().split()
+    
+    if len(input_data) >= 2:
+        A = int(input_data[0])
+        B = int(input_data[1])
+        
+        # Calculate the square of A + B
+        result = (A + B) ** 2
+        
+        # Print the result
+        print(result)
+
+if __name__ == ""__main__"":
+   ","a, b = map(int, input().split())
+print((a + b) ** 2)",True,,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.1179335036024429,-0.22207772227584796,0.34,270,27,34,91.400390625,91.3984375,91.400390625,0.001953125,28,0.021196732170457033,2312,0,0.0,0.6357599606492867,195168
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"A positive integer not less than 10 whose top digit (the most significant digit) in decimal representation is strictly larger than every other digit in that number is called a Snake number.
+For example, 31 and 201 are Snake numbers, but 35 and 202 are not.
+Find how many Snake numbers exist between L and R, inclusive.
+
+Input
+
+The input is given from Standard Input in the following format:
+L R
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 10 \leq L \leq R \leq 10^{18}
+- All input values are integers.
+
+Sample Input 1
+
+97 210
+
+Sample Output 1
+
+6
+
+The Snake numbers between 97 and 210, inclusive, are 97, 98, 100, 200, 201, and 210: there are six.
+
+Sample Input 2
+
+1000 9999
+
+Sample Output 2
+
+2025
+
+Sample Input 3
+
+252509054433933519 760713016476190692
+
+Sample Output 3
+
+221852052834757",abc387_c,"<think>
+The problem asks us to count the number of ""Snake numbers"" in a given range $[L, R]$.
+A Snake number is a positive integer $\ge 10$ such that its most significant digit (MSD) is strictly larger than every other digit in the number.
+The constraints are $10 \le L \le R \le 10^{18}$.
+
+Let $N$ be a number. Let $d_k d_{k-1} \dots d_1 d_0$ be its decimal representation, where $d_k$ is the MSD.
+The condition is $d_k > d_i$ for all $i \in \{0, 1, \dots, k-1\}$.
+This means the MSD must be strictly greater than all other digits.
+Since digits are integers from 0 to 9, if the MSD is $x$, then all other digits must be in the range $[0, x-1]$.
+Also, the MSD itself cannot be 0 because the number is $\ge 10$.
+
+The problem asks for the count of such numbers in $[L, R]$. This is equivalent to finding the count of Snake numbers in $[1, R]$ minus the count of Snake numbers in $[1, L-1]$.
+Let $f(N)$ be the number of Snake numbers in $[1, N]$. Then the answer is $f(R) - f(L-1)$.
+
+Let's analyze the properties of Snake numbers.
+A Snake number is determined by its length (number of digits) and its digits.
+Let the length be $k$. Since $N \ge 10$, the length is at least 2.
+For a number of length $k$, let the digits be $d_{k-1} d_{k-2} \dots d_0$ (using 0-based indexing from right to left, or just $d_1 \dots d_k$ where $d_1$ is MSD).
+Let's denote the digits as $a_1 a_2 \dots a_k$ where $a_1$ is the MSD.
+The condition is $a_1 > a_i$ for all $i=2, \dots, k$.
+This implies $a_1 \in \{2, 3, \dots, 9\}$ because if $a_1=1$, then all other digits must be $<1$, i.e., 0. So $100\dots0$ would be a Snake number?
+Wait, if $a_1=1$, then $a_i < 1 \implies a_i=0$. So $100\dots0$ is a Snake number.
+Wait, let's check the definition again. ""strictly larger than every other digit"".
+Example: 31. MSD is 3. Other digits: 1. $3 > 1$. Yes.
+Example: 201. MSD is 2. Other digits: 0, 1. $2 > 0$ and $2 > 1$. Yes.
+Example: 35. MSD 3. Other digits 5. $3 \ngtr 5$. No.
+Example: 202. MSD 2. Other digits 0, 2. $2 \ngtr 2$. No.
+Example: 100. MSD 1. Other digits 0, 0. $1 > 0$. Yes.
+So 100 is a Snake number.
+Wait, the sample explanation says: ""The Snake numbers between 97 and 210, inclusive, are 97, 98, 100, 200, 201, and 210"".
+Let's check 100. MSD 1. Others 0, 0. $1 > 0$. Correct.
+Let's check 200. MSD 2. Others 0, 0. $2 > 0$. Correct.
+Let's check 210. MSD 2. Others 1, 0. $2 > 1, 2 > 0$. Correct.
+Let's check 97. MSD 9. Other 7. $9 > 7$. Correct.
+Let's check 98. MSD 9. Other 8. $9 > 8$. Correct.
+Wait, what about 10? MSD 1. Other 0. $1 > 0$. Yes.
+What about 11? MSD 1. Other 1. $1 \ngtr 1$. No.
+What about 12? MSD 1. Other 2. $","
+
+<think>
+The problem asks us to count the number of ""Snake numbers"" in a given range $[L, R]$.
+A Snake number is a positive integer $\ge 10$ such that its most significant digit (MSD) is strictly larger than every other digit in the number.
+The constraints are $10 \le L \le R \le 10^{18}$.
+
+Let $N$ be a number. Let $d_k d_{k-1} \dots d_1 d_0$ be its decimal representation, where $d_k$ is the MSD.
+The condition is $d_k > d_i$ for all $i \in \{0, 1, \dots, k-1\}$.
+This means the MSD must be strictly greater than all other digits.
+Since digits are integers from 0 to 9, if the MSD is $x$, then all other digits must be in the range $[0, x-1]$.
+Also, the MSD itself cannot be 0 because the number is $\ge 10$.
+
+The problem asks for the count of such numbers in $[L, R]$. This is equivalent to finding the count of Snake numbers in $[1, R]$ minus the count of Snake numbers in $[1, L-1]$.
+Let $f(N)$ be the number of Snake numbers in $[1, N]$. Then the answer is $f(R) - f(L-1)$.
+
+Let's analyze the properties of Snake numbers.
+A Snake number is determined by its length (number of digits) and its digits.
+Let the length be $k$. Since $N \ge 10$, the length is at least 2.
+For a number of length $k$, let the digits be $d_{k-1} d_{k-2} \dots d_0$ (using 0-based indexing from right to left, or just $d_1 \dots d_k$ where $d_1$ is MSD).
+Let's denote the digits as $a_1 a_2 \dots a_k$ where $a_1$ is the MSD.
+The condition is $a_1 > a_i$ for all $i=2, \dots, k$.
+This implies $a_1 \in \{2, 3, \dots, 9\}$ because if $a_1=1$, then all other digits must be $<1$, i.e., 0. So $100\dots0$ would be a Snake number?
+Wait, if $a_1=1$, then $a_i < 1 \implies a_i=0$. So $100\dots0$ is a Snake number.
+Wait, let's check the definition again. ""strictly larger than every other digit"".
+Example: 31. MSD is 3. Other digits: 1. $3 > 1$. Yes.
+Example: 201. MSD is 2. Other digits: 0, 1. $2 > 0$ and $2 > 1$. Yes.
+Example: 35. MSD 3. Other digits 5. $3 \ngtr 5$. No.
+Example: 202. MSD 2. Other digits 0, 2. $2 \ngtr 2$. No.
+Example: 100. MSD 1. Other digits 0, 0. $1 > 0$. Yes.
+So 100 is a Snake number.
+Wait, the sample explanation says: ""The Snake numbers between 97 and 210, inclusive, are 97, 98, 100, 200, 201, and 210"".
+Let's check 100. MSD 1. Others 0, 0. $1 > 0$. Correct.
+Let's check 200. MSD 2. Others 0, 0. $2 > 0$. Correct.
+Let's check 210. MSD 2. Others 1, 0. $2 > 1, 2 > 0$. Correct.
+Let's check 97. MSD 9. Other 7. $9 > 7$. Correct.
+Let's check 98. MSD 9. Other 8. $9 > 8$. Correct.
+Wait, what about 10? MSD 1. Other 0. $1 > 0$. Yes.
+What about 11? MSD 1. Other 1. $1 \ngtr 1$. No.
+What about 12? MSD 1. Other 2. $","<think>
+The problem asks us to count the number of ""Snake numbers"" in a given range $[L, R]$.
+A Snake number is a positive integer $\ge 10$ such that its most significant digit (MSD) is strictly larger than every other digit in the number.
+The constraints are $10 \le L \le R \le 10^{18}$.
+
+Let $N$ be a number. Let $d_k d_{k-1} \dots d_1 d_0$ be its decimal representation, where $d_k$ is the MSD.
+The condition is $d_k > d_i$ for all $i \in \{0, 1, \dots, k-1\}$.
+This means the MSD must be strictly greater than all other digits.
+Since digits are integers from 0 to 9, if the MSD is $x$, then all other digits must be in the range $[0, x-1]$.
+Also, the MSD itself cannot be 0 because the number is $\ge 10$.
+
+The problem asks for the count of such numbers in $[L, R]$. This is equivalent to finding the count of Snake numbers in $[1, R]$ minus the count of Snake numbers in $[1, L-1]$.
+Let $f(N)$ be the number of Snake numbers in $[1, N]$. Then the answer is $f(R) - f(L-1)$.
+
+Let's analyze the properties of Snake numbers.
+A Snake number is determined by its length (number of digits) and its digits.
+Let the length be $k$. Since $N \ge 10$, the length is at least 2.
+For a number of length $k$, let the digits be $d_{k-1} d_{k-2} \dots d_0$ (using 0-based indexing from right to left, or just $d_1 \dots d_k$ where $d_1$ is MSD).
+Let's denote the digits as $a_1 a_2 \dots a_k$ where $a_1$ is the MSD.
+The condition is $a_1 > a_i$ for all $i=2, \dots, k$.
+This implies $a_1 \in \{2, 3, \dots, 9\}$ because if $a_1=1$, then all other digits must be $<1$, i.e., 0. So $100\dots0$ would be a Snake number?
+Wait, if $a_1=1$, then $a_i < 1 \implies a_i=0$. So $100\dots0$ is a Snake number.
+Wait, let's check the definition again. ""strictly larger than every other digit"".
+Example: 31. MSD is 3. Other digits: 1. $3 > 1$. Yes.
+Example: 201. MSD is 2. Other digits: 0, 1. $2 > 0$ and $2 > 1$. Yes.
+Example: 35. MSD 3. Other digits 5. $3 \ngtr 5$. No.
+Example: 202. MSD 2. Other digits 0, 2. $2 \ngtr 2$. No.
+Example: 100. MSD 1. Other digits 0, 0. $1 > 0$. Yes.
+So 100 is a Snake number.
+Wait, the sample explanation says: ""The Snake numbers between 97 and 210, inclusive, are 97, 98, 100, 200, 201, and 210"".
+Let's check 100. MSD 1. Others 0, 0. $1 > 0$. Correct.
+Let's check 200. MSD 2. Others 0, 0. $2 > 0$. Correct.
+Let's check 210. MSD 2. Others 1, 0. $2 > 1, 2 > 0$. Correct.
+Let's check 97. MSD 9. Other 7. $9 > 7$. Correct.
+Let's check 98. MSD 9. Other 8. $9 > 8$. Correct.
+Wait, what about 10? MSD 1. Other 0. $1 > 0$. Yes.
+What about 11? MSD 1. Other 1. $1 \ngtr 1$. No.
+What about 12? MSD 1. Other 2. $",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.16437285065091894,-0.30698846225634685,0.22,294,30,22,91.400390625,91.3984375,91.400390625,0.001953125,31,0.018547140649149974,2252,0,0.0,0.6840341341144,248549
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"On a certain planet, there are N aliens, all of whom are minors.
+The i-th alien currently has A_i stones, and will become an adult exactly i years later.
+When someone becomes an adult on this planet, every adult who has at least one stone gives exactly one stone as a congratulatory gift to the alien who has just become an adult.
+Find how many stones each alien will have after N years.
+Assume that no new aliens will be born in the future.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+A_1 A_2 \ldots A_N
+
+Output
+
+Let B_i be the number of stones owned by the i-th alien after N years. Print B_1, B_2, \ldots, B_N in this order, separated by spaces.
+
+Constraints
+
+
+- 1 \leq N \leq 5 \times 10^5
+- 0 \leq A_i \leq 5 \times 10^5
+- All input values are integers.
+
+Sample Input 1
+
+4
+5 0 9 3
+
+Sample Output 1
+
+2 0 10 5
+
+Let C_i be the number of stones that the i-th alien has at a given time.
+Initially, (C_1, C_2, C_3, C_4) = (5, 0, 9, 3).
+After 1 year, (C_1, C_2, C_3, C_4) = (5, 0, 9, 3).
+After 2 years, (C_1, C_2, C_3, C_4) = (4, 1, 9, 3).
+After 3 years, (C_1, C_2, C_3, C_4) = (3, 0, 11, 3).
+After 4 years, (C_1, C_2, C_3, C_4) = (2, 0, 10, 5).
+
+Sample Input 2
+
+5
+4 6 7 2 5
+
+Sample Output 2
+
+0 4 7 4 9
+
+Sample Input 3
+
+10
+2 9 1 2 0 4 6 7 1 5
+
+Sample Output 3
+
+0 2 0 0 0 4 7 10 4 10",abc388_d,"<think>
+The problem asks us to simulate a process involving $N$ aliens.
+There are $N$ aliens, indexed 1 to $N$.
+Initially, the $i$-th alien has $A_i$ stones.
+The $i$-th alien becomes an adult exactly $i$ years later.
+When an alien becomes an adult, every *current* adult (someone who has already become an adult) who has at least one stone gives exactly one stone to the newly adult alien.
+We need to find the number of stones each alien has after $N$ years.
+
+Let's trace the process.
+Aliens become adults at years $t=1, 2, \ldots, N$.
+Specifically, alien $i$ becomes an adult at year $i$.
+The process happens sequentially.
+At year $t$, alien $t$ becomes an adult.
+At this moment, we look at all aliens $j$ such that $j < t$ (since they became adults at year $j < t$).
+If alien $j$ has at least one stone, they give 1 stone to alien $t$.
+Alien $t$ receives stones from all such $j$.
+Alien $t$'s stone count increases by the number of such $j$'s.
+Aliens $j$ with $j > t$ are still minors, so they haven't become adults yet. They don't give stones.
+Aliens $j$ with $j < t$ are already adults. Do they lose stones? No, the problem says ""gives exactly one stone"". It doesn't say they lose it. Wait, let's re-read carefully.
+""When someone becomes an adult on this planet, every adult who has at least one stone gives exactly one stone as a congratulatory gift to the alien who has just become an adult.""
+This implies the adult alien gives away a stone. So the giver loses 1 stone.
+Let's check the sample to verify this interpretation.
+
+Sample 1:
+$N=4$
+$A = [5, 0, 9, 3]$ (indices 1 to 4)
+Initially: $C_1=5, C_2=0, C_3=9, C_4=3$.
+
+Year 1: Alien 1 becomes adult.
+Adults before year 1: None.
+Alien 1 receives 0 stones.
+$C_1$ remains 5.
+Wait, the sample explanation says:
+""After 1 year, (C_1, C_2, C_3, C_4) = (5, 0, 9, 3).""
+This matches.
+
+Year 2: Alien 2 becomes adult.
+Adults before year 2: Alien 1.
+Alien 1 has $C_1 = 5 \ge 1$. So Alien 1 gives 1 stone to Alien 2.
+Alien 1 loses 1 stone. $C_1 \to 4$.
+Alien 2 receives 1 stone. $C_2 \to 0 + 1 = 1$.
+State: $C_1=4, C_2=1, C_3=9, C_4=3$.
+Sample explanation: ""After 2 years, (C_1, C_2, C_3, C_4) = (4, 1, 9, 3).""
+Matches.
+
+Year 3: Alien 3 becomes adult.
+Adults before year 3: Alien 1, Alien 2.
+Alien 1 has $C_1 = 4 \ge 1$. Gives 1 stone. $C_1 \to 3$.
+Alien 2 has $C_2 = 1 \ge 1$. Gives 1 stone. $C_2 \to 0$.
+Alien 3 receives $1+1=2$ stones. $C_3 \to 9 + 2 = 11$.
+State: $C_1=3, C_2=0, C_3=11, C_4=3$.
+Sample explanation: ""After 3 years, (C_1, C_2, C_3, C_4) = (3, 0, 11, 3).""
+Matches.
+
+Year 4: Alien 4 becomes adult.
+Adults before year 4: Alien 1, Alien 2, Alien 3.
+Alien 1 has $C_1 = 3 \ge 1$. Gives 1 stone. $C_1 \to 2$.
+Alien 2 has $C_2 = 0 < 1$. Does not give.","
+
+<think>
+The problem asks us to simulate a process involving $N$ aliens.
+There are $N$ aliens, indexed 1 to $N$.
+Initially, the $i$-th alien has $A_i$ stones.
+The $i$-th alien becomes an adult exactly $i$ years later.
+When an alien becomes an adult, every *current* adult (someone who has already become an adult) who has at least one stone gives exactly one stone to the newly adult alien.
+We need to find the number of stones each alien has after $N$ years.
+
+Let's trace the process.
+Aliens become adults at years $t=1, 2, \ldots, N$.
+Specifically, alien $i$ becomes an adult at year $i$.
+The process happens sequentially.
+At year $t$, alien $t$ becomes an adult.
+At this moment, we look at all aliens $j$ such that $j < t$ (since they became adults at year $j < t$).
+If alien $j$ has at least one stone, they give 1 stone to alien $t$.
+Alien $t$ receives stones from all such $j$.
+Alien $t$'s stone count increases by the number of such $j$'s.
+Aliens $j$ with $j > t$ are still minors, so they haven't become adults yet. They don't give stones.
+Aliens $j$ with $j < t$ are already adults. Do they lose stones? No, the problem says ""gives exactly one stone"". It doesn't say they lose it. Wait, let's re-read carefully.
+""When someone becomes an adult on this planet, every adult who has at least one stone gives exactly one stone as a congratulatory gift to the alien who has just become an adult.""
+This implies the adult alien gives away a stone. So the giver loses 1 stone.
+Let's check the sample to verify this interpretation.
+
+Sample 1:
+$N=4$
+$A = [5, 0, 9, 3]$ (indices 1 to 4)
+Initially: $C_1=5, C_2=0, C_3=9, C_4=3$.
+
+Year 1: Alien 1 becomes adult.
+Adults before year 1: None.
+Alien 1 receives 0 stones.
+$C_1$ remains 5.
+Wait, the sample explanation says:
+""After 1 year, (C_1, C_2, C_3, C_4) = (5, 0, 9, 3).""
+This matches.
+
+Year 2: Alien 2 becomes adult.
+Adults before year 2: Alien 1.
+Alien 1 has $C_1 = 5 \ge 1$. So Alien 1 gives 1 stone to Alien 2.
+Alien 1 loses 1 stone. $C_1 \to 4$.
+Alien 2 receives 1 stone. $C_2 \to 0 + 1 = 1$.
+State: $C_1=4, C_2=1, C_3=9, C_4=3$.
+Sample explanation: ""After 2 years, (C_1, C_2, C_3, C_4) = (4, 1, 9, 3).""
+Matches.
+
+Year 3: Alien 3 becomes adult.
+Adults before year 3: Alien 1, Alien 2.
+Alien 1 has $C_1 = 4 \ge 1$. Gives 1 stone. $C_1 \to 3$.
+Alien 2 has $C_2 = 1 \ge 1$. Gives 1 stone. $C_2 \to 0$.
+Alien 3 receives $1+1=2$ stones. $C_3 \to 9 + 2 = 11$.
+State: $C_1=3, C_2=0, C_3=11, C_4=3$.
+Sample explanation: ""After 3 years, (C_1, C_2, C_3, C_4) = (3, 0, 11, 3).""
+Matches.
+
+Year 4: Alien 4 becomes adult.
+Adults before year 4: Alien 1, Alien 2, Alien 3.
+Alien 1 has $C_1 = 3 \ge 1$. Gives 1 stone. $C_1 \to 2$.
+Alien 2 has $C_2 = 0 < 1$. Does not give.","<think>
+The problem asks us to simulate a process involving $N$ aliens.
+There are $N$ aliens, indexed 1 to $N$.
+Initially, the $i$-th alien has $A_i$ stones.
+The $i$-th alien becomes an adult exactly $i$ years later.
+When an alien becomes an adult, every *current* adult (someone who has already become an adult) who has at least one stone gives exactly one stone to the newly adult alien.
+We need to find the number of stones each alien has after $N$ years.
+
+Let's trace the process.
+Aliens become adults at years $t=1, 2, \ldots, N$.
+Specifically, alien $i$ becomes an adult at year $i$.
+The process happens sequentially.
+At year $t$, alien $t$ becomes an adult.
+At this moment, we look at all aliens $j$ such that $j < t$ (since they became adults at year $j < t$).
+If alien $j$ has at least one stone, they give 1 stone to alien $t$.
+Alien $t$ receives stones from all such $j$.
+Alien $t$'s stone count increases by the number of such $j$'s.
+Aliens $j$ with $j > t$ are still minors, so they haven't become adults yet. They don't give stones.
+Aliens $j$ with $j < t$ are already adults. Do they lose stones? No, the problem says ""gives exactly one stone"". It doesn't say they lose it. Wait, let's re-read carefully.
+""When someone becomes an adult on this planet, every adult who has at least one stone gives exactly one stone as a congratulatory gift to the alien who has just become an adult.""
+This implies the adult alien gives away a stone. So the giver loses 1 stone.
+Let's check the sample to verify this interpretation.
+
+Sample 1:
+$N=4$
+$A = [5, 0, 9, 3]$ (indices 1 to 4)
+Initially: $C_1=5, C_2=0, C_3=9, C_4=3$.
+
+Year 1: Alien 1 becomes adult.
+Adults before year 1: None.
+Alien 1 receives 0 stones.
+$C_1$ remains 5.
+Wait, the sample explanation says:
+""After 1 year, (C_1, C_2, C_3, C_4) = (5, 0, 9, 3).""
+This matches.
+
+Year 2: Alien 2 becomes adult.
+Adults before year 2: Alien 1.
+Alien 1 has $C_1 = 5 \ge 1$. So Alien 1 gives 1 stone to Alien 2.
+Alien 1 loses 1 stone. $C_1 \to 4$.
+Alien 2 receives 1 stone. $C_2 \to 0 + 1 = 1$.
+State: $C_1=4, C_2=1, C_3=9, C_4=3$.
+Sample explanation: ""After 2 years, (C_1, C_2, C_3, C_4) = (4, 1, 9, 3).""
+Matches.
+
+Year 3: Alien 3 becomes adult.
+Adults before year 3: Alien 1, Alien 2.
+Alien 1 has $C_1 = 4 \ge 1$. Gives 1 stone. $C_1 \to 3$.
+Alien 2 has $C_2 = 1 \ge 1$. Gives 1 stone. $C_2 \to 0$.
+Alien 3 receives $1+1=2$ stones. $C_3 \to 9 + 2 = 11$.
+State: $C_1=3, C_2=0, C_3=11, C_4=3$.
+Sample explanation: ""After 3 years, (C_1, C_2, C_3, C_4) = (3, 0, 11, 3).""
+Matches.
+
+Year 4: Alien 4 becomes adult.
+Adults before year 4: Alien 1, Alien 2, Alien 3.
+Alien 1 has $C_1 = 3 \ge 1$. Gives 1 stone. $C_1 \to 2$.
+Alien 2 has $C_2 = 0 < 1$. Does not give.",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.1431111778172419,-0.2951515951722253,0.18,314,32,18,91.400390625,91.3984375,91.400390625,0.001953125,33,0.02472952086553326,3260,1699,0.5211656441717791,0.7362701411999173,319122
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"There are N snakes.
+Initially, the thickness of the i-th snake is T_i, and its length is L_i.
+The weight of a snake is defined as the product of its thickness and length.
+For each integer k satisfying 1 \leq k \leq D, find the weight of the heaviest snake when every snake's length has increased by k.
+
+Input
+
+The input is given from Standard Input in the following format:
+N D
+T_1 L_1
+T_2 L_2
+\vdots
+T_N L_N
+
+Output
+
+Print D lines. The k-th line should contain the weight of the heaviest snake when every snake's length has increased by k.
+
+Constraints
+
+
+- 1 \leq N, D \leq 100
+- 1 \leq T_i, L_i \leq 100
+- All input values are integers.
+
+Sample Input 1
+
+4 3
+3 3
+5 1
+2 4
+1 10
+
+Sample Output 1
+
+12
+15
+20
+
+When every snake’s length has increased by 1, the snakes' weights become 12, 10, 10, 11, so print 12 on the first line.
+When every snake’s length has increased by 2, the snakes' weights become 15, 15, 12, 12, so print 15 on the second line.
+When every snake’s length has increased by 3, the snakes' weights become 18, 20, 14, 13, so print 20 on the third line.
+
+Sample Input 2
+
+1 4
+100 100
+
+Sample Output 2
+
+10100
+10200
+10300
+10400",abc388_b,"import sys
+
+def solve():
+    # Read all input from stdin
+    input_data = sys.stdin.read().split()
+    
+    if not input_data:
+        return
+
+    iterator = iter(input_data)
+    
+    try:
+        N = int(next(iterator))
+        D = int(next(iterator))
+        
+        snakes = []
+        for _ in range(N):
+            T = int(next(iterator))
+            L = int(next(iterator))
+            snakes.append((T, L))
+            
+        for k in range(1, D + 1):
+            max_w = 0
+            for t, l in snakes:
+                w = t * (l + k)
+                if w > max_w:
+                    max_w = w
+            print(max_w)
+            
+    except StopIteration:
+        pass
+
+if __name__ == '__main__':
+    solve()","
+
+<think>
+The user wants a Python program to solve a specific problem.
+
+**Problem Statement:**
+There are $N$ snakes.
+Each snake $i$ has an initial thickness $T_i$ and an initial length $L_i$.
+The weight of a snake is defined as $T_i \times L_i$.
+For each integer $k$ from $1$ to $D$, we need to calculate the maximum weight among all snakes, assuming every snake's length has increased by $k$.
+So, for a specific $k$, the new weight of snake $i$ is $T_i \times (L_i + k)$.
+We need to output the maximum of these weights for each $k \in \{1, \dots, D\}$.
+
+**Input Format:**
+Line 1: $N$ $D$
+Lines 2 to $N+1$: $T_i$ $L_i$
+
+**Constraints:**
+$N, D \le 100$
+$T_i, L_i \le 100$
+Since $N$ and $D$ are very small, a brute-force approach is perfectly fine.
+Complexity: $O(N \times D)$. With $N, D \le 100$, operations $\approx 10^4$, which is trivial.
+
+**Algorithm:**
+1. Read $N$ and $D$.
+2. Read the list of snakes. Store them as a list of tuples or lists $[(T_1, L_1), (T_2, L_2), \dots, (T_N, L_N)]$.
+3. Loop $k$ from $1$ to $D$:
+    a. Initialize `max_weight` to -1 (or 0, since weights are positive).
+    b. Loop through each snake $(T_i, L_i)$:
+        i. Calculate `current_weight` = $T_i \times (L_i + k)$.
+        ii. Update `max_weight` = $\max(\text{max\_weight}, \text{current\_weight})$.
+    c. Print `max_weight`.
+
+**Example 1 Walkthrough:**
+Input:
+4 3
+3 3
+5 1
+2 4
+1 10
+
+Snakes:
+1: T=3, L=3
+2: T=5, L=1
+3: T=2, L=4
+4: T=1, L=10
+
+k=1:
+1: 3 * (3+1) = 12
+2: 5 * (1+1) = 10
+3: 2 * (4+1) = 10
+4: 1 * (10+1) = 11
+Max = 12. Output 12.
+
+k=2:
+1: 3 * (3+2) = 15
+2: 5 * (1+2) = 15
+3: 2 * (4+2) = 12
+4: 1 * (10+2) = 12
+Max = 15. Output 15.
+
+k=3:
+1: 3 * (3+3) = 18
+2: 5 * (1+3) = 20
+3: 2 * (4+3) = 14
+4: 1 * (10+3) = 13
+Max = 20. Output 20.
+
+Matches sample output.
+
+**Implementation Details:**
+- Use `sys.stdin.read` or `input()` to parse.
+- Since constraints are small, standard input reading is sufficient.
+
+```python
+import sys
+
+def solve():
+    # Read all input from stdin
+    input_data = sys.stdin.read().split()
+    
+    if not input_data:
+        return
+
+    iterator = iter(input_data)
+    
+    try:
+        N = int(next(iterator))
+        D = int(next(iterator))
+        
+        snakes = []
+        for _ in range(N):
+            T = int(next(iterator))
+            L = int(next(iterator))
+            snakes.append((T, L))
+            
+        for k in range(1, D + 1):
+            max_w = 0
+            for t, l in snakes:
+                w = t * (l + k)
+                if w > max_w:
+                    max_w = w
+            print(max_w)
+            
+    except StopIteration:
+        pass
+
+if __name__ == '__main__':
+    solve()
+```
+
+Let's double check constraints.
+$N, D \le 100$.
+$T","import sys
+
+def solve():
+    # Read all input from stdin
+    input_data = sys.stdin.read().split()
+    
+    if not input_data:
+        return
+
+    iterator = iter(input_data)
+    
+    try:
+        N = int(next(iterator))
+        D = int(next(iterator))
+        
+        snakes = []
+        for _ in range(N):
+            T = int(next(iterator))
+            L = int(next(iterator))
+            snakes.append((T, L))
+            
+        for k in range(1, D + 1):
+            max_w = 0
+            for t, l in snakes:
+                w = t * (l + k)
+                if w > max_w:
+                    max_w = w
+            print(max_w)
+            
+    except StopIteration:
+        pass
+
+if __name__ == '__main__':
+    solve()",True,,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.07758710286489603,-0.14505977065195974,0.63,341,35,63,91.400390625,91.3984375,91.400390625,0.001953125,36,0.01678074630161186,2220,868,0.390990990990991,0.7589865042208644,327658
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"There are N mochi (rice cakes), arranged in ascending order of size.
+The size of the i-th mochi (1\leq i\leq N) is A_i.
+Given two mochi A and B, with sizes a and b respectively, you can make one kagamimochi (a stacked rice cake) by placing mochi A on top of mochi B if and only if a is at most half of b.
+You are given Q integer pairs. Let (L_i, R_i) be the i-th pair (1\leq i\leq Q), and solve the following problem for each i:
+
+Using only the R_i - L_i + 1 mochi from the L_i-th to the R_i-th, how many kagamimochi can you make simultaneously?  
+More precisely, find the maximum non-negative integer K such that:
+
+- Out of the R_i - L_i + 1 mochi from the L_i-th to the R_i-th, choose 2K mochi and form K pairs. For each pair, place one mochi on top of the other, to make K kagamimochi.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+A_1 A_2 \dotsc A_N
+Q
+L_1 R_1
+L_2 R_2
+\vdots
+L_Q R_Q
+
+Output
+
+Print Q lines. The i-th line (1\leq i\leq Q) should contain the answer to the i-th query.
+
+Constraints
+
+
+- 2 \leq N \leq 2 \times 10^5
+- 1 \leq A_i \leq 10^9 \ (1 \leq i \leq N)
+- A_i \leq A_{i+1} \ (1 \leq i < N)
+- 1 \leq Q \leq 2 \times 10^5
+- 1 \leq L_i < R_i \leq N \ (1 \leq i \leq Q)
+- All input values are integers.
+
+Sample Input 1
+
+11
+1 1 2 3 4 4 7 10 11 12 20
+5
+2 5
+3 8
+7 11
+1 2
+1 11
+
+Sample Output 1
+
+2
+3
+1
+0
+5
+
+The answers to each query are as follows. One possible way to make the kagamimochi is given for each query.
+
+- The mochi sizes are (1, 2, 3, 4). You can make the two kagamimochi (1,3) and (2,4).
+- The mochi sizes are (2, 3, 4, 4, 7, 10). You can make the three kagamimochi (2,4), (3,7), and (4,10).
+- The mochi sizes are (7, 10, 11, 12, 20). You can make one kagamimochi (10,20).
+- The mochi sizes are (1, 1). You cannot make any kagamimochi.
+- The mochi sizes are (1, 1, 2, 3, 4, 4, 7, 10, 11, 12, 20). You can make five kagamimochi (1,2), (1,3), (4,10), (4,11), and (7,20).
+
+Hence, print 2, 3, 1, 0, 5 in this order.
+
+Sample Input 2
+
+24
+127 148 170 174 258 311 331 414 416 436 517 523 532 587 591 638 660 748 760 776 837 857 972 984
+15
+7 11
+8 9
+8 13
+12 15
+9 23
+1 17
+8 12
+1 5
+6 17
+3 7
+12 19
+13 18
+7 22
+1 12
+14 15
+
+Sample Output 2
+
+0
+0
+0
+0
+2
+6
+0
+1
+1
+0
+0
+0
+3
+5
+0",abc388_g,"<think>
+The problem asks us to find the maximum number of pairs $(a, b)$ we can form from a subarray of a sorted array $A$ such that $a \le b/2$. The subarray is defined by indices $[L, R]$ (1-based). We need to answer $Q$ such queries. The array $A$ is sorted in ascending order.
+
+Let the subarray be $S = [A_L, A_{L+1}, \dots, A_R]$. We want to select $2K$ elements from $S$ and pair them up $(x_1, y_1), \dots, (x_K, y_K)$ such that $x_j \le y_j/2$ for all $j$. Note that the problem statement says ""place mochi A on top of mochi B if and only if $a$ is at most half of $b$"". Since the array is sorted, $A_i \le A_{i+1}$. If we pick two elements $u, v$ with $u \le v$, the condition is $u \le v/2$. If we pick $u > v$, we can't pair them in that order, but since we want to maximize pairs, we should always pair a smaller element with a larger element. So the condition is effectively $u \le v/2$ where $u$ is the smaller one.
+
+Let's rephrase the condition. We want to form pairs $(u, v)$ such that $u \le v/2$, or equivalently $2u \le v$.
+We have a set of numbers. We want to maximize the number of pairs.
+This looks like a greedy problem. To maximize the number of pairs, we should try to pair the smallest available numbers with the smallest possible numbers that satisfy the condition. Or perhaps pair the smallest available numbers with the largest available numbers?
+Actually, if we have a set of numbers, say $\{1, 2, 3, 4\}$, we can pair $(1, 2)$ and $(3, 4)$? No, $3 \le 4/2$ is false. We can pair $(1, 3)$ and $(2, 4)$? $1 \le 3/2$ (1.5) yes, $2 \le 4/2$ (2) yes.
+Wait, the condition is $a \le b/2$.
+Let's check the sample explanation.
+Sample 1, Query 1: $L=2, R=5$. Subarray: $1, 2, 3, 4$.
+Pairs: $(1, 3)$ and $(2, 4)$.
+$1 \le 3/2 = 1.5$ (True).
+$2 \le 4/2 = 2$ (True).
+Total 2 pairs.
+Is it possible to do better? No, 4 elements max 2 pairs.
+Sample 1, Query 2: $L=3, R=8$. Subarray: $2, 3, 4, 4, 7, 10$.
+Pairs: $(2, 4), (3, 7), (4, 10)$.
+$2 \le 2$ (True).
+$3 \le 3.5$ (True).
+$4 \le 5$ (True).
+Total 3 pairs.
+Sample 1, Query 5: $L=1, R=11$. Subarray: $1, 1, 2, 3, 4, 4, 7, 10, 11, 12, 20$.
+Pairs: $(1, 2), (1, 3), (4, 10), (4, 11), (7, 20)$.
+Wait, $(1, 2)$ means $1 \le 1$. $(1, 3)$ means $1 \le 1.5$.
+Wait, the sample explanation says: ""The mochi sizes are (1, 1, 2, 3, 4, 4, 7, 10, 11, 12, 20). You can make five kagamimochi (1,2), (1,3), (4,10), (4,11), and (7,20).""
+Wait, $(1, 2)$ uses the first 1 and the 2. $(1, 3)$ uses the second 1 and the 3.
+Wait, if we use 1 and 2, we use up 1 and 2. If we use 1 and 3, we use","
+
+<think>
+The problem asks us to find the maximum number of pairs $(a, b)$ we can form from a subarray of a sorted array $A$ such that $a \le b/2$. The subarray is defined by indices $[L, R]$ (1-based). We need to answer $Q$ such queries. The array $A$ is sorted in ascending order.
+
+Let the subarray be $S = [A_L, A_{L+1}, \dots, A_R]$. We want to select $2K$ elements from $S$ and pair them up $(x_1, y_1), \dots, (x_K, y_K)$ such that $x_j \le y_j/2$ for all $j$. Note that the problem statement says ""place mochi A on top of mochi B if and only if $a$ is at most half of $b$"". Since the array is sorted, $A_i \le A_{i+1}$. If we pick two elements $u, v$ with $u \le v$, the condition is $u \le v/2$. If we pick $u > v$, we can't pair them in that order, but since we want to maximize pairs, we should always pair a smaller element with a larger element. So the condition is effectively $u \le v/2$ where $u$ is the smaller one.
+
+Let's rephrase the condition. We want to form pairs $(u, v)$ such that $u \le v/2$, or equivalently $2u \le v$.
+We have a set of numbers. We want to maximize the number of pairs.
+This looks like a greedy problem. To maximize the number of pairs, we should try to pair the smallest available numbers with the smallest possible numbers that satisfy the condition. Or perhaps pair the smallest available numbers with the largest available numbers?
+Actually, if we have a set of numbers, say $\{1, 2, 3, 4\}$, we can pair $(1, 2)$ and $(3, 4)$? No, $3 \le 4/2$ is false. We can pair $(1, 3)$ and $(2, 4)$? $1 \le 3/2$ (1.5) yes, $2 \le 4/2$ (2) yes.
+Wait, the condition is $a \le b/2$.
+Let's check the sample explanation.
+Sample 1, Query 1: $L=2, R=5$. Subarray: $1, 2, 3, 4$.
+Pairs: $(1, 3)$ and $(2, 4)$.
+$1 \le 3/2 = 1.5$ (True).
+$2 \le 4/2 = 2$ (True).
+Total 2 pairs.
+Is it possible to do better? No, 4 elements max 2 pairs.
+Sample 1, Query 2: $L=3, R=8$. Subarray: $2, 3, 4, 4, 7, 10$.
+Pairs: $(2, 4), (3, 7), (4, 10)$.
+$2 \le 2$ (True).
+$3 \le 3.5$ (True).
+$4 \le 5$ (True).
+Total 3 pairs.
+Sample 1, Query 5: $L=1, R=11$. Subarray: $1, 1, 2, 3, 4, 4, 7, 10, 11, 12, 20$.
+Pairs: $(1, 2), (1, 3), (4, 10), (4, 11), (7, 20)$.
+Wait, $(1, 2)$ means $1 \le 1$. $(1, 3)$ means $1 \le 1.5$.
+Wait, the sample explanation says: ""The mochi sizes are (1, 1, 2, 3, 4, 4, 7, 10, 11, 12, 20). You can make five kagamimochi (1,2), (1,3), (4,10), (4,11), and (7,20).""
+Wait, $(1, 2)$ uses the first 1 and the 2. $(1, 3)$ uses the second 1 and the 3.
+Wait, if we use 1 and 2, we use up 1 and 2. If we use 1 and 3, we use","<think>
+The problem asks us to find the maximum number of pairs $(a, b)$ we can form from a subarray of a sorted array $A$ such that $a \le b/2$. The subarray is defined by indices $[L, R]$ (1-based). We need to answer $Q$ such queries. The array $A$ is sorted in ascending order.
+
+Let the subarray be $S = [A_L, A_{L+1}, \dots, A_R]$. We want to select $2K$ elements from $S$ and pair them up $(x_1, y_1), \dots, (x_K, y_K)$ such that $x_j \le y_j/2$ for all $j$. Note that the problem statement says ""place mochi A on top of mochi B if and only if $a$ is at most half of $b$"". Since the array is sorted, $A_i \le A_{i+1}$. If we pick two elements $u, v$ with $u \le v$, the condition is $u \le v/2$. If we pick $u > v$, we can't pair them in that order, but since we want to maximize pairs, we should always pair a smaller element with a larger element. So the condition is effectively $u \le v/2$ where $u$ is the smaller one.
+
+Let's rephrase the condition. We want to form pairs $(u, v)$ such that $u \le v/2$, or equivalently $2u \le v$.
+We have a set of numbers. We want to maximize the number of pairs.
+This looks like a greedy problem. To maximize the number of pairs, we should try to pair the smallest available numbers with the smallest possible numbers that satisfy the condition. Or perhaps pair the smallest available numbers with the largest available numbers?
+Actually, if we have a set of numbers, say $\{1, 2, 3, 4\}$, we can pair $(1, 2)$ and $(3, 4)$? No, $3 \le 4/2$ is false. We can pair $(1, 3)$ and $(2, 4)$? $1 \le 3/2$ (1.5) yes, $2 \le 4/2$ (2) yes.
+Wait, the condition is $a \le b/2$.
+Let's check the sample explanation.
+Sample 1, Query 1: $L=2, R=5$. Subarray: $1, 2, 3, 4$.
+Pairs: $(1, 3)$ and $(2, 4)$.
+$1 \le 3/2 = 1.5$ (True).
+$2 \le 4/2 = 2$ (True).
+Total 2 pairs.
+Is it possible to do better? No, 4 elements max 2 pairs.
+Sample 1, Query 2: $L=3, R=8$. Subarray: $2, 3, 4, 4, 7, 10$.
+Pairs: $(2, 4), (3, 7), (4, 10)$.
+$2 \le 2$ (True).
+$3 \le 3.5$ (True).
+$4 \le 5$ (True).
+Total 3 pairs.
+Sample 1, Query 5: $L=1, R=11$. Subarray: $1, 1, 2, 3, 4, 4, 7, 10, 11, 12, 20$.
+Pairs: $(1, 2), (1, 3), (4, 10), (4, 11), (7, 20)$.
+Wait, $(1, 2)$ means $1 \le 1$. $(1, 3)$ means $1 \le 1.5$.
+Wait, the sample explanation says: ""The mochi sizes are (1, 1, 2, 3, 4, 4, 7, 10, 11, 12, 20). You can make five kagamimochi (1,2), (1,3), (4,10), (4,11), and (7,20).""
+Wait, $(1, 2)$ uses the first 1 and the 2. $(1, 3)$ uses the second 1 and the 3.
+Wait, if we use 1 and 2, we use up 1 and 2. If we use 1 and 3, we use",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.19341175362762406,-0.3918614338185062,0.34,281,29,34,91.400390625,91.3984375,91.400390625,0.001953125,30,0.021417531463899353,2989,1837,0.614586818333891,0.806268640879492,433523
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"There are N mochi (rice cakes) arranged in ascending order of size.
+The size of the i-th mochi (1 \leq i \leq N) is A_i.
+Given two mochi A and B, with sizes a and b respectively, you can make one kagamimochi (a stacked rice cake) by placing mochi A on top of mochi B if and only if a is at most half of b.
+You choose two mochi out of the N mochi, and place one on top of the other to form one kagamimochi.
+Find how many different kinds of kagamimochi can be made.
+Two kagamimochi are distinguished if at least one of the mochi is different, even if the sizes of the mochi are the same.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+A_1 A_2 \cdots A_N
+
+Output
+
+Print the number of different kinds of kagamimochi that can be made.
+
+Constraints
+
+
+- 2 \leq N \leq 5 \times 10^5
+- 1 \leq A_i \leq 10^9 \ (1 \leq i \leq N)
+- A_i \leq A_{i+1} \ (1 \leq i < N)
+- All input values are integers.
+
+Sample Input 1
+
+6
+2 3 4 4 7 10
+
+Sample Output 1
+
+8
+
+The sizes of the given mochi are as follows:
+
+In this case, you can make the following eight kinds of kagamimochi:
+
+Note that there are two kinds of kagamimochi where a mochi of size 4 is topped by a mochi of size 2, and two kinds where a mochi of size 10 is topped by a mochi of size 4.
+
+Sample Input 2
+
+3
+387 388 389
+
+Sample Output 2
+
+0
+
+It is possible that you cannot make any kagamimochi.
+
+Sample Input 3
+
+32
+1 2 4 5 8 10 12 16 19 25 33 40 50 64 87 101 149 175 202 211 278 314 355 405 412 420 442 481 512 582 600 641
+
+Sample Output 3
+
+388",abc388_c,"<think>
+The problem asks us to find the number of different kinds of kagamimochi that can be formed from a given set of $N$ mochi.
+We are given $N$ mochi with sizes $A_1, A_2, \dots, A_N$.
+The mochi are arranged in ascending order of size, so $A_1 \leq A_2 \leq \dots \leq A_N$.
+We can form a kagamimochi by placing mochi A on top of mochi B if the size of A is at most half the size of B. That is, if $size(A) \leq \frac{1}{2} size(B)$.
+We need to choose two mochi from the given $N$ mochi. Let's say we choose mochi with index $i$ and mochi with index $j$ (where $1 \leq i, j \leq N$).
+The problem statement says ""Two kagamimochi are distinguished if at least one of the mochi is different, even if the sizes of the mochi are the same.""
+This implies that we are counting pairs of indices $(i, j)$ such that we can form a valid kagamimochi.
+Wait, let's re-read carefully.
+""You choose two mochi out of the N mochi, and place one on top of the other to form one kagamimochi.""
+""Find how many different kinds of kagamimochi can be made.""
+""Two kagamimochi are distinguished if at least one of the mochi is different, even if the sizes of the mochi are the same.""
+
+Let's look at the sample explanation.
+Sample 1:
+Sizes: 2, 3, 4, 4, 7, 10.
+Indices: 1, 2, 3, 4, 5, 6.
+Values: $A_1=2, A_2=3, A_3=4, A_4=4, A_5=7, A_6=10$.
+We need to pick two mochi. Let's say we pick mochi $i$ and mochi $j$.
+If we place mochi $i$ on top of mochi $j$, the condition is $A_i \leq A_j / 2$.
+If we place mochi $j$ on top of mochi $i$, the condition is $A_j \leq A_i / 2$.
+Since $A_i$ and $A_j$ are positive integers, $A_i \leq A_j / 2$ implies $A_i < A_j$.
+So, if we pick two distinct mochi, one must be the top one and one must be the bottom one.
+The problem says ""Two kagamimochi are distinguished if at least one of the mochi is different"".
+This refers to the identity of the mochi used. Since mochi are distinct entities (even if they have the same size), we are essentially counting pairs of indices $(i, j)$ such that we can form a stack.
+However, the phrasing ""place one on top of the other"" implies an ordered pair.
+Let's check the sample explanation again.
+""In this case, you can make the following eight kinds of kagamimochi:""
+The mochi are:
+1: size 2
+2: size 3
+3: size 4
+4: size 4
+5: size 7
+6: size 10
+
+Possible pairs $(i, j)$ where $A_i \leq A_j / 2$:
+If $j=6$ (size 10):
+$i=1$ (size 2): $2 \leq 10/2 = 5$. Valid. (Top: 2, Bottom: 10)
+$i=2$ (size 3): $3 \leq 5$. Valid. (Top: 3, Bottom: 10)
+$i=3$ (size 4): $4 \leq 5$. Valid. (Top: 4, Bottom: 10)
+$i=4$ (size 4): $4 \leq 5$. Valid. (Top: 4, Bottom: 10)
+$i=5$ (size 7): $7 \leq 5$. Invalid.
+
+If $j=5$ (size 7):
+$i=1$ (size 2): $2 \leq 3.5$. Valid.
+$i=2$ (size 3): $3 \leq 3.5$. Valid.
+$i=3$ (size 4): $4","
+
+<think>
+The problem asks us to find the number of different kinds of kagamimochi that can be formed from a given set of $N$ mochi.
+We are given $N$ mochi with sizes $A_1, A_2, \dots, A_N$.
+The mochi are arranged in ascending order of size, so $A_1 \leq A_2 \leq \dots \leq A_N$.
+We can form a kagamimochi by placing mochi A on top of mochi B if the size of A is at most half the size of B. That is, if $size(A) \leq \frac{1}{2} size(B)$.
+We need to choose two mochi from the given $N$ mochi. Let's say we choose mochi with index $i$ and mochi with index $j$ (where $1 \leq i, j \leq N$).
+The problem statement says ""Two kagamimochi are distinguished if at least one of the mochi is different, even if the sizes of the mochi are the same.""
+This implies that we are counting pairs of indices $(i, j)$ such that we can form a valid kagamimochi.
+Wait, let's re-read carefully.
+""You choose two mochi out of the N mochi, and place one on top of the other to form one kagamimochi.""
+""Find how many different kinds of kagamimochi can be made.""
+""Two kagamimochi are distinguished if at least one of the mochi is different, even if the sizes of the mochi are the same.""
+
+Let's look at the sample explanation.
+Sample 1:
+Sizes: 2, 3, 4, 4, 7, 10.
+Indices: 1, 2, 3, 4, 5, 6.
+Values: $A_1=2, A_2=3, A_3=4, A_4=4, A_5=7, A_6=10$.
+We need to pick two mochi. Let's say we pick mochi $i$ and mochi $j$.
+If we place mochi $i$ on top of mochi $j$, the condition is $A_i \leq A_j / 2$.
+If we place mochi $j$ on top of mochi $i$, the condition is $A_j \leq A_i / 2$.
+Since $A_i$ and $A_j$ are positive integers, $A_i \leq A_j / 2$ implies $A_i < A_j$.
+So, if we pick two distinct mochi, one must be the top one and one must be the bottom one.
+The problem says ""Two kagamimochi are distinguished if at least one of the mochi is different"".
+This refers to the identity of the mochi used. Since mochi are distinct entities (even if they have the same size), we are essentially counting pairs of indices $(i, j)$ such that we can form a stack.
+However, the phrasing ""place one on top of the other"" implies an ordered pair.
+Let's check the sample explanation again.
+""In this case, you can make the following eight kinds of kagamimochi:""
+The mochi are:
+1: size 2
+2: size 3
+3: size 4
+4: size 4
+5: size 7
+6: size 10
+
+Possible pairs $(i, j)$ where $A_i \leq A_j / 2$:
+If $j=6$ (size 10):
+$i=1$ (size 2): $2 \leq 10/2 = 5$. Valid. (Top: 2, Bottom: 10)
+$i=2$ (size 3): $3 \leq 5$. Valid. (Top: 3, Bottom: 10)
+$i=3$ (size 4): $4 \leq 5$. Valid. (Top: 4, Bottom: 10)
+$i=4$ (size 4): $4 \leq 5$. Valid. (Top: 4, Bottom: 10)
+$i=5$ (size 7): $7 \leq 5$. Invalid.
+
+If $j=5$ (size 7):
+$i=1$ (size 2): $2 \leq 3.5$. Valid.
+$i=2$ (size 3): $3 \leq 3.5$. Valid.
+$i=3$ (size 4): $4","<think>
+The problem asks us to find the number of different kinds of kagamimochi that can be formed from a given set of $N$ mochi.
+We are given $N$ mochi with sizes $A_1, A_2, \dots, A_N$.
+The mochi are arranged in ascending order of size, so $A_1 \leq A_2 \leq \dots \leq A_N$.
+We can form a kagamimochi by placing mochi A on top of mochi B if the size of A is at most half the size of B. That is, if $size(A) \leq \frac{1}{2} size(B)$.
+We need to choose two mochi from the given $N$ mochi. Let's say we choose mochi with index $i$ and mochi with index $j$ (where $1 \leq i, j \leq N$).
+The problem statement says ""Two kagamimochi are distinguished if at least one of the mochi is different, even if the sizes of the mochi are the same.""
+This implies that we are counting pairs of indices $(i, j)$ such that we can form a valid kagamimochi.
+Wait, let's re-read carefully.
+""You choose two mochi out of the N mochi, and place one on top of the other to form one kagamimochi.""
+""Find how many different kinds of kagamimochi can be made.""
+""Two kagamimochi are distinguished if at least one of the mochi is different, even if the sizes of the mochi are the same.""
+
+Let's look at the sample explanation.
+Sample 1:
+Sizes: 2, 3, 4, 4, 7, 10.
+Indices: 1, 2, 3, 4, 5, 6.
+Values: $A_1=2, A_2=3, A_3=4, A_4=4, A_5=7, A_6=10$.
+We need to pick two mochi. Let's say we pick mochi $i$ and mochi $j$.
+If we place mochi $i$ on top of mochi $j$, the condition is $A_i \leq A_j / 2$.
+If we place mochi $j$ on top of mochi $i$, the condition is $A_j \leq A_i / 2$.
+Since $A_i$ and $A_j$ are positive integers, $A_i \leq A_j / 2$ implies $A_i < A_j$.
+So, if we pick two distinct mochi, one must be the top one and one must be the bottom one.
+The problem says ""Two kagamimochi are distinguished if at least one of the mochi is different"".
+This refers to the identity of the mochi used. Since mochi are distinct entities (even if they have the same size), we are essentially counting pairs of indices $(i, j)$ such that we can form a stack.
+However, the phrasing ""place one on top of the other"" implies an ordered pair.
+Let's check the sample explanation again.
+""In this case, you can make the following eight kinds of kagamimochi:""
+The mochi are:
+1: size 2
+2: size 3
+3: size 4
+4: size 4
+5: size 7
+6: size 10
+
+Possible pairs $(i, j)$ where $A_i \leq A_j / 2$:
+If $j=6$ (size 10):
+$i=1$ (size 2): $2 \leq 10/2 = 5$. Valid. (Top: 2, Bottom: 10)
+$i=2$ (size 3): $3 \leq 5$. Valid. (Top: 3, Bottom: 10)
+$i=3$ (size 4): $4 \leq 5$. Valid. (Top: 4, Bottom: 10)
+$i=4$ (size 4): $4 \leq 5$. Valid. (Top: 4, Bottom: 10)
+$i=5$ (size 7): $7 \leq 5$. Invalid.
+
+If $j=5$ (size 7):
+$i=1$ (size 2): $2 \leq 3.5$. Valid.
+$i=2$ (size 3): $3 \leq 3.5$. Valid.
+$i=3$ (size 4): $4",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.15186837339284243,-0.29905913139142104,0.39,270,27,39,91.400390625,91.3984375,91.400390625,0.001953125,28,0.02207992934422609,2564,1492,0.5819032761310452,0.7566819143498599,309118
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"You are given a string S. Here, the first character of S is an uppercase English letter, and the second and subsequent characters are lowercase English letters.
+Print the string formed by concatenating the first character of S and UPC in this order.
+
+Input
+
+The input is given from Standard Input in the following format:
+S
+
+Output
+
+Print the string formed by concatenating the first character of S and UPC in this order.
+
+Constraints
+
+
+- S is a string of length between 1 and 100, inclusive.
+- The first character of S is an uppercase English letter.
+- The second and subsequent characters of S are lowercase English letters.
+
+Sample Input 1
+
+Kyoto
+
+Sample Output 1
+
+KUPC
+
+The first character of Kyoto is K, so concatenate K and UPC, and print KUPC.
+
+Sample Input 2
+
+Tohoku
+
+Sample Output 2
+
+TUPC",abc388_a,"import sys
+
+def main():
+    # Read the string S from standard input
+    # Using sys.stdin.read().split() handles potential surrounding whitespace/newlines robustly
+    input_data = sys.stdin.read().split()
+    
+    if not input_data:
+        return
+
+    S = input_data[0]
+    
+    # Extract the first character
+    first_char = S[0]
+    
+    # Concatenate with ""UPC""
+    result = first_char + ""UPC""
+    
+    # Print the result
+    print(result)
+
+if __name__ == ""__main__"":
+    main()","
+
+<think>
+The user wants a Python program to solve a simple string manipulation problem.
+
+**Problem Statement:**
+Given a string $S$ where the first character is uppercase and the rest are lowercase.
+Output the string formed by concatenating the first character of $S$ and the string ""UPC"".
+
+**Input Format:**
+A single string $S$ from Standard Input.
+
+**Output Format:**
+The concatenated string to Standard Output.
+
+**Constraints:**
+- Length of $S$ is between 1 and 100.
+- First char is uppercase.
+- Rest are lowercase.
+
+**Algorithm:**
+1. Read the input string $S$.
+2. Extract the first character of $S$. Let's call it `first_char`.
+3. Concatenate `first_char` with the string ""UPC"".
+4. Print the result.
+
+**Example 1:**
+Input: `Kyoto`
+First char: `K`
+Result: `K` + `UPC` = `KUPC`
+
+**Example 2:**
+Input: `Tohoku`
+First char: `T`
+Result: `T` + `UPC` = `TUPC`
+
+**Implementation Details:**
+- Use `input()` to read $S$.
+- Use indexing `S[0]` to get the first character.
+- Use string concatenation `+` or f-string.
+- Print the result.
+
+**Code Structure:**
+```python
+S = input()
+result = S[0] + ""UPC""
+print(result)
+```
+
+Let's double-check constraints. $S$ length $\ge 1$, so `S[0]` is always valid.
+
+The prompt asks to enclose the code within delimiters.
+
+```python
+import sys
+
+def solve():
+    # Read input from stdin
+    # The input might contain a trailing newline, but input() handles stripping it usually.
+    # However, standard competitive programming inputs are often just the string.
+    try:
+        s = sys.stdin.read().strip()
+    except Exception:
+        return
+
+    if not s:
+        return
+
+    # Logic
+    first_char = s[0]
+    output = first_char + ""UPC""
+    
+    # Write output to stdout
+    print(output)
+
+if __name__ == '__main__':
+    solve()
+```
+
+Wait, `input()` is simpler and sufficient.
+```python
+S = input()
+print(S[0] + ""UPC"")
+```
+This is robust enough for the given constraints.
+
+Let's verify the prompt requirements again.
+""Read the inputs from stdin solve the problem and write the answer to stdout"".
+""Enclose your code within delimiters as follows.""
+
+I will provide the simple script.
+
+```python
+S = input()
+print(S[0] + ""UPC"")
+```
+This looks correct.
+
+One edge case: Is there whitespace? The problem says ""S is a string"". Usually `input()` reads the line. If there are spaces, `strip()` might be safer, but the problem description implies a single token or line. Given the constraints and typical format, `input()` is fine. `sys.stdin.read().strip()` is safer against empty lines or weird whitespace handling in some environments, but `input()` is standard for ""S"" given on one line.
+
+Let's stick to the simplest correct solution.
+
+```python
+import sys
+
+# Read all input from stdin
+input_str = sys.stdin.read().strip()
+
+# Get the first character
+first_char = input_str[0]
+
+# Concatenate with ""UPC"" and print
+print(first_char + ""UPC"")
+```
+Using `sys.stdin.read().strip()` handles cases where there might be extra newlines or spaces better than `input()` in some specific online judge environments, though `input()` is usually fine. Since the input is just ""S"", `input()` is perfectly standard.
+
+Let's write the code.
+
+```python
+import sys
+
+def main():
+    # Read the string S from standard input
+    # Using sys.stdin.read().split() handles potential surrounding whitespace/newlines robustly
+    input_data = sys.stdin.read().split()
+    
+    if not input_data:
+        return
+
+    S = input_data[0]
+    
+    # Extract the first character
+    first_char = S[0]
+    
+    # Concatenate with ""UPC""
+    result = first_char + ""UPC""
+    
+    # Print the result
+    print(result)
+
+if __name__ == ""__main__"":
+    main()
+```
+Actually, `input()` is safer if the input format is strictly line-based as described.
+""The input is given from Standard Input in the following format","import sys
+
+def main():
+    # Read the string S from standard input
+    # Using sys.stdin.read().split() handles potential surrounding whitespace/newlines robustly
+    input_data = sys.stdin.read().split()
+    
+    if not input_data:
+        return
+
+    S = input_data[0]
+    
+    # Extract the first character
+    first_char = S[0]
+    
+    # Concatenate with ""UPC""
+    result = first_char + ""UPC""
+    
+    # Print the result
+    print(result)
+
+if __name__ == ""__main__"":
+    main()",True,,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.18126893618294385,-0.35942782858003863,0.33,281,29,33,91.400390625,91.3984375,91.400390625,0.001953125,30,0.01678074630161186,2240,1108,0.49464285714285716,0.6685378832821257,225878
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"There are N squares arranged in a row, labeled 1, 2, \ldots, N from left to right.
+You are given M pairs of integers (L_1, R_1), \ldots, (L_M, R_M).
+A square j is defined to be bad if and only if there exists some i such that L_i \leq j \leq R_i.
+Determine whether you can move from square 1 to square N by repeatedly performing the following action:
+
+- Let your current square be x. Choose an integer i that satisfies all of the following conditions, and move to square x + i.
+- A \leq i \leq B
+- x + i \leq N
+- Square x + i is not bad.
+
+Input
+
+The input is given from Standard Input in the following format:
+N M A B
+L_1 R_1
+L_2 R_2
+\vdots
+L_M R_M
+
+Output
+
+If it is possible to reach square N by repeating the action described in the problem statement, print Yes. Otherwise, print No.
+
+Constraints
+
+
+- 2 \leq N \leq 10^{12}
+- 0 \leq M \leq 2 \times 10^4
+- 1 \leq A \leq B \leq 20
+- 1 < L_i \leq R_i < N \ (1 \leq i \leq M)
+- R_i < L_{i+1} \ (1 \leq i \leq M - 1)
+- All input values are integers.
+
+Sample Input 1
+
+24 2 3 5
+7 8
+17 20
+
+Sample Output 1
+
+Yes
+
+You can move to square N in this way: 1 \to 6 \to 9 \to 12 \to 16 \to 21 \to 24.
+
+Sample Input 2
+
+30 1 5 8
+4 24
+
+Sample Output 2
+
+No
+
+Sample Input 3
+
+100 4 10 11
+16 18
+39 42
+50 55
+93 99
+
+Sample Output 3
+
+Yes",abc388_f,"<think>
+The problem asks whether it is possible to travel from square 1 to square $N$ in a row of $N$ squares. We are given $M$ intervals $[L_i, R_i]$. A square $j$ is ""bad"" if it falls within any of these intervals. From a current square $x$, we can move to $x+i$ if $A \le i \le B$, $x+i \le N$, and the destination square $x+i$ is not bad.
+
+The constraints are:
+$N \le 10^{12}$
+$M \le 2 \times 10^4$
+$1 \le A \le B \le 20$
+
+Since $N$ is very large, we cannot simulate the process square by square or use a standard BFS/DFS on a graph with $N$ nodes. However, the number of ""bad"" squares is relatively small (at most $2 \times 10^4$ intervals, so at most $2 \times 10^4$ bad squares if they are disjoint, or fewer if they overlap). Wait, the intervals are disjoint because $R_i < L_{i+1}$. So there are at most $M$ bad intervals. The number of bad squares is the sum of lengths of these intervals. The total number of bad squares could be large if intervals are long, but $M$ is small. Actually, the constraints say $R_i < L_{i+1}$, so the intervals are disjoint. The number of bad squares is $\sum (R_i - L_i + 1)$. Since $L_i \ge 1$ and $R_i < N$, this could be up to $N$. But $M$ is small.
+
+Let's re-read the constraints carefully.
+$N \le 10^{12}$
+$M \le 2 \times 10^4$
+$A, B \le 20$
+
+The key observation is that the step size $i$ is very small ($1 \le i \le 20$).
+We want to reach $N$. This is equivalent to finding a path $1 = x_0, x_1, \dots, x_k = N$ such that $x_{j+1} - x_j \in [A, B]$ and $x_{j+1}$ is not bad.
+
+Since $N$ is large, we can think of this as a shortest path problem or reachability problem on a graph. The nodes are squares $1, \dots, N$. Edges exist from $u$ to $v$ if $v-u \in [A, B]$ and $v$ is not bad.
+Since we want to reach $N$, we can work backwards from $N$ or forwards from 1.
+However, the state space is huge. But notice that the ""bad"" squares are sparse in terms of intervals, but they cover specific ranges.
+Actually, the condition ""square $x+i$ is not bad"" depends on whether $x+i$ falls into any $[L_k, R_k]$.
+Since $M$ is small, the number of bad intervals is small.
+Let's consider the structure of the ""bad"" regions. They are disjoint intervals.
+Between two bad intervals, or before the first bad interval, or after the last bad interval, the squares are ""good"".
+Let the bad intervals be $[L_1, R_1], [L_2, R_2], \dots, [L_M, R_M]$.
+The squares that are not bad are those not in any $[L_k, R_k]$.
+Let's denote the set of bad squares as $S_{bad}$.
+We want to find a sequence $x_0, \dots, x_k$ such that $x_0=1, x_k=N$, $x_{j+1} - x_j \in [A, B]$, and $x_{j+1} \notin S_{bad}$. Note that $x_0=1$ is not necessarily bad (unless $1 \in [L_k, R_k]$, but constraints say $L_i > 1$, so 1 is always good). Also $N$ is not necessarily bad (constraints say $R_i < N$, so $N$ is always good).
+
+Wait, the condition is ""Square $x+i$ is not bad"". It does not say $x$ must not be bad. But if $x$ is bad, we arrived there from some previous square. Is it allowed to land on a bad square?
+""A square j is defined to be bad if ..."".
+""Square x + i is not bad.""
+This implies we can only land on non-bad","
+
+<think>
+The problem asks whether it is possible to travel from square 1 to square $N$ in a row of $N$ squares. We are given $M$ intervals $[L_i, R_i]$. A square $j$ is ""bad"" if it falls within any of these intervals. From a current square $x$, we can move to $x+i$ if $A \le i \le B$, $x+i \le N$, and the destination square $x+i$ is not bad.
+
+The constraints are:
+$N \le 10^{12}$
+$M \le 2 \times 10^4$
+$1 \le A \le B \le 20$
+
+Since $N$ is very large, we cannot simulate the process square by square or use a standard BFS/DFS on a graph with $N$ nodes. However, the number of ""bad"" squares is relatively small (at most $2 \times 10^4$ intervals, so at most $2 \times 10^4$ bad squares if they are disjoint, or fewer if they overlap). Wait, the intervals are disjoint because $R_i < L_{i+1}$. So there are at most $M$ bad intervals. The number of bad squares is the sum of lengths of these intervals. The total number of bad squares could be large if intervals are long, but $M$ is small. Actually, the constraints say $R_i < L_{i+1}$, so the intervals are disjoint. The number of bad squares is $\sum (R_i - L_i + 1)$. Since $L_i \ge 1$ and $R_i < N$, this could be up to $N$. But $M$ is small.
+
+Let's re-read the constraints carefully.
+$N \le 10^{12}$
+$M \le 2 \times 10^4$
+$A, B \le 20$
+
+The key observation is that the step size $i$ is very small ($1 \le i \le 20$).
+We want to reach $N$. This is equivalent to finding a path $1 = x_0, x_1, \dots, x_k = N$ such that $x_{j+1} - x_j \in [A, B]$ and $x_{j+1}$ is not bad.
+
+Since $N$ is large, we can think of this as a shortest path problem or reachability problem on a graph. The nodes are squares $1, \dots, N$. Edges exist from $u$ to $v$ if $v-u \in [A, B]$ and $v$ is not bad.
+Since we want to reach $N$, we can work backwards from $N$ or forwards from 1.
+However, the state space is huge. But notice that the ""bad"" squares are sparse in terms of intervals, but they cover specific ranges.
+Actually, the condition ""square $x+i$ is not bad"" depends on whether $x+i$ falls into any $[L_k, R_k]$.
+Since $M$ is small, the number of bad intervals is small.
+Let's consider the structure of the ""bad"" regions. They are disjoint intervals.
+Between two bad intervals, or before the first bad interval, or after the last bad interval, the squares are ""good"".
+Let the bad intervals be $[L_1, R_1], [L_2, R_2], \dots, [L_M, R_M]$.
+The squares that are not bad are those not in any $[L_k, R_k]$.
+Let's denote the set of bad squares as $S_{bad}$.
+We want to find a sequence $x_0, \dots, x_k$ such that $x_0=1, x_k=N$, $x_{j+1} - x_j \in [A, B]$, and $x_{j+1} \notin S_{bad}$. Note that $x_0=1$ is not necessarily bad (unless $1 \in [L_k, R_k]$, but constraints say $L_i > 1$, so 1 is always good). Also $N$ is not necessarily bad (constraints say $R_i < N$, so $N$ is always good).
+
+Wait, the condition is ""Square $x+i$ is not bad"". It does not say $x$ must not be bad. But if $x$ is bad, we arrived there from some previous square. Is it allowed to land on a bad square?
+""A square j is defined to be bad if ..."".
+""Square x + i is not bad.""
+This implies we can only land on non-bad","<think>
+The problem asks whether it is possible to travel from square 1 to square $N$ in a row of $N$ squares. We are given $M$ intervals $[L_i, R_i]$. A square $j$ is ""bad"" if it falls within any of these intervals. From a current square $x$, we can move to $x+i$ if $A \le i \le B$, $x+i \le N$, and the destination square $x+i$ is not bad.
+
+The constraints are:
+$N \le 10^{12}$
+$M \le 2 \times 10^4$
+$1 \le A \le B \le 20$
+
+Since $N$ is very large, we cannot simulate the process square by square or use a standard BFS/DFS on a graph with $N$ nodes. However, the number of ""bad"" squares is relatively small (at most $2 \times 10^4$ intervals, so at most $2 \times 10^4$ bad squares if they are disjoint, or fewer if they overlap). Wait, the intervals are disjoint because $R_i < L_{i+1}$. So there are at most $M$ bad intervals. The number of bad squares is the sum of lengths of these intervals. The total number of bad squares could be large if intervals are long, but $M$ is small. Actually, the constraints say $R_i < L_{i+1}$, so the intervals are disjoint. The number of bad squares is $\sum (R_i - L_i + 1)$. Since $L_i \ge 1$ and $R_i < N$, this could be up to $N$. But $M$ is small.
+
+Let's re-read the constraints carefully.
+$N \le 10^{12}$
+$M \le 2 \times 10^4$
+$A, B \le 20$
+
+The key observation is that the step size $i$ is very small ($1 \le i \le 20$).
+We want to reach $N$. This is equivalent to finding a path $1 = x_0, x_1, \dots, x_k = N$ such that $x_{j+1} - x_j \in [A, B]$ and $x_{j+1}$ is not bad.
+
+Since $N$ is large, we can think of this as a shortest path problem or reachability problem on a graph. The nodes are squares $1, \dots, N$. Edges exist from $u$ to $v$ if $v-u \in [A, B]$ and $v$ is not bad.
+Since we want to reach $N$, we can work backwards from $N$ or forwards from 1.
+However, the state space is huge. But notice that the ""bad"" squares are sparse in terms of intervals, but they cover specific ranges.
+Actually, the condition ""square $x+i$ is not bad"" depends on whether $x+i$ falls into any $[L_k, R_k]$.
+Since $M$ is small, the number of bad intervals is small.
+Let's consider the structure of the ""bad"" regions. They are disjoint intervals.
+Between two bad intervals, or before the first bad interval, or after the last bad interval, the squares are ""good"".
+Let the bad intervals be $[L_1, R_1], [L_2, R_2], \dots, [L_M, R_M]$.
+The squares that are not bad are those not in any $[L_k, R_k]$.
+Let's denote the set of bad squares as $S_{bad}$.
+We want to find a sequence $x_0, \dots, x_k$ such that $x_0=1, x_k=N$, $x_{j+1} - x_j \in [A, B]$, and $x_{j+1} \notin S_{bad}$. Note that $x_0=1$ is not necessarily bad (unless $1 \in [L_k, R_k]$, but constraints say $L_i > 1$, so 1 is always good). Also $N$ is not necessarily bad (constraints say $R_i < N$, so $N$ is always good).
+
+Wait, the condition is ""Square $x+i$ is not bad"". It does not say $x$ must not be bad. But if $x$ is bad, we arrived there from some previous square. Is it allowed to land on a bad square?
+""A square j is defined to be bad if ..."".
+""Square x + i is not bad.""
+This implies we can only land on non-bad",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.27716508065827483,-0.5323556550560493,0.29,272,29,29,91.400390625,91.3984375,91.400390625,0.001953125,30,0.01943033782291892,2640,1540,0.5833333333333334,0.7459505067385268,305779
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"There are N mochi (rice cakes), arranged in ascending order of size.
+The size of the i-th mochi (1\leq i\leq N) is A_i.
+Given two mochi A and B, with sizes a and b respectively, you can make one kagamimochi (a stacked rice cake) by placing mochi A on top of mochi B if and only if a is at most half of b.
+Find how many kagamimochi can be made simultaneously.
+More precisely, find the maximum non-negative integer K for which the following is possible:
+
+- From the N mochi, choose 2K of them to form K pairs. For each pair, place one mochi on top of the other, to make K kagamimochi.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+A_1 A_2 \dotsc A_N
+
+Output
+
+Print the maximum K such that K kagamimochi can be made simultaneously.
+
+Constraints
+
+
+- 2 \leq N \leq 5 \times 10^5
+- 1 \leq A_i \leq 10^9 \ (1 \leq i \leq N)
+- A_i \leq A_{i+1} \ (1 \leq i < N)
+- All input values are integers.
+
+Sample Input 1
+
+6
+2 3 4 4 7 10
+
+Sample Output 1
+
+3
+
+The sizes of the given mochi are as follows:
+
+In this case, you can make the following three kagamimochi simultaneously:
+
+It is not possible to make four or more kagamimochi from six mochi, so print 3.
+
+Sample Input 2
+
+3
+387 388 389
+
+Sample Output 2
+
+0
+
+It is possible that you cannot make any kagamimochi.
+
+Sample Input 3
+
+24
+307 321 330 339 349 392 422 430 477 481 488 537 541 571 575 602 614 660 669 678 712 723 785 792
+
+Sample Output 3
+
+6",abc388_e,"<think>
+The problem asks us to find the maximum number of pairs $(A_i, A_j)$ such that $A_i \leq A_j / 2$ (or equivalently $2 A_i \leq A_j$), where each mochi can be used in at most one pair. The input array $A$ is already sorted in ascending order.
+
+Let $N$ be the number of mochi. We want to select $K$ pairs.
+Since we want to maximize $K$, this sounds like a greedy approach or a binary search on the answer.
+
+Let's analyze the condition $A_i \leq A_j / 2$.
+We have a set of numbers. We want to pair them up.
+If we pick the smallest available mochi to be the bottom one, it's hard to satisfy the condition because the top one must be small enough. Wait, the condition is $A_{top} \leq A_{bottom} / 2$. So the bottom one must be at least twice the size of the top one.
+To maximize the number of pairs, we should try to use the smallest possible mochi as the ""top"" of the stack, and the largest possible mochi as the ""bottom"" of the stack? Or maybe the other way around?
+
+Let's consider the sorted array $A_1 \leq A_2 \leq \dots \leq A_N$.
+Suppose we want to form $K$ pairs.
+If we fix the set of mochi used as ""tops"" and the set of mochi used as ""bottoms"", we need to match them such that for each pair $(t, b)$, $t \leq b/2$.
+Since the array is sorted, intuitively, to make it easier to satisfy the condition $t \leq b/2$, we should pair the smallest available mochi with the largest available mochi? Or maybe the smallest available mochi with the smallest available mochi that satisfies the condition?
+
+Let's look at the constraints. $N$ up to $5 \times 10^5$. An $O(N^2)$ solution is too slow. We need something like $O(N)$ or $O(N \log N)$. Since the input is already sorted, $O(N)$ is ideal.
+
+Let's try a greedy strategy.
+We want to form pairs $(A_i, A_j)$ with $i < j$ (since $A_i \leq A_j$ is required for $A_i \leq A_j/2$ unless $A_i=A_j$ and $A_i \leq A_j/2$ implies $A_i=0$ which is not allowed since $A_i \geq 1$). Actually, if $A_i \leq A_j/2$, then $A_i < A_j$ strictly because $A_i \geq 1$. So the top mochi must be strictly smaller than the bottom mochi.
+So we are looking for pairs $(i, j)$ with $i < j$ such that $A_i \leq A_j / 2$.
+
+Consider the smallest element $A_1$. It is the easiest to be a ""top"" mochi because it is small. It is also the hardest to be a ""bottom"" mochi because it is small.
+However, if $A_1$ is used as a top, we need a bottom $A_j \geq 2 A_1$.
+If $A_1$ is used as a bottom, we need a top $A_i \leq A_1 / 2$. Since $A_1$ is the minimum, no such $A_i$ exists (unless $A_1$ is 0, but constraints say $A_i \geq 1$). So $A_1$ *must* be a top mochi if it is used in a pair.
+Wait, if $A_1$ is used as a bottom, we need $A_i \leq A_1/2$. Since $A_i \geq A_1$, this implies $A_i \leq A_1/2$ and $A_i \geq A_1$, so $A_i = A_1/2$. But $A_i \geq A_1 \geq 1$, so $A_1/2 \geq 1 \implies A_1 \geq 2$. If $A_1=1$, it can't be a bottom. If $A_1 > 1$, say $A_1=2$, then $A_i$ could be 1, but $A_1$ is the minimum, so no $A_i < 2$. Thus, the smallest element $A_1$ can *never* be a bottom mo","
+
+<think>
+The problem asks us to find the maximum number of pairs $(A_i, A_j)$ such that $A_i \leq A_j / 2$ (or equivalently $2 A_i \leq A_j$), where each mochi can be used in at most one pair. The input array $A$ is already sorted in ascending order.
+
+Let $N$ be the number of mochi. We want to select $K$ pairs.
+Since we want to maximize $K$, this sounds like a greedy approach or a binary search on the answer.
+
+Let's analyze the condition $A_i \leq A_j / 2$.
+We have a set of numbers. We want to pair them up.
+If we pick the smallest available mochi to be the bottom one, it's hard to satisfy the condition because the top one must be small enough. Wait, the condition is $A_{top} \leq A_{bottom} / 2$. So the bottom one must be at least twice the size of the top one.
+To maximize the number of pairs, we should try to use the smallest possible mochi as the ""top"" of the stack, and the largest possible mochi as the ""bottom"" of the stack? Or maybe the other way around?
+
+Let's consider the sorted array $A_1 \leq A_2 \leq \dots \leq A_N$.
+Suppose we want to form $K$ pairs.
+If we fix the set of mochi used as ""tops"" and the set of mochi used as ""bottoms"", we need to match them such that for each pair $(t, b)$, $t \leq b/2$.
+Since the array is sorted, intuitively, to make it easier to satisfy the condition $t \leq b/2$, we should pair the smallest available mochi with the largest available mochi? Or maybe the smallest available mochi with the smallest available mochi that satisfies the condition?
+
+Let's look at the constraints. $N$ up to $5 \times 10^5$. An $O(N^2)$ solution is too slow. We need something like $O(N)$ or $O(N \log N)$. Since the input is already sorted, $O(N)$ is ideal.
+
+Let's try a greedy strategy.
+We want to form pairs $(A_i, A_j)$ with $i < j$ (since $A_i \leq A_j$ is required for $A_i \leq A_j/2$ unless $A_i=A_j$ and $A_i \leq A_j/2$ implies $A_i=0$ which is not allowed since $A_i \geq 1$). Actually, if $A_i \leq A_j/2$, then $A_i < A_j$ strictly because $A_i \geq 1$. So the top mochi must be strictly smaller than the bottom mochi.
+So we are looking for pairs $(i, j)$ with $i < j$ such that $A_i \leq A_j / 2$.
+
+Consider the smallest element $A_1$. It is the easiest to be a ""top"" mochi because it is small. It is also the hardest to be a ""bottom"" mochi because it is small.
+However, if $A_1$ is used as a top, we need a bottom $A_j \geq 2 A_1$.
+If $A_1$ is used as a bottom, we need a top $A_i \leq A_1 / 2$. Since $A_1$ is the minimum, no such $A_i$ exists (unless $A_1$ is 0, but constraints say $A_i \geq 1$). So $A_1$ *must* be a top mochi if it is used in a pair.
+Wait, if $A_1$ is used as a bottom, we need $A_i \leq A_1/2$. Since $A_i \geq A_1$, this implies $A_i \leq A_1/2$ and $A_i \geq A_1$, so $A_i = A_1/2$. But $A_i \geq A_1 \geq 1$, so $A_1/2 \geq 1 \implies A_1 \geq 2$. If $A_1=1$, it can't be a bottom. If $A_1 > 1$, say $A_1=2$, then $A_i$ could be 1, but $A_1$ is the minimum, so no $A_i < 2$. Thus, the smallest element $A_1$ can *never* be a bottom mo","<think>
+The problem asks us to find the maximum number of pairs $(A_i, A_j)$ such that $A_i \leq A_j / 2$ (or equivalently $2 A_i \leq A_j$), where each mochi can be used in at most one pair. The input array $A$ is already sorted in ascending order.
+
+Let $N$ be the number of mochi. We want to select $K$ pairs.
+Since we want to maximize $K$, this sounds like a greedy approach or a binary search on the answer.
+
+Let's analyze the condition $A_i \leq A_j / 2$.
+We have a set of numbers. We want to pair them up.
+If we pick the smallest available mochi to be the bottom one, it's hard to satisfy the condition because the top one must be small enough. Wait, the condition is $A_{top} \leq A_{bottom} / 2$. So the bottom one must be at least twice the size of the top one.
+To maximize the number of pairs, we should try to use the smallest possible mochi as the ""top"" of the stack, and the largest possible mochi as the ""bottom"" of the stack? Or maybe the other way around?
+
+Let's consider the sorted array $A_1 \leq A_2 \leq \dots \leq A_N$.
+Suppose we want to form $K$ pairs.
+If we fix the set of mochi used as ""tops"" and the set of mochi used as ""bottoms"", we need to match them such that for each pair $(t, b)$, $t \leq b/2$.
+Since the array is sorted, intuitively, to make it easier to satisfy the condition $t \leq b/2$, we should pair the smallest available mochi with the largest available mochi? Or maybe the smallest available mochi with the smallest available mochi that satisfies the condition?
+
+Let's look at the constraints. $N$ up to $5 \times 10^5$. An $O(N^2)$ solution is too slow. We need something like $O(N)$ or $O(N \log N)$. Since the input is already sorted, $O(N)$ is ideal.
+
+Let's try a greedy strategy.
+We want to form pairs $(A_i, A_j)$ with $i < j$ (since $A_i \leq A_j$ is required for $A_i \leq A_j/2$ unless $A_i=A_j$ and $A_i \leq A_j/2$ implies $A_i=0$ which is not allowed since $A_i \geq 1$). Actually, if $A_i \leq A_j/2$, then $A_i < A_j$ strictly because $A_i \geq 1$. So the top mochi must be strictly smaller than the bottom mochi.
+So we are looking for pairs $(i, j)$ with $i < j$ such that $A_i \leq A_j / 2$.
+
+Consider the smallest element $A_1$. It is the easiest to be a ""top"" mochi because it is small. It is also the hardest to be a ""bottom"" mochi because it is small.
+However, if $A_1$ is used as a top, we need a bottom $A_j \geq 2 A_1$.
+If $A_1$ is used as a bottom, we need a top $A_i \leq A_1 / 2$. Since $A_1$ is the minimum, no such $A_i$ exists (unless $A_1$ is 0, but constraints say $A_i \geq 1$). So $A_1$ *must* be a top mochi if it is used in a pair.
+Wait, if $A_1$ is used as a bottom, we need $A_i \leq A_1/2$. Since $A_i \geq A_1$, this implies $A_i \leq A_1/2$ and $A_i \geq A_1$, so $A_i = A_1/2$. But $A_i \geq A_1 \geq 1$, so $A_1/2 \geq 1 \implies A_1 \geq 2$. If $A_1=1$, it can't be a bottom. If $A_1 > 1$, say $A_1=2$, then $A_i$ could be 1, but $A_1$ is the minimum, so no $A_i < 2$. Thus, the smallest element $A_1$ can *never* be a bottom mo",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.25660771308155855,-0.5004028332030962,0.22,242,25,22,91.400390625,91.3984375,91.400390625,0.001953125,26,0.021196732170457033,2584,1612,0.6238390092879257,0.6964177341177041,247162
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"On the two-dimensional coordinate plane, there is an infinite tiling of 1 \times 1 squares.
+Consider drawing a circle of radius R centered at the center of one of these squares. How many of these squares are completely contained inside the circle?
+More precisely, find the number of integer pairs (i,j) such that all four points (i+0.5,j+0.5), (i+0.5,j-0.5), (i-0.5,j+0.5), and (i-0.5,j-0.5) are at a distance of at most R from the origin.
+
+Input
+
+The input is given from Standard Input in the following format:
+R
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 1 \leq R \leq 10^{6}
+- All input values are integers.
+
+Sample Input 1
+
+2
+
+Sample Output 1
+
+5
+
+There are a total of five squares completely contained in the circle: the square whose center matches the circle’s center, plus the four squares adjacent to it.
+
+Sample Input 2
+
+4
+
+Sample Output 2
+
+37
+
+Sample Input 3
+
+26
+
+Sample Output 3
+
+2025",abc389_d,"<think>
+The problem asks us to find the number of $1 \times 1$ squares completely contained within a circle of radius $R$ centered at the center of one of these squares.
+The squares are defined by their centers $(i, j)$ where $i, j$ are integers.
+The problem statement specifies the condition for a square to be completely contained.
+A square with center $(i, j)$ has vertices at $(i \pm 0.5, j \pm 0.5)$.
+The condition is that all four vertices must be at a distance of at most $R$ from the origin $(0,0)$.
+The distance squared from the origin to a point $(x, y)$ is $x^2 + y^2$.
+So, for a square centered at $(i, j)$, the vertices are $(i+0.5, j+0.5)$, $(i+0.5, j-0.5)$, $(i-0.5, j+0.5)$, and $(i-0.5, j-0.5)$.
+The condition is that for all these vertices, $x^2 + y^2 \leq R^2$.
+Since the circle is centered at $(0,0)$, the distance from the origin to any point in the square is maximized at the vertices.
+Specifically, the distance to $(i+0.5, j+0.5)$ is $\sqrt{(i+0.5)^2 + (j+0.5)^2}$.
+The distance to $(i+0.5, j-0.5)$ is $\sqrt{(i+0.5)^2 + (j-0.5)^2}$.
+The distance to $(i-0.5, j+0.5)$ is $\sqrt{(i-0.5)^2 + (j+0.5)^2}$.
+The distance to $(i-0.5, j-0.5)$ is $\sqrt{(i-0.5)^2 + (j-0.5)^2}$.
+We need all these distances to be $\leq R$.
+This is equivalent to saying that the maximum distance among these four vertices is $\leq R$.
+The maximum distance will be the one corresponding to the vertex furthest from the origin.
+Let's analyze the expression $(x \pm 0.5)^2 + (y \pm 0.5)^2$.
+$(x \pm 0.5)^2 = x^2 \pm x + 0.25$.
+So the squared distance is $x^2 + y^2 \pm x \pm 0.25 + 0.25 = x^2 + y^2 \pm x \pm 0.5$.
+Wait, actually the vertices are $(i \pm 0.5, j \pm 0.5)$.
+The squared distance is $(i \pm 0.5)^2 + (j \pm 0.5)^2$.
+We want $(i \pm 0.5)^2 + (j \pm 0.5)^2 \leq R^2$ for all combinations of signs.
+This is equivalent to $\max((i+0.5)^2 + (j+0.5)^2, (i+0.5)^2 + (j-0.5)^2, (i-0.5)^2 + (j+0.5)^2, (i-0.5)^2 + (j-0.5)^2) \leq R^2$.
+Let's look at the terms.
+$(i+0.5)^2 + (j+0.5)^2 = i^2 + i + 0.25 + j^2 + j + 0.25 = i^2 + j^2 + i + j + 0.5$.
+$(i+0.5)^2 + (j-0.5)^2 = i^2 + i + 0.25 + j^2 - j + 0.25 = i^2 + j^2 + i - j + 0.5$.
+$(i-0.5)^2 + (j+0.5)^2 = i^2 - i + 0.25 + j^2 + j + 0.25 = i^2 + j^2 - i + j + 0.5$.
+$(i-0.5)^2 + (j-0.5)^2 = i^2 - i + 0.25 + j^2 - j + 0.25 = i^2 + j^2 - i - j + 0.5","
+
+<think>
+The problem asks us to find the number of $1 \times 1$ squares completely contained within a circle of radius $R$ centered at the center of one of these squares.
+The squares are defined by their centers $(i, j)$ where $i, j$ are integers.
+The problem statement specifies the condition for a square to be completely contained.
+A square with center $(i, j)$ has vertices at $(i \pm 0.5, j \pm 0.5)$.
+The condition is that all four vertices must be at a distance of at most $R$ from the origin $(0,0)$.
+The distance squared from the origin to a point $(x, y)$ is $x^2 + y^2$.
+So, for a square centered at $(i, j)$, the vertices are $(i+0.5, j+0.5)$, $(i+0.5, j-0.5)$, $(i-0.5, j+0.5)$, and $(i-0.5, j-0.5)$.
+The condition is that for all these vertices, $x^2 + y^2 \leq R^2$.
+Since the circle is centered at $(0,0)$, the distance from the origin to any point in the square is maximized at the vertices.
+Specifically, the distance to $(i+0.5, j+0.5)$ is $\sqrt{(i+0.5)^2 + (j+0.5)^2}$.
+The distance to $(i+0.5, j-0.5)$ is $\sqrt{(i+0.5)^2 + (j-0.5)^2}$.
+The distance to $(i-0.5, j+0.5)$ is $\sqrt{(i-0.5)^2 + (j+0.5)^2}$.
+The distance to $(i-0.5, j-0.5)$ is $\sqrt{(i-0.5)^2 + (j-0.5)^2}$.
+We need all these distances to be $\leq R$.
+This is equivalent to saying that the maximum distance among these four vertices is $\leq R$.
+The maximum distance will be the one corresponding to the vertex furthest from the origin.
+Let's analyze the expression $(x \pm 0.5)^2 + (y \pm 0.5)^2$.
+$(x \pm 0.5)^2 = x^2 \pm x + 0.25$.
+So the squared distance is $x^2 + y^2 \pm x \pm 0.25 + 0.25 = x^2 + y^2 \pm x \pm 0.5$.
+Wait, actually the vertices are $(i \pm 0.5, j \pm 0.5)$.
+The squared distance is $(i \pm 0.5)^2 + (j \pm 0.5)^2$.
+We want $(i \pm 0.5)^2 + (j \pm 0.5)^2 \leq R^2$ for all combinations of signs.
+This is equivalent to $\max((i+0.5)^2 + (j+0.5)^2, (i+0.5)^2 + (j-0.5)^2, (i-0.5)^2 + (j+0.5)^2, (i-0.5)^2 + (j-0.5)^2) \leq R^2$.
+Let's look at the terms.
+$(i+0.5)^2 + (j+0.5)^2 = i^2 + i + 0.25 + j^2 + j + 0.25 = i^2 + j^2 + i + j + 0.5$.
+$(i+0.5)^2 + (j-0.5)^2 = i^2 + i + 0.25 + j^2 - j + 0.25 = i^2 + j^2 + i - j + 0.5$.
+$(i-0.5)^2 + (j+0.5)^2 = i^2 - i + 0.25 + j^2 + j + 0.25 = i^2 + j^2 - i + j + 0.5$.
+$(i-0.5)^2 + (j-0.5)^2 = i^2 - i + 0.25 + j^2 - j + 0.25 = i^2 + j^2 - i - j + 0.5","<think>
+The problem asks us to find the number of $1 \times 1$ squares completely contained within a circle of radius $R$ centered at the center of one of these squares.
+The squares are defined by their centers $(i, j)$ where $i, j$ are integers.
+The problem statement specifies the condition for a square to be completely contained.
+A square with center $(i, j)$ has vertices at $(i \pm 0.5, j \pm 0.5)$.
+The condition is that all four vertices must be at a distance of at most $R$ from the origin $(0,0)$.
+The distance squared from the origin to a point $(x, y)$ is $x^2 + y^2$.
+So, for a square centered at $(i, j)$, the vertices are $(i+0.5, j+0.5)$, $(i+0.5, j-0.5)$, $(i-0.5, j+0.5)$, and $(i-0.5, j-0.5)$.
+The condition is that for all these vertices, $x^2 + y^2 \leq R^2$.
+Since the circle is centered at $(0,0)$, the distance from the origin to any point in the square is maximized at the vertices.
+Specifically, the distance to $(i+0.5, j+0.5)$ is $\sqrt{(i+0.5)^2 + (j+0.5)^2}$.
+The distance to $(i+0.5, j-0.5)$ is $\sqrt{(i+0.5)^2 + (j-0.5)^2}$.
+The distance to $(i-0.5, j+0.5)$ is $\sqrt{(i-0.5)^2 + (j+0.5)^2}$.
+The distance to $(i-0.5, j-0.5)$ is $\sqrt{(i-0.5)^2 + (j-0.5)^2}$.
+We need all these distances to be $\leq R$.
+This is equivalent to saying that the maximum distance among these four vertices is $\leq R$.
+The maximum distance will be the one corresponding to the vertex furthest from the origin.
+Let's analyze the expression $(x \pm 0.5)^2 + (y \pm 0.5)^2$.
+$(x \pm 0.5)^2 = x^2 \pm x + 0.25$.
+So the squared distance is $x^2 + y^2 \pm x \pm 0.25 + 0.25 = x^2 + y^2 \pm x \pm 0.5$.
+Wait, actually the vertices are $(i \pm 0.5, j \pm 0.5)$.
+The squared distance is $(i \pm 0.5)^2 + (j \pm 0.5)^2$.
+We want $(i \pm 0.5)^2 + (j \pm 0.5)^2 \leq R^2$ for all combinations of signs.
+This is equivalent to $\max((i+0.5)^2 + (j+0.5)^2, (i+0.5)^2 + (j-0.5)^2, (i-0.5)^2 + (j+0.5)^2, (i-0.5)^2 + (j-0.5)^2) \leq R^2$.
+Let's look at the terms.
+$(i+0.5)^2 + (j+0.5)^2 = i^2 + i + 0.25 + j^2 + j + 0.25 = i^2 + j^2 + i + j + 0.5$.
+$(i+0.5)^2 + (j-0.5)^2 = i^2 + i + 0.25 + j^2 - j + 0.25 = i^2 + j^2 + i - j + 0.5$.
+$(i-0.5)^2 + (j+0.5)^2 = i^2 - i + 0.25 + j^2 + j + 0.25 = i^2 + j^2 - i + j + 0.5$.
+$(i-0.5)^2 + (j-0.5)^2 = i^2 - i + 0.25 + j^2 - j + 0.25 = i^2 + j^2 - i - j + 0.5",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.1256203770931378,-0.24233074999700027,0.51,346,36,51,91.400390625,91.3984375,91.400390625,0.001953125,37,0.021196732170457033,3120,1732,0.5551282051282052,0.5487953486519852,251110
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"You are given an integer X not less than 2.
+Find the positive integer N such that N! = X.
+Here, N! denotes the factorial of N, and it is guaranteed that there is exactly one such N.
+
+Input
+
+The input is given from Standard Input in the following format:
+X
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 2 \leq X \leq 3 \times 10^{18}
+- There is exactly one positive integer N such that N!=X.
+- All input values are integers.
+
+Sample Input 1
+
+6
+
+Sample Output 1
+
+3
+
+From 3!=3\times2\times1=6, print 3.
+
+Sample Input 2
+
+2432902008176640000
+
+Sample Output 2
+
+20
+
+From 20!=2432902008176640000, print 20.",abc389_b,"<think>
+The problem asks us to find a positive integer $N$ such that $N! = X$, given $X$.
+The constraints on $X$ are $2 \leq X \leq 3 \times 10^{18}$.
+We are guaranteed that such an $N$ exists and is unique.
+
+Let's analyze the magnitude of $N$.
+$1! = 1$
+$2! = 2$
+$3! = 6$
+$4! = 24$
+$5! = 120$
+$6! = 720$
+$7! = 5040$
+$8! = 40320$
+$9! = 362880$
+$10! = 3628800$
+$11! = 39916800$
+$12! = 479001600$
+$13! = 6227020800$
+$14! = 87178291200$
+$15! = 1307674368000$
+$16! = 20922789888000$
+$17! = 355687428096000$
+$18! = 6402373705728000$
+$19! = 121645100408832000$
+$20! = 2432902008176640000$
+$21! \approx 5.1 \times 10^{19}$
+
+The maximum value of $X$ is $3 \times 10^{18}$.
+$20! \approx 2.43 \times 10^{18}$.
+$21! \approx 5.1 \times 10^{19}$.
+So, $N$ will be at most 20.
+Wait, let's double check.
+$20! = 2,432,902,008,176,640,000$.
+$3 \times 10^{18} = 3,000,000,000,000,000,000$.
+So $20! < 3 \times 10^{18}$.
+$21! = 21 \times 20! \approx 5.1 \times 10^{19} > 3 \times 10^{18}$.
+So the maximum possible value for $N$ is 20.
+Wait, if $X$ can be up to $3 \times 10^{18}$, and $20! < X_{max}$, then $N$ could potentially be 20.
+Is it possible for $N$ to be larger?
+The problem says $X \leq 3 \times 10^{18}$.
+Since $21! > 3 \times 10^{18}$, $N$ cannot be 21 or greater.
+So $N$ is in the range $[1, 20]$. Actually, since $X \geq 2$, $N \geq 2$.
+So $N \in [2, 20]$.
+
+Since the range of $N$ is very small (at most 20), we can simply iterate through integers starting from 1 (or 2) and compute their factorials until we reach or exceed $X$. Since a solution is guaranteed to exist, we will find it.
+
+Algorithm:
+1. Read $X$ from standard input.
+2. Initialize `current_factorial` = 1 and `n` = 1.
+3. Loop while `current_factorial` < $X$:
+    a. Increment `n` by 1.
+    b. Multiply `current_factorial` by `n`.
+4. Print `n`.
+
+Let's trace with Sample 1: $X = 6$.
+- `current_factorial` = 1, `n` = 1.
+- Loop condition $1 < 6$ is true.
+- `n` becomes 2. `current_factorial` becomes $1 \times 2 = 2$.","
+
+<think>
+The problem asks us to find a positive integer $N$ such that $N! = X$, given $X$.
+The constraints on $X$ are $2 \leq X \leq 3 \times 10^{18}$.
+We are guaranteed that such an $N$ exists and is unique.
+
+Let's analyze the magnitude of $N$.
+$1! = 1$
+$2! = 2$
+$3! = 6$
+$4! = 24$
+$5! = 120$
+$6! = 720$
+$7! = 5040$
+$8! = 40320$
+$9! = 362880$
+$10! = 3628800$
+$11! = 39916800$
+$12! = 479001600$
+$13! = 6227020800$
+$14! = 87178291200$
+$15! = 1307674368000$
+$16! = 20922789888000$
+$17! = 355687428096000$
+$18! = 6402373705728000$
+$19! = 121645100408832000$
+$20! = 2432902008176640000$
+$21! \approx 5.1 \times 10^{19}$
+
+The maximum value of $X$ is $3 \times 10^{18}$.
+$20! \approx 2.43 \times 10^{18}$.
+$21! \approx 5.1 \times 10^{19}$.
+So, $N$ will be at most 20.
+Wait, let's double check.
+$20! = 2,432,902,008,176,640,000$.
+$3 \times 10^{18} = 3,000,000,000,000,000,000$.
+So $20! < 3 \times 10^{18}$.
+$21! = 21 \times 20! \approx 5.1 \times 10^{19} > 3 \times 10^{18}$.
+So the maximum possible value for $N$ is 20.
+Wait, if $X$ can be up to $3 \times 10^{18}$, and $20! < X_{max}$, then $N$ could potentially be 20.
+Is it possible for $N$ to be larger?
+The problem says $X \leq 3 \times 10^{18}$.
+Since $21! > 3 \times 10^{18}$, $N$ cannot be 21 or greater.
+So $N$ is in the range $[1, 20]$. Actually, since $X \geq 2$, $N \geq 2$.
+So $N \in [2, 20]$.
+
+Since the range of $N$ is very small (at most 20), we can simply iterate through integers starting from 1 (or 2) and compute their factorials until we reach or exceed $X$. Since a solution is guaranteed to exist, we will find it.
+
+Algorithm:
+1. Read $X$ from standard input.
+2. Initialize `current_factorial` = 1 and `n` = 1.
+3. Loop while `current_factorial` < $X$:
+    a. Increment `n` by 1.
+    b. Multiply `current_factorial` by `n`.
+4. Print `n`.
+
+Let's trace with Sample 1: $X = 6$.
+- `current_factorial` = 1, `n` = 1.
+- Loop condition $1 < 6$ is true.
+- `n` becomes 2. `current_factorial` becomes $1 \times 2 = 2$.","<think>
+The problem asks us to find a positive integer $N$ such that $N! = X$, given $X$.
+The constraints on $X$ are $2 \leq X \leq 3 \times 10^{18}$.
+We are guaranteed that such an $N$ exists and is unique.
+
+Let's analyze the magnitude of $N$.
+$1! = 1$
+$2! = 2$
+$3! = 6$
+$4! = 24$
+$5! = 120$
+$6! = 720$
+$7! = 5040$
+$8! = 40320$
+$9! = 362880$
+$10! = 3628800$
+$11! = 39916800$
+$12! = 479001600$
+$13! = 6227020800$
+$14! = 87178291200$
+$15! = 1307674368000$
+$16! = 20922789888000$
+$17! = 355687428096000$
+$18! = 6402373705728000$
+$19! = 121645100408832000$
+$20! = 2432902008176640000$
+$21! \approx 5.1 \times 10^{19}$
+
+The maximum value of $X$ is $3 \times 10^{18}$.
+$20! \approx 2.43 \times 10^{18}$.
+$21! \approx 5.1 \times 10^{19}$.
+So, $N$ will be at most 20.
+Wait, let's double check.
+$20! = 2,432,902,008,176,640,000$.
+$3 \times 10^{18} = 3,000,000,000,000,000,000$.
+So $20! < 3 \times 10^{18}$.
+$21! = 21 \times 20! \approx 5.1 \times 10^{19} > 3 \times 10^{18}$.
+So the maximum possible value for $N$ is 20.
+Wait, if $X$ can be up to $3 \times 10^{18}$, and $20! < X_{max}$, then $N$ could potentially be 20.
+Is it possible for $N$ to be larger?
+The problem says $X \leq 3 \times 10^{18}$.
+Since $21! > 3 \times 10^{18}$, $N$ cannot be 21 or greater.
+So $N$ is in the range $[1, 20]$. Actually, since $X \geq 2$, $N \geq 2$.
+So $N \in [2, 20]$.
+
+Since the range of $N$ is very small (at most 20), we can simply iterate through integers starting from 1 (or 2) and compute their factorials until we reach or exceed $X$. Since a solution is guaranteed to exist, we will find it.
+
+Algorithm:
+1. Read $X$ from standard input.
+2. Initialize `current_factorial` = 1 and `n` = 1.
+3. Loop while `current_factorial` < $X$:
+    a. Increment `n` by 1.
+    b. Multiply `current_factorial` by `n`.
+4. Print `n`.
+
+Let's trace with Sample 1: $X = 6$.
+- `current_factorial` = 1, `n` = 1.
+- Loop condition $1 < 6$ is true.
+- `n` becomes 2. `current_factorial` becomes $1 \times 2 = 2$.",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.10573650676307278,-0.20927273206854619,0.25,301,31,25,91.400390625,91.3984375,91.400390625,0.001953125,32,0.018547140649149974,2412,1224,0.5074626865671642,0.6102556082377488,262159
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"You are given a 3-character string S, where the first character is a digit, the second character is the character x, and the third character is a digit.
+Find the product of the two numbers in S.
+
+Input
+
+The input is given from Standard Input in the following format:
+S
+
+Output
+
+Print the answer as an integer.
+
+Constraints
+
+
+- S is a 3-character string where the first character is an integer between 1 and 9, inclusive, the second character is the character x, and the third character is an integer between 1 and 9, inclusive.
+
+Sample Input 1
+
+3x8
+
+Sample Output 1
+
+24
+
+From 3 \times 8 = 24, print 24.
+
+Sample Input 2
+
+9x9
+
+Sample Output 2
+
+81
+
+From 9 \times 9 = 81, print 81.",abc389_a,"S = input()
+print(int(S[0]) * int(S[2]))","
+
+<think>
+The user wants a Python program to solve a specific problem.
+
+**Problem Statement:**
+Given a 3-character string $S$ in the format ""dx"" where $d$ is a digit, $x$ is the character 'x', and the last character is a digit.
+The goal is to find the product of the two digits.
+
+**Input Format:**
+A single string $S$.
+
+**Output Format:**
+An integer representing the product of the two digits.
+
+**Constraints:**
+- $S$ is 3 characters long.
+- $S[0]$ is a digit '1'-'9'.
+- $S[1]$ is 'x'.
+- $S[2]$ is a digit '1'-'9'.
+
+**Algorithm:**
+1. Read the input string $S$.
+2. Extract the first character (index 0) and convert it to an integer.
+3. Extract the third character (index 2) and convert it to an integer.
+4. Multiply these two integers.
+5. Print the result.
+
+**Example 1:**
+Input: `3x8`
+First digit: 3
+Second digit: 8
+Product: $3 \times 8 = 24$
+Output: `24`
+
+**Example 2:**
+Input: `9x9`
+First digit: 9
+Second digit: 9
+Product: $9 \times 9 = 81$
+Output: `81`
+
+**Implementation Details:**
+- Use `input()` to read the string.
+- Use `int()` to convert characters to integers.
+- Use `*` for multiplication.
+- Use `print()` to output.
+
+**Drafting the code:**
+```python
+S = input()
+num1 = int(S[0])
+num2 = int(S[2])
+print(num1 * num2)
+```
+
+Let's double check constraints. The input is guaranteed to be in the specific format. No error handling is strictly required based on the problem statement, but standard competitive programming practice suggests assuming valid input as per constraints.
+
+The code looks correct.
+
+```python
+import sys
+
+def solve():
+    # Read the string S from standard input
+    S = sys.stdin.read().strip()
+    
+    # Extract the first digit
+    digit1 = int(S[0])
+    
+    # Extract the second digit (skipping the 'x' at index 1)
+    digit2 = int(S[2])
+    
+    # Calculate the product
+    result = digit1 * digit2
+    
+    # Print the result
+    print(result)
+
+if __name__ == '__main__':
+    solve()
+```
+Or simpler without sys import:
+```python
+S = input()
+a = int(S[0])
+b = int(S[2])
+print(a * b)
+```
+This is sufficient.
+
+One edge case to consider: trailing newlines or whitespace. `input()` handles the line reading. `strip()` might be safer if there's extra whitespace, though usually `input()` strips the trailing newline. Since the input is just one line, `input()` is fine.
+
+Let's write the final solution.
+
+```python
+S = input()
+first_digit = int(S[0])
+second_digit = int(S[2])
+print(first_digit * second_digit)
+```
+This matches the requirements perfectly.
+
+Wait, looking at the instruction: ""Read the inputs from stdin solve the problem and write the answer to stdout"".
+The code block should be enclosed in delimiters.
+
+Final check of the prompt requirements:
+- ""You will NOT return anything except for the program.""
+- ""Enclose your code within delimiters as follows.""
+
+Okay, I will provide just the code block.
+
+```python
+S = input()
+print(int(S[0]) * int(S[2]))
+```
+This is concise and correct.
+
+Let's verify with Sample 1:
+Input: `3x8`
+`S[0]` is '3', `int('3')` is 3.
+`S[2]` is '8', `int('8')` is 8.
+`3 * 8` is 24.
+Print 24. Correct.
+
+Sample 2:
+Input: `9x9`
+`S[0]` is '9', `int('9')` is 9.
+`S[2]` is '9', `int('9')` is 9.
+`9 * 9` is 81.
+Print 81. Correct.
+
+The constraints say $S$ is 3 characters.
+$S[0]$ is digit.
+$S[1]$ is","S = input()
+print(int(S[0]) * int(S[2]))",True,,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.1604723648116372,-0.31282314298164066,0.31,250,26,31,91.400390625,91.3984375,91.400390625,0.001953125,27,0.021196732170457033,2160,1140,0.5277777777777778,0.6176964903608502,182070
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"You are given a positive even integer N and a prime number P.
+For M = N-1, \ldots, \frac{N(N-1)}{2}, solve the following problem.
+How many undirected connected simple graphs with N vertices labeled from 1 to N and M edges satisfy this: the number of vertices whose shortest distance from vertex 1 is even is equal to the number of vertices whose shortest distance from vertex 1 is odd? Find this number modulo P.
+
+Input
+
+The input is given from Standard Input in the following format:
+N P
+
+Output
+
+For M = N-1, \ldots, \frac{N(N-1)}{2}, output the answers in order, separated by spaces, on a single line.
+
+Constraints
+
+
+- 2 \leq N \leq 30
+- 10^8 \leq P \leq 10^9
+- N is even.
+- P is prime.
+- All input values are integers.
+
+Sample Input 1
+
+4 998244353
+
+Sample Output 1
+
+12 9 3 0
+
+With four vertices and three edges, there are 12 simple connected undirected graphs satisfying the condition.
+With four vertices and four edges, there are 9 such graphs.
+With four vertices and five edges, there are 3 such graphs.
+With four vertices and six edges, there are 0 such graphs.
+
+Sample Input 2
+
+6 924844033
+
+Sample Output 2
+
+810 2100 3060 3030 2230 1210 450 100 10 0 0
+
+Sample Input 3
+
+10 433416647
+
+Sample Output 3
+
+49218750 419111280 321937732 107111441 372416570 351559278 312484809 334285827 317777667 211471846 58741385 422156135 323887465 54923551 121645733 94354149 346849276 72744827 385773306 163421544 351691775 59915863 430096957 166653801 346330874 185052506 245426328 47501118 7422030 899640 79380 4536 126 0 0 0 0
+
+Remember to find the number of such graphs modulo P.",abc389_g,"<think>
+The problem asks us to consider undirected connected simple graphs with $N$ vertices labeled $1$ to $N$. We are given a prime $P$. We need to iterate through $M$ from $N-1$ to $\frac{N(N-1)}{2}$ and count the number of such graphs with exactly $M$ edges that satisfy a specific condition. The condition is: the number of vertices whose shortest distance from vertex 1 is even is equal to the number of vertices whose shortest distance from vertex 1 is odd. We need to output the counts modulo $P$.
+
+The constraints are $N \le 30$. This is quite small. $N$ is even. $P$ is a large prime.
+Let's analyze the condition.
+The shortest distance from vertex 1 defines a partition of the vertices into sets based on the parity of the distance. Let $d(v)$ be the shortest distance from vertex 1 to vertex $v$. We want the number of vertices $\{v \mid d(v) \text{ is even}\}$ to be equal to the number of vertices $\{v \mid d(v) \text{ is odd}\}$.
+Since $d(1) = 0$ (even), vertex 1 is always in the even set.
+Let $E$ be the set of vertices with even distance, and $O$ be the set of vertices with odd distance. We require $|E| = |O|$. Since $N$ is even, this is possible. If $N$ were odd, $|E| + |O| = N$ would imply $|E| = |O| = N/2$, which is impossible since $1 \in E$. But $N$ is even, so $N/2$ is an integer.
+So we need to count graphs where the bipartition induced by BFS levels starting from 1 has equal sizes.
+
+Wait, the condition is about the *shortest* distance. This is equivalent to saying that the graph is bipartite? No.
+If a graph is bipartite, the vertices can be partitioned into two sets $A$ and $B$ such that all edges go between $A$ and $B$. If we start BFS from 1, if 1 is in $A$, then all neighbors are in $B$, their neighbors in $A$, etc. So the distance parity corresponds exactly to the partition sets.
+However, a graph doesn't have to be bipartite for the condition to hold.
+Consider a triangle $1-2-3-1$. Distances from 1: $d(1)=0, d(2)=1, d(3)=1$. $|E|=1, |O|=2$. Not equal.
+Consider $1-2, 2-3, 3-4, 1-4$. This is a cycle $1-2-3-4-1$. $d(1)=0, d(2)=1, d(3)=2, d(4)=1$. $|E|=2, |O|=2$. Equal.
+Is the graph bipartite? Yes, $1,3$ in one set, $2,4$ in another.
+Consider $1-2, 2-3, 3-1, 1-4$. Triangle $1,2,3$ and edge $1-4$. $d(1)=0, d(2)=1, d(3)=1, d(4)=1$. $|E|=1, |O|=3$. Not equal.
+Consider $1-2, 2-3, 3-4, 4-5, 5-1$. Cycle $1-2-3-4-5-1$. $N=5$ (odd).
+Consider $1-2, 2-3, 3-4, 4-1$ (square) plus $1-3$. $d(1)=0, d(2)=1, d(4)=1, d(3)=1$. $|E|=1, |O|=3$.
+Wait, the condition is about the *number* of vertices at even distance vs odd distance.
+Let $S_{even} = \{v \mid d(v) \equiv 0 \pmod 2\}$ and $S_{odd} = \{v \mid d(v) \equiv 1 \pmod 2\}$. We require $|S_{even}| = |S_{odd}| = N/2$.
+Note that $1 \in S_{even}$.
+This condition is related to the existence of a bipartite subgraph containing all edges? No.
+Actually, if $|S_{even}| = |S_{odd}|$,","
+
+<think>
+The problem asks us to consider undirected connected simple graphs with $N$ vertices labeled $1$ to $N$. We are given a prime $P$. We need to iterate through $M$ from $N-1$ to $\frac{N(N-1)}{2}$ and count the number of such graphs with exactly $M$ edges that satisfy a specific condition. The condition is: the number of vertices whose shortest distance from vertex 1 is even is equal to the number of vertices whose shortest distance from vertex 1 is odd. We need to output the counts modulo $P$.
+
+The constraints are $N \le 30$. This is quite small. $N$ is even. $P$ is a large prime.
+Let's analyze the condition.
+The shortest distance from vertex 1 defines a partition of the vertices into sets based on the parity of the distance. Let $d(v)$ be the shortest distance from vertex 1 to vertex $v$. We want the number of vertices $\{v \mid d(v) \text{ is even}\}$ to be equal to the number of vertices $\{v \mid d(v) \text{ is odd}\}$.
+Since $d(1) = 0$ (even), vertex 1 is always in the even set.
+Let $E$ be the set of vertices with even distance, and $O$ be the set of vertices with odd distance. We require $|E| = |O|$. Since $N$ is even, this is possible. If $N$ were odd, $|E| + |O| = N$ would imply $|E| = |O| = N/2$, which is impossible since $1 \in E$. But $N$ is even, so $N/2$ is an integer.
+So we need to count graphs where the bipartition induced by BFS levels starting from 1 has equal sizes.
+
+Wait, the condition is about the *shortest* distance. This is equivalent to saying that the graph is bipartite? No.
+If a graph is bipartite, the vertices can be partitioned into two sets $A$ and $B$ such that all edges go between $A$ and $B$. If we start BFS from 1, if 1 is in $A$, then all neighbors are in $B$, their neighbors in $A$, etc. So the distance parity corresponds exactly to the partition sets.
+However, a graph doesn't have to be bipartite for the condition to hold.
+Consider a triangle $1-2-3-1$. Distances from 1: $d(1)=0, d(2)=1, d(3)=1$. $|E|=1, |O|=2$. Not equal.
+Consider $1-2, 2-3, 3-4, 1-4$. This is a cycle $1-2-3-4-1$. $d(1)=0, d(2)=1, d(3)=2, d(4)=1$. $|E|=2, |O|=2$. Equal.
+Is the graph bipartite? Yes, $1,3$ in one set, $2,4$ in another.
+Consider $1-2, 2-3, 3-1, 1-4$. Triangle $1,2,3$ and edge $1-4$. $d(1)=0, d(2)=1, d(3)=1, d(4)=1$. $|E|=1, |O|=3$. Not equal.
+Consider $1-2, 2-3, 3-4, 4-5, 5-1$. Cycle $1-2-3-4-5-1$. $N=5$ (odd).
+Consider $1-2, 2-3, 3-4, 4-1$ (square) plus $1-3$. $d(1)=0, d(2)=1, d(4)=1, d(3)=1$. $|E|=1, |O|=3$.
+Wait, the condition is about the *number* of vertices at even distance vs odd distance.
+Let $S_{even} = \{v \mid d(v) \equiv 0 \pmod 2\}$ and $S_{odd} = \{v \mid d(v) \equiv 1 \pmod 2\}$. We require $|S_{even}| = |S_{odd}| = N/2$.
+Note that $1 \in S_{even}$.
+This condition is related to the existence of a bipartite subgraph containing all edges? No.
+Actually, if $|S_{even}| = |S_{odd}|$,","<think>
+The problem asks us to consider undirected connected simple graphs with $N$ vertices labeled $1$ to $N$. We are given a prime $P$. We need to iterate through $M$ from $N-1$ to $\frac{N(N-1)}{2}$ and count the number of such graphs with exactly $M$ edges that satisfy a specific condition. The condition is: the number of vertices whose shortest distance from vertex 1 is even is equal to the number of vertices whose shortest distance from vertex 1 is odd. We need to output the counts modulo $P$.
+
+The constraints are $N \le 30$. This is quite small. $N$ is even. $P$ is a large prime.
+Let's analyze the condition.
+The shortest distance from vertex 1 defines a partition of the vertices into sets based on the parity of the distance. Let $d(v)$ be the shortest distance from vertex 1 to vertex $v$. We want the number of vertices $\{v \mid d(v) \text{ is even}\}$ to be equal to the number of vertices $\{v \mid d(v) \text{ is odd}\}$.
+Since $d(1) = 0$ (even), vertex 1 is always in the even set.
+Let $E$ be the set of vertices with even distance, and $O$ be the set of vertices with odd distance. We require $|E| = |O|$. Since $N$ is even, this is possible. If $N$ were odd, $|E| + |O| = N$ would imply $|E| = |O| = N/2$, which is impossible since $1 \in E$. But $N$ is even, so $N/2$ is an integer.
+So we need to count graphs where the bipartition induced by BFS levels starting from 1 has equal sizes.
+
+Wait, the condition is about the *shortest* distance. This is equivalent to saying that the graph is bipartite? No.
+If a graph is bipartite, the vertices can be partitioned into two sets $A$ and $B$ such that all edges go between $A$ and $B$. If we start BFS from 1, if 1 is in $A$, then all neighbors are in $B$, their neighbors in $A$, etc. So the distance parity corresponds exactly to the partition sets.
+However, a graph doesn't have to be bipartite for the condition to hold.
+Consider a triangle $1-2-3-1$. Distances from 1: $d(1)=0, d(2)=1, d(3)=1$. $|E|=1, |O|=2$. Not equal.
+Consider $1-2, 2-3, 3-4, 1-4$. This is a cycle $1-2-3-4-1$. $d(1)=0, d(2)=1, d(3)=2, d(4)=1$. $|E|=2, |O|=2$. Equal.
+Is the graph bipartite? Yes, $1,3$ in one set, $2,4$ in another.
+Consider $1-2, 2-3, 3-1, 1-4$. Triangle $1,2,3$ and edge $1-4$. $d(1)=0, d(2)=1, d(3)=1, d(4)=1$. $|E|=1, |O|=3$. Not equal.
+Consider $1-2, 2-3, 3-4, 4-5, 5-1$. Cycle $1-2-3-4-5-1$. $N=5$ (odd).
+Consider $1-2, 2-3, 3-4, 4-1$ (square) plus $1-3$. $d(1)=0, d(2)=1, d(4)=1, d(3)=1$. $|E|=1, |O|=3$.
+Wait, the condition is about the *number* of vertices at even distance vs odd distance.
+Let $S_{even} = \{v \mid d(v) \equiv 0 \pmod 2\}$ and $S_{odd} = \{v \mid d(v) \equiv 1 \pmod 2\}$. We require $|S_{even}| = |S_{odd}| = N/2$.
+Note that $1 \in S_{even}$.
+This condition is related to the existence of a bipartite subgraph containing all edges? No.
+Actually, if $|S_{even}| = |S_{odd}|$,",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.23312814139607466,-0.4347192626732819,0.23,261,27,23,91.400390625,91.3984375,91.400390625,0.001953125,28,0.01943033782291892,2196,1156,0.5264116575591985,0.7845304525450073,335834
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"Takahashi plans to participate in N AtCoder contests.
+In the i-th contest (1 \leq i \leq N), if his rating is between L_i and R_i (inclusive), his rating increases by 1.
+You are given Q queries in the following format:
+
+- An integer X is given. Assuming that Takahashi's initial rating is X, determine his rating after participating in all N contests.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+L_1 R_1
+L_2 R_2
+\vdots
+L_N R_N
+Q
+\text{query}_1
+\text{query}_2
+\vdots
+\text{query}_Q
+
+Here, \text{query}_i is the i-th query in the form:
+X
+
+Output
+
+Print Q lines. The i-th line should contain the answer to the i-th query.
+
+Constraints
+
+
+- 1 \leq N \leq 2 \times 10^5
+- 1 \leq L_i \leq R_i \leq 5 \times 10^5 (1 \leq i \leq N)
+- 1 \leq Q \leq 3 \times 10^5
+- For each query, 1 \leq X \leq 5 \times 10^5.
+- All input values are integers.
+
+Sample Input 1
+
+5
+1 5
+1 3
+3 6
+2 4
+4 7
+3
+3
+2
+5
+
+Sample Output 1
+
+6
+6
+8
+
+For the 1st query, the rating changes as follows:
+
+- In the 1st contest, the rating is between 1 and 5, so it increases by 1, becoming 4.  
+- In the 2nd contest, the rating is not between 1 and 3, so it remains 4.  
+- In the 3rd contest, the rating is between 3 and 6, so it increases by 1, becoming 5.  
+- In the 4th contest, the rating is not between 2 and 4, so it remains 5.  
+- In the 5th contest, the rating is between 4 and 7, so it increases by 1, becoming 6.
+
+For the 2nd query, the rating increases in the 1st, 2nd, 3rd, and 5th contests, ending at 6.
+For the 3rd query, the rating increases in the 1st, 3rd, and 5th contests, ending at 8.
+
+Sample Input 2
+
+10
+1 1999
+1 1999
+1200 2399
+1 1999
+1 1999
+1 1999
+2000 500000
+1 1999
+1 1999
+1600 2799
+7
+1
+1995
+2000
+2399
+500000
+2799
+1000
+
+Sample Output 2
+
+8
+2002
+2003
+2402
+500001
+2800
+1007
+
+Sample Input 3
+
+15
+260522 414575
+436426 479445
+148772 190081
+190629 433447
+47202 203497
+394325 407775
+304784 463982
+302156 468417
+131932 235902
+78537 395728
+223857 330739
+286918 329211
+39679 238506
+63340 186568
+160016 361868
+10
+287940
+296263
+224593
+101449
+336991
+390310
+323355
+177068
+11431
+8580
+
+Sample Output 3
+
+287946
+296269
+224599
+101453
+336997
+390315
+323363
+177075
+11431
+8580",abc389_f,"<think>
+The problem asks us to simulate a rating change process for $N$ contests. For each contest $i$, there is a range $[L_i, R_i]$. If a contestant's current rating $X$ satisfies $L_i \le X \le R_i$, their rating increases by 1. We are given $Q$ queries, each specifying an initial rating $X$. For each query, we need to find the final rating after all $N$ contests.
+
+Constraints:
+$N \le 2 \times 10^5$
+$Q \le 3 \times 10^5$
+$L_i, R_i, X \le 5 \times 10^5$
+
+Let's denote the rating after $k$ contests as $X_k$. $X_0 = X$.
+$X_{k} = X_{k-1} + 1$ if $L_k \le X_{k-1} \le R_k$, else $X_{k} = X_{k-1}$.
+We need to compute $X_N$ for various initial $X$.
+
+Since $N$ and $Q$ are up to $3 \times 10^5$, a direct simulation for each query would take $O(N \cdot Q)$ time, which is too slow ($9 \times 10^{10}$ operations). We need a faster approach, likely close to $O((N+Q) \log (\max R))$ or $O((N+Q) \sqrt{\max R})$.
+
+Let's analyze the condition $L_i \le X \le R_i$. This means the rating increases if it falls within the interval $[L_i, R_i]$.
+Notice that the rating only increases. It never decreases.
+Also, the maximum possible rating is bounded. The maximum initial rating is $5 \times 10^5$, and there are $N$ contests, so the maximum final rating is $5 \times 10^5 + 2 \times 10^5 = 7 \times 10^5$. Let's call the maximum possible rating $M \approx 7 \times 10^5$.
+
+Let $f(X)$ be the final rating given initial rating $X$.
+The function $f(X)$ is non-decreasing. If $X_1 < X_2$, then $f(X_1) \le f(X_2)$.
+Why? Because if a rating $X_1$ increases in a contest, it means $X_1 \in [L_i, R_i]$. If $X_2 > X_1$, it's possible $X_2$ is also in $[L_i, R_i]$ or not. But intuitively, higher ratings are ""better"" or at least not worse.
+Actually, let's verify monotonicity.
+Suppose $X_1 < X_2$.
+If $X_1$ increases, $X_1 \to X_1+1$.
+If $X_2$ increases, $X_2 \to X_2+1$.
+If $X_2$ doesn't increase, $X_2 \to X_2$.
+If $X_1$ doesn't increase, $X_1 \to X_1$.
+The condition is $L \le X \le R$.
+If $X_1 \in [L, R]$, then $X_1+1$ is the new rating.
+If $X_2 \in [L, R]$, then $X_2+1$ is the new rating.
+If $X_1 \notin [L, R]$ and $X_2 \in [L, R]$, then $X_1$ stays same, $X_2$ increases. Since $X_1 < X_2$, the order is preserved.
+If $X_1 \in [L, R]$ and $X_2 \notin [L, R]$, then $X_1$ increases, $X_2$ stays same. Since $X_1 < X_2$, it is possible that $X_1+1 \le X_2$ or $X_1+1 > X_2$.
+Example: $L=2, R=2$. $X_1=2, X_2=3$.
+$X_1 \in [2, 2] \implies X_1 \to 3$.
+$X_2 \notin [2, 2] \implies X_2 \to 3$.
+Here $X_1$ increased, $X_2$ didn't. But $f(X_1) = 3, f(X_2) =","
+
+<think>
+The problem asks us to simulate a rating change process for $N$ contests. For each contest $i$, there is a range $[L_i, R_i]$. If a contestant's current rating $X$ satisfies $L_i \le X \le R_i$, their rating increases by 1. We are given $Q$ queries, each specifying an initial rating $X$. For each query, we need to find the final rating after all $N$ contests.
+
+Constraints:
+$N \le 2 \times 10^5$
+$Q \le 3 \times 10^5$
+$L_i, R_i, X \le 5 \times 10^5$
+
+Let's denote the rating after $k$ contests as $X_k$. $X_0 = X$.
+$X_{k} = X_{k-1} + 1$ if $L_k \le X_{k-1} \le R_k$, else $X_{k} = X_{k-1}$.
+We need to compute $X_N$ for various initial $X$.
+
+Since $N$ and $Q$ are up to $3 \times 10^5$, a direct simulation for each query would take $O(N \cdot Q)$ time, which is too slow ($9 \times 10^{10}$ operations). We need a faster approach, likely close to $O((N+Q) \log (\max R))$ or $O((N+Q) \sqrt{\max R})$.
+
+Let's analyze the condition $L_i \le X \le R_i$. This means the rating increases if it falls within the interval $[L_i, R_i]$.
+Notice that the rating only increases. It never decreases.
+Also, the maximum possible rating is bounded. The maximum initial rating is $5 \times 10^5$, and there are $N$ contests, so the maximum final rating is $5 \times 10^5 + 2 \times 10^5 = 7 \times 10^5$. Let's call the maximum possible rating $M \approx 7 \times 10^5$.
+
+Let $f(X)$ be the final rating given initial rating $X$.
+The function $f(X)$ is non-decreasing. If $X_1 < X_2$, then $f(X_1) \le f(X_2)$.
+Why? Because if a rating $X_1$ increases in a contest, it means $X_1 \in [L_i, R_i]$. If $X_2 > X_1$, it's possible $X_2$ is also in $[L_i, R_i]$ or not. But intuitively, higher ratings are ""better"" or at least not worse.
+Actually, let's verify monotonicity.
+Suppose $X_1 < X_2$.
+If $X_1$ increases, $X_1 \to X_1+1$.
+If $X_2$ increases, $X_2 \to X_2+1$.
+If $X_2$ doesn't increase, $X_2 \to X_2$.
+If $X_1$ doesn't increase, $X_1 \to X_1$.
+The condition is $L \le X \le R$.
+If $X_1 \in [L, R]$, then $X_1+1$ is the new rating.
+If $X_2 \in [L, R]$, then $X_2+1$ is the new rating.
+If $X_1 \notin [L, R]$ and $X_2 \in [L, R]$, then $X_1$ stays same, $X_2$ increases. Since $X_1 < X_2$, the order is preserved.
+If $X_1 \in [L, R]$ and $X_2 \notin [L, R]$, then $X_1$ increases, $X_2$ stays same. Since $X_1 < X_2$, it is possible that $X_1+1 \le X_2$ or $X_1+1 > X_2$.
+Example: $L=2, R=2$. $X_1=2, X_2=3$.
+$X_1 \in [2, 2] \implies X_1 \to 3$.
+$X_2 \notin [2, 2] \implies X_2 \to 3$.
+Here $X_1$ increased, $X_2$ didn't. But $f(X_1) = 3, f(X_2) = ","<think>
+The problem asks us to simulate a rating change process for $N$ contests. For each contest $i$, there is a range $[L_i, R_i]$. If a contestant's current rating $X$ satisfies $L_i \le X \le R_i$, their rating increases by 1. We are given $Q$ queries, each specifying an initial rating $X$. For each query, we need to find the final rating after all $N$ contests.
+
+Constraints:
+$N \le 2 \times 10^5$
+$Q \le 3 \times 10^5$
+$L_i, R_i, X \le 5 \times 10^5$
+
+Let's denote the rating after $k$ contests as $X_k$. $X_0 = X$.
+$X_{k} = X_{k-1} + 1$ if $L_k \le X_{k-1} \le R_k$, else $X_{k} = X_{k-1}$.
+We need to compute $X_N$ for various initial $X$.
+
+Since $N$ and $Q$ are up to $3 \times 10^5$, a direct simulation for each query would take $O(N \cdot Q)$ time, which is too slow ($9 \times 10^{10}$ operations). We need a faster approach, likely close to $O((N+Q) \log (\max R))$ or $O((N+Q) \sqrt{\max R})$.
+
+Let's analyze the condition $L_i \le X \le R_i$. This means the rating increases if it falls within the interval $[L_i, R_i]$.
+Notice that the rating only increases. It never decreases.
+Also, the maximum possible rating is bounded. The maximum initial rating is $5 \times 10^5$, and there are $N$ contests, so the maximum final rating is $5 \times 10^5 + 2 \times 10^5 = 7 \times 10^5$. Let's call the maximum possible rating $M \approx 7 \times 10^5$.
+
+Let $f(X)$ be the final rating given initial rating $X$.
+The function $f(X)$ is non-decreasing. If $X_1 < X_2$, then $f(X_1) \le f(X_2)$.
+Why? Because if a rating $X_1$ increases in a contest, it means $X_1 \in [L_i, R_i]$. If $X_2 > X_1$, it's possible $X_2$ is also in $[L_i, R_i]$ or not. But intuitively, higher ratings are ""better"" or at least not worse.
+Actually, let's verify monotonicity.
+Suppose $X_1 < X_2$.
+If $X_1$ increases, $X_1 \to X_1+1$.
+If $X_2$ increases, $X_2 \to X_2+1$.
+If $X_2$ doesn't increase, $X_2 \to X_2$.
+If $X_1$ doesn't increase, $X_1 \to X_1$.
+The condition is $L \le X \le R$.
+If $X_1 \in [L, R]$, then $X_1+1$ is the new rating.
+If $X_2 \in [L, R]$, then $X_2+1$ is the new rating.
+If $X_1 \notin [L, R]$ and $X_2 \in [L, R]$, then $X_1$ stays same, $X_2$ increases. Since $X_1 < X_2$, the order is preserved.
+If $X_1 \in [L, R]$ and $X_2 \notin [L, R]$, then $X_1$ increases, $X_2$ stays same. Since $X_1 < X_2$, it is possible that $X_1+1 \le X_2$ or $X_1+1 > X_2$.
+Example: $L=2, R=2$. $X_1=2, X_2=3$.
+$X_1 \in [2, 2] \implies X_1 \to 3$.
+$X_2 \notin [2, 2] \implies X_2 \to 3$.
+Here $X_1$ increased, $X_2$ didn't. But $f(X_1) = 3, f(X_2) =",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.20049272158551998,-0.4001787528169624,0.19,265,27,19,91.400390625,91.3984375,91.400390625,0.001953125,28,0.023183925811437356,2489,1417,0.5693049417436722,0.8341511811868179,447516
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"There are N types of products, each having 10^{100} units in stock.
+You can buy any non-negative number of units of each product. To buy k units of the i-th product, it costs k^2 P_i yen.
+If your total purchase cost is at most M yen, what is the maximum number of units you can buy in total?
+
+Input
+
+The input is given from Standard Input in the following format:
+N M
+P_1 \ldots P_N
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 1 \leq N \leq 2 \times 10^{5}
+- 1 \leq M \leq 10^{18}
+- 1 \leq P_i \leq 2 \times 10^{9}
+- All input values are integers.
+
+Sample Input 1
+
+3 9
+4 1 9
+
+Sample Output 1
+
+3
+
+If you buy one unit of the 1st product and two units of the 2nd product, the total purchase cost is 1^2 \times 4 + 2^2 \times 1 = 8. It is impossible to buy four or more units in total with a total cost of at most 9 yen, so the answer is 3.
+
+Sample Input 2
+
+10 1000
+2 15 6 5 12 1 7 9 17 2
+
+Sample Output 2
+
+53",abc389_e,"<think>
+The problem asks us to find the maximum total number of units we can buy given a budget $M$. We have $N$ types of products. For the $i$-th product, the cost to buy $k$ units is $k^2 P_i$. We can buy any non-negative integer number of units of each product. The stock is effectively infinite ($10^{100}$ units), so we don't need to worry about running out.
+
+Let $x_i$ be the number of units of product $i$ we buy. The total cost is $\sum_{i=1}^N x_i^2 P_i$. We want to maximize $\sum_{i=1}^N x_i$ subject to $\sum_{i=1}^N x_i^2 P_i \le M$ and $x_i \ge 0$.
+
+Let $S = \sum_{i=1}^N x_i$ be the total number of units. We want to maximize $S$.
+The cost function is convex. Specifically, for a fixed product $i$, the cost of buying $k$ units is $k^2 P_i$. The marginal cost of buying the $k$-th unit is $(k)^2 P_i - (k-1)^2 P_i = (2k-1) P_i$. This marginal cost increases as $k$ increases.
+Since the marginal cost increases with the number of units bought for a specific product, this is a resource allocation problem where we want to pick the cheapest available ""next unit"" to buy.
+
+However, the ""next unit"" cost depends on how many units we have already bought of that specific product.
+If we have bought $x_i$ units of product $i$, the cost of the next unit (the $(x_i+1)$-th unit) is $(x_i+1)^2 P_i$.
+If we have bought 0 units, the cost is $1^2 P_i = P_i$.
+If we have bought 1 unit, the cost is $2^2 P_i = 4 P_i$.
+If we have bought 2 units, the cost is $3^2 P_i = 9 P_i$.
+
+This looks like we can maintain a pool of available ""next unit"" costs. Initially, for each product $i$, the cost of the first unit is $P_i$. We can pick the minimum $P_i$ among all products, buy that unit, and then the cost for the next unit of that product becomes $4 P_i$ (since $(1+1)^2 P_i = 4 P_i$). We repeat this process until the cost of the next cheapest unit exceeds $M$.
+
+Wait, the cost of the $k$-th unit of product $i$ is $k^2 P_i$.
+Let's check the sample 1.
+$N=3, M=9$.
+$P = [4, 1, 9]$.
+Available next unit costs:
+Product 1: $1^2 \times 4 = 4$.
+Product 2: $1^2 \times 1 = 1$.
+Product 3: $1^2 \times 9 = 9$.
+The minimum is 1 (Product 2). We buy 1 unit of Product 2.
+Cost so far: 1. Remaining budget: $9-1=8$.
+Units bought: 1.
+Now we update the next unit cost for Product 2. It becomes $2^2 \times 1 = 4$.
+Available next unit costs:
+Product 1: 4.
+Product 2: 4.
+Product 3: 9.
+Minimum is 4. We can buy either Product 1 or Product 2. Let's say Product 1.
+Cost so far: $1 + 4 = 5$. Remaining budget: $9-5=4$.
+Units bought: 2.
+Update next unit cost for Product 1: $2^2 \times 4 = 16$.
+Available next unit costs:
+Product 1: 16.
+Product 2: 4.
+Product 3: 9.
+Minimum is 4 (Product 2). Buy Product 2.
+Cost so far: $5 + 4 = 9$. Remaining budget: 0.
+Units bought: 3.
+Update next unit cost for Product 2: $3^2 \times 1 = 9$.
+Available next unit costs:
+Product 1: 16.
+Product 2: 9.
+Product 3: 9.
+Minimum is 9. Remaining budget 0. Cannot buy.
+Total units: 3.
+This matches Sample 1 output","
+
+<think>
+The problem asks us to find the maximum total number of units we can buy given a budget $M$. We have $N$ types of products. For the $i$-th product, the cost to buy $k$ units is $k^2 P_i$. We can buy any non-negative integer number of units of each product. The stock is effectively infinite ($10^{100}$ units), so we don't need to worry about running out.
+
+Let $x_i$ be the number of units of product $i$ we buy. The total cost is $\sum_{i=1}^N x_i^2 P_i$. We want to maximize $\sum_{i=1}^N x_i$ subject to $\sum_{i=1}^N x_i^2 P_i \le M$ and $x_i \ge 0$.
+
+Let $S = \sum_{i=1}^N x_i$ be the total number of units. We want to maximize $S$.
+The cost function is convex. Specifically, for a fixed product $i$, the cost of buying $k$ units is $k^2 P_i$. The marginal cost of buying the $k$-th unit is $(k)^2 P_i - (k-1)^2 P_i = (2k-1) P_i$. This marginal cost increases as $k$ increases.
+Since the marginal cost increases with the number of units bought for a specific product, this is a resource allocation problem where we want to pick the cheapest available ""next unit"" to buy.
+
+However, the ""next unit"" cost depends on how many units we have already bought of that specific product.
+If we have bought $x_i$ units of product $i$, the cost of the next unit (the $(x_i+1)$-th unit) is $(x_i+1)^2 P_i$.
+If we have bought 0 units, the cost is $1^2 P_i = P_i$.
+If we have bought 1 unit, the cost is $2^2 P_i = 4 P_i$.
+If we have bought 2 units, the cost is $3^2 P_i = 9 P_i$.
+
+This looks like we can maintain a pool of available ""next unit"" costs. Initially, for each product $i$, the cost of the first unit is $P_i$. We can pick the minimum $P_i$ among all products, buy that unit, and then the cost for the next unit of that product becomes $4 P_i$ (since $(1+1)^2 P_i = 4 P_i$). We repeat this process until the cost of the next cheapest unit exceeds $M$.
+
+Wait, the cost of the $k$-th unit of product $i$ is $k^2 P_i$.
+Let's check the sample 1.
+$N=3, M=9$.
+$P = [4, 1, 9]$.
+Available next unit costs:
+Product 1: $1^2 \times 4 = 4$.
+Product 2: $1^2 \times 1 = 1$.
+Product 3: $1^2 \times 9 = 9$.
+The minimum is 1 (Product 2). We buy 1 unit of Product 2.
+Cost so far: 1. Remaining budget: $9-1=8$.
+Units bought: 1.
+Now we update the next unit cost for Product 2. It becomes $2^2 \times 1 = 4$.
+Available next unit costs:
+Product 1: 4.
+Product 2: 4.
+Product 3: 9.
+Minimum is 4. We can buy either Product 1 or Product 2. Let's say Product 1.
+Cost so far: $1 + 4 = 5$. Remaining budget: $9-5=4$.
+Units bought: 2.
+Update next unit cost for Product 1: $2^2 \times 4 = 16$.
+Available next unit costs:
+Product 1: 16.
+Product 2: 4.
+Product 3: 9.
+Minimum is 4 (Product 2). Buy Product 2.
+Cost so far: $5 + 4 = 9$. Remaining budget: 0.
+Units bought: 3.
+Update next unit cost for Product 2: $3^2 \times 1 = 9$.
+Available next unit costs:
+Product 1: 16.
+Product 2: 9.
+Product 3: 9.
+Minimum is 9. Remaining budget 0. Cannot buy.
+Total units: 3.
+This matches Sample 1 output","<think>
+The problem asks us to find the maximum total number of units we can buy given a budget $M$. We have $N$ types of products. For the $i$-th product, the cost to buy $k$ units is $k^2 P_i$. We can buy any non-negative integer number of units of each product. The stock is effectively infinite ($10^{100}$ units), so we don't need to worry about running out.
+
+Let $x_i$ be the number of units of product $i$ we buy. The total cost is $\sum_{i=1}^N x_i^2 P_i$. We want to maximize $\sum_{i=1}^N x_i$ subject to $\sum_{i=1}^N x_i^2 P_i \le M$ and $x_i \ge 0$.
+
+Let $S = \sum_{i=1}^N x_i$ be the total number of units. We want to maximize $S$.
+The cost function is convex. Specifically, for a fixed product $i$, the cost of buying $k$ units is $k^2 P_i$. The marginal cost of buying the $k$-th unit is $(k)^2 P_i - (k-1)^2 P_i = (2k-1) P_i$. This marginal cost increases as $k$ increases.
+Since the marginal cost increases with the number of units bought for a specific product, this is a resource allocation problem where we want to pick the cheapest available ""next unit"" to buy.
+
+However, the ""next unit"" cost depends on how many units we have already bought of that specific product.
+If we have bought $x_i$ units of product $i$, the cost of the next unit (the $(x_i+1)$-th unit) is $(x_i+1)^2 P_i$.
+If we have bought 0 units, the cost is $1^2 P_i = P_i$.
+If we have bought 1 unit, the cost is $2^2 P_i = 4 P_i$.
+If we have bought 2 units, the cost is $3^2 P_i = 9 P_i$.
+
+This looks like we can maintain a pool of available ""next unit"" costs. Initially, for each product $i$, the cost of the first unit is $P_i$. We can pick the minimum $P_i$ among all products, buy that unit, and then the cost for the next unit of that product becomes $4 P_i$ (since $(1+1)^2 P_i = 4 P_i$). We repeat this process until the cost of the next cheapest unit exceeds $M$.
+
+Wait, the cost of the $k$-th unit of product $i$ is $k^2 P_i$.
+Let's check the sample 1.
+$N=3, M=9$.
+$P = [4, 1, 9]$.
+Available next unit costs:
+Product 1: $1^2 \times 4 = 4$.
+Product 2: $1^2 \times 1 = 1$.
+Product 3: $1^2 \times 9 = 9$.
+The minimum is 1 (Product 2). We buy 1 unit of Product 2.
+Cost so far: 1. Remaining budget: $9-1=8$.
+Units bought: 1.
+Now we update the next unit cost for Product 2. It becomes $2^2 \times 1 = 4$.
+Available next unit costs:
+Product 1: 4.
+Product 2: 4.
+Product 3: 9.
+Minimum is 4. We can buy either Product 1 or Product 2. Let's say Product 1.
+Cost so far: $1 + 4 = 5$. Remaining budget: $9-5=4$.
+Units bought: 2.
+Update next unit cost for Product 1: $2^2 \times 4 = 16$.
+Available next unit costs:
+Product 1: 16.
+Product 2: 4.
+Product 3: 9.
+Minimum is 4 (Product 2). Buy Product 2.
+Cost so far: $5 + 4 = 9$. Remaining budget: 0.
+Units bought: 3.
+Update next unit cost for Product 2: $3^2 \times 1 = 9$.
+Available next unit costs:
+Product 1: 16.
+Product 2: 9.
+Product 3: 9.
+Minimum is 9. Remaining budget 0. Cannot buy.
+Total units: 3.
+This matches Sample 1 output",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.18631860343922302,-0.36738978371401265,0.61,421,43,61,91.400390625,91.3984375,91.400390625,0.001953125,44,0.022963126517995147,3608,1940,0.5376940133037694,0.57794978664285,332541
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"There are N foods, each containing exactly one of vitamins 1, 2, and 3.
+Specifically, eating the i-th food gives you A_i units of vitamin V_i, and C_i calories.
+Takahashi can choose any subset of these N foods as long as the total calorie consumption does not exceed X.
+Find the maximum possible value of this: the minimum intake among vitamins 1, 2, and 3.
+
+Input
+
+The input is given from Standard Input in the following format:
+N X
+V_1 A_1 C_1
+V_2 A_2 C_2
+\vdots
+V_N A_N C_N
+
+Output
+
+Print the maximum possible value of ""the minimum intake among vitamins 1, 2, and 3"" when the total calories consumed is at most X.
+
+Constraints
+
+
+- 1 \leq N \leq 5000
+- 1 \leq X \leq 5000
+- 1 \leq V_i \leq 3
+- 1 \leq A_i \leq 2 \times 10^5
+- 1 \leq C_i \leq X
+- All input values are integers.
+
+Sample Input 1
+
+5 25
+1 8 5
+2 3 5
+2 7 10
+3 2 5
+3 3 10
+
+Sample Output 1
+
+3
+
+Each food provides the following if eaten:
+
+- 1st food: 8 units of vitamin 1, and 5 calories
+- 2nd food: 3 units of vitamin 2, and 5 calories
+- 3rd food: 7 units of vitamin 2, and 10 calories
+- 4th food: 2 units of vitamin 3, and 5 calories
+- 5th food: 3 units of vitamin 3, and 10 calories
+
+Eating the 1st, 2nd, 4th, and 5th foods gives 8 units of vitamin 1, 3 units of vitamin 2, 5 units of vitamin 3, and 25 calories.
+In this case, the minimum among the three vitamin intakes is 3 (vitamin 2).
+It is impossible to get 4 or more units of each vitamin without exceeding 25 calories, so the answer is 3.
+
+Sample Input 2
+
+2 5000
+1 200000 1
+2 200000 1
+
+Sample Output 2
+
+0",abc390_e,"<think>
+The problem asks us to select a subset of $N$ foods such that the total calories do not exceed $X$. Each food $i$ provides $A_i$ units of vitamin $V_i$ and costs $C_i$ calories. We want to maximize the minimum of the total amounts of vitamins 1, 2, and 3 obtained from the selected subset.
+
+Let $S$ be the set of indices of the selected foods.
+Let $V_1(S) = \sum_{i \in S, V_i=1} A_i$
+Let $V_2(S) = \sum_{i \in S, V_i=2} A_i$
+Let $V_3(S) = \sum_{i \in S, V_i=3} A_i$
+Let $Cost(S) = \sum_{i \in S} C_i$.
+
+We want to maximize $\min(V_1(S), V_2(S), V_3(S))$ subject to $Cost(S) \le X$.
+
+Constraints:
+$N \le 5000$
+$X \le 5000$
+$A_i \le 2 \times 10^5$
+$C_i \le X$
+
+The constraints on $N$ and $X$ suggest a dynamic programming approach. The value of $X$ is small (up to 5000), which is typical for knapsack-like problems. The values $A_i$ can be large, so we cannot use them as DP state dimensions directly if we want to track exact amounts. However, we are interested in the minimum of the three sums.
+
+Let $k$ be the target value for the minimum intake. If we fix $k$, we want to check if it is possible to obtain at least $k$ units of vitamin 1, at least $k$ units of vitamin 2, and at least $k$ units of vitamin 3 with total calories $\le X$.
+If we can binary search on the answer $k$, the range of $k$ is from 0 to $\sum A_i$ (which can be large, up to $5000 \times 2 \times 10^5 = 10^9$).
+However, checking a specific $k$ involves a variation of the knapsack problem.
+Specifically, for a fixed $k$, we need to select items to satisfy:
+$\sum_{i \in S, V_i=1} A_i \ge k$
+$\sum_{i \in S, V_i=2} A_i \ge k$
+$\sum_{i \in S, V_i=3} A_i \ge k$
+$\sum_{i \in S} C_i \le X$
+
+This looks like a multi-dimensional knapsack problem or a variation of the subset sum problem. Since we have three types of items (vitamins 1, 2, 3), we can process them separately.
+Actually, the items are distinct. Each item $i$ belongs to exactly one category $V_i \in \{1, 2, 3\}$.
+So, we have a set of items for vitamin 1, a set for vitamin 2, and a set for vitamin 3.
+Let $S_1$ be the set of indices where $V_i=1$, $S_2$ where $V_i=2$, $S_3$ where $V_i=3$.
+We need to choose $s_1 \subseteq S_1$, $s_2 \subseteq S_2$, $s_3 \subseteq S_3$ such that:
+$\sum_{i \in s_1} A_i \ge k$
+$\sum_{i \in s_2} A_i \ge k$
+$\sum_{i \in s_3} A_i \ge k$
+$\sum_{i \in s_1} C_i + \sum_{i \in s_2} C_i + \sum_{i \in s_3} C_i \le X$
+
+Notice that the choice of items for vitamin 1 does not affect the vitamin 2 or 3 counts, only the total cost.
+So, for a fixed $k$, we can calculate the minimum cost to get at least $k$ units of vitamin 1, minimum cost to get at least $k$ units of vitamin 2, and minimum cost to get at least $k$ units of vitamin 3.
+Let $dp1[v]$ be the minimum cost to get exactly $v$ units of vitamin 1.
+Let $dp2[v]$ be the minimum cost to get exactly $v$ units of vitamin 2.
+Let $dp3[v]$ be the minimum cost","
+
+<think>
+The problem asks us to select a subset of $N$ foods such that the total calories do not exceed $X$. Each food $i$ provides $A_i$ units of vitamin $V_i$ and costs $C_i$ calories. We want to maximize the minimum of the total amounts of vitamins 1, 2, and 3 obtained from the selected subset.
+
+Let $S$ be the set of indices of the selected foods.
+Let $V_1(S) = \sum_{i \in S, V_i=1} A_i$
+Let $V_2(S) = \sum_{i \in S, V_i=2} A_i$
+Let $V_3(S) = \sum_{i \in S, V_i=3} A_i$
+Let $Cost(S) = \sum_{i \in S} C_i$.
+
+We want to maximize $\min(V_1(S), V_2(S), V_3(S))$ subject to $Cost(S) \le X$.
+
+Constraints:
+$N \le 5000$
+$X \le 5000$
+$A_i \le 2 \times 10^5$
+$C_i \le X$
+
+The constraints on $N$ and $X$ suggest a dynamic programming approach. The value of $X$ is small (up to 5000), which is typical for knapsack-like problems. The values $A_i$ can be large, so we cannot use them as DP state dimensions directly if we want to track exact amounts. However, we are interested in the minimum of the three sums.
+
+Let $k$ be the target value for the minimum intake. If we fix $k$, we want to check if it is possible to obtain at least $k$ units of vitamin 1, at least $k$ units of vitamin 2, and at least $k$ units of vitamin 3 with total calories $\le X$.
+If we can binary search on the answer $k$, the range of $k$ is from 0 to $\sum A_i$ (which can be large, up to $5000 \times 2 \times 10^5 = 10^9$).
+However, checking a specific $k$ involves a variation of the knapsack problem.
+Specifically, for a fixed $k$, we need to select items to satisfy:
+$\sum_{i \in S, V_i=1} A_i \ge k$
+$\sum_{i \in S, V_i=2} A_i \ge k$
+$\sum_{i \in S, V_i=3} A_i \ge k$
+$\sum_{i \in S} C_i \le X$
+
+This looks like a multi-dimensional knapsack problem or a variation of the subset sum problem. Since we have three types of items (vitamins 1, 2, 3), we can process them separately.
+Actually, the items are distinct. Each item $i$ belongs to exactly one category $V_i \in \{1, 2, 3\}$.
+So, we have a set of items for vitamin 1, a set for vitamin 2, and a set for vitamin 3.
+Let $S_1$ be the set of indices where $V_i=1$, $S_2$ where $V_i=2$, $S_3$ where $V_i=3$.
+We need to choose $s_1 \subseteq S_1$, $s_2 \subseteq S_2$, $s_3 \subseteq S_3$ such that:
+$\sum_{i \in s_1} A_i \ge k$
+$\sum_{i \in s_2} A_i \ge k$
+$\sum_{i \in s_3} A_i \ge k$
+$\sum_{i \in s_1} C_i + \sum_{i \in s_2} C_i + \sum_{i \in s_3} C_i \le X$
+
+Notice that the choice of items for vitamin 1 does not affect the vitamin 2 or 3 counts, only the total cost.
+So, for a fixed $k$, we can calculate the minimum cost to get at least $k$ units of vitamin 1, minimum cost to get at least $k$ units of vitamin 2, and minimum cost to get at least $k$ units of vitamin 3.
+Let $dp1[v]$ be the minimum cost to get exactly $v$ units of vitamin 1.
+Let $dp2[v]$ be the minimum cost to get exactly $v$ units of vitamin 2.
+Let $dp3[v]$ be the minimum cost","<think>
+The problem asks us to select a subset of $N$ foods such that the total calories do not exceed $X$. Each food $i$ provides $A_i$ units of vitamin $V_i$ and costs $C_i$ calories. We want to maximize the minimum of the total amounts of vitamins 1, 2, and 3 obtained from the selected subset.
+
+Let $S$ be the set of indices of the selected foods.
+Let $V_1(S) = \sum_{i \in S, V_i=1} A_i$
+Let $V_2(S) = \sum_{i \in S, V_i=2} A_i$
+Let $V_3(S) = \sum_{i \in S, V_i=3} A_i$
+Let $Cost(S) = \sum_{i \in S} C_i$.
+
+We want to maximize $\min(V_1(S), V_2(S), V_3(S))$ subject to $Cost(S) \le X$.
+
+Constraints:
+$N \le 5000$
+$X \le 5000$
+$A_i \le 2 \times 10^5$
+$C_i \le X$
+
+The constraints on $N$ and $X$ suggest a dynamic programming approach. The value of $X$ is small (up to 5000), which is typical for knapsack-like problems. The values $A_i$ can be large, so we cannot use them as DP state dimensions directly if we want to track exact amounts. However, we are interested in the minimum of the three sums.
+
+Let $k$ be the target value for the minimum intake. If we fix $k$, we want to check if it is possible to obtain at least $k$ units of vitamin 1, at least $k$ units of vitamin 2, and at least $k$ units of vitamin 3 with total calories $\le X$.
+If we can binary search on the answer $k$, the range of $k$ is from 0 to $\sum A_i$ (which can be large, up to $5000 \times 2 \times 10^5 = 10^9$).
+However, checking a specific $k$ involves a variation of the knapsack problem.
+Specifically, for a fixed $k$, we need to select items to satisfy:
+$\sum_{i \in S, V_i=1} A_i \ge k$
+$\sum_{i \in S, V_i=2} A_i \ge k$
+$\sum_{i \in S, V_i=3} A_i \ge k$
+$\sum_{i \in S} C_i \le X$
+
+This looks like a multi-dimensional knapsack problem or a variation of the subset sum problem. Since we have three types of items (vitamins 1, 2, 3), we can process them separately.
+Actually, the items are distinct. Each item $i$ belongs to exactly one category $V_i \in \{1, 2, 3\}$.
+So, we have a set of items for vitamin 1, a set for vitamin 2, and a set for vitamin 3.
+Let $S_1$ be the set of indices where $V_i=1$, $S_2$ where $V_i=2$, $S_3$ where $V_i=3$.
+We need to choose $s_1 \subseteq S_1$, $s_2 \subseteq S_2$, $s_3 \subseteq S_3$ such that:
+$\sum_{i \in s_1} A_i \ge k$
+$\sum_{i \in s_2} A_i \ge k$
+$\sum_{i \in s_3} A_i \ge k$
+$\sum_{i \in s_1} C_i + \sum_{i \in s_2} C_i + \sum_{i \in s_3} C_i \le X$
+
+Notice that the choice of items for vitamin 1 does not affect the vitamin 2 or 3 counts, only the total cost.
+So, for a fixed $k$, we can calculate the minimum cost to get at least $k$ units of vitamin 1, minimum cost to get at least $k$ units of vitamin 2, and minimum cost to get at least $k$ units of vitamin 3.
+Let $dp1[v]$ be the minimum cost to get exactly $v$ units of vitamin 1.
+Let $dp2[v]$ be the minimum cost to get exactly $v$ units of vitamin 2.
+Let $dp3[v]$ be the minimum cost",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.17468508297075852,-0.35507890855444035,0.43,313,32,43,91.400390625,91.3984375,91.400390625,0.001953125,33,0.01943033782291892,2968,1696,0.5714285714285714,0.7653296033930425,354608
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"You are given a positive integer N.
+For an integer sequence A=(A_1,A_2,\ldots,A_N) of length N. Let f(A) be the integer obtained as follows:
+
+- Let S be an empty string.
+- For i=1,2,\ldots,N in this order:
+- Let T be the decimal representation of A_i without leading zeros.
+- Append T to the end of S.
+
+
+- Interpret S as a decimal integer, and let that be f(A).
+
+For example, if A=(1,20,34), then f(A)=12034.
+There are N! permutations P of (1,2,\ldots,N). Find the sum, modulo 998244353, of f(P) over all such permutations P.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+
+Output
+
+Print the sum, modulo 998244353, of f(P) over all permutations P of (1,2,\ldots,N).
+
+Constraints
+
+
+- 1 \le N \le 2 \times 10^5
+- All input values are integers.
+
+Sample Input 1
+
+3
+
+Sample Output 1
+
+1332
+
+The six permutations of (1,2,3) are (1,2,3), (1,3,2), (2,1,3), (2,3,1), (3,1,2), (3,2,1). Their f(P) values are 123,132,213,231,312,321. Therefore, print 123+132+213+231+312+321 = 1332.
+
+Sample Input 2
+
+390
+
+Sample Output 2
+
+727611652
+
+Print the sum modulo 998244353.
+
+Sample Input 3
+
+79223
+
+Sample Output 3
+
+184895744",abc390_g,"<think>
+The problem asks us to calculate the sum of $f(P)$ over all permutations $P$ of the sequence $(1, 2, \ldots, N)$, modulo 998244353.
+Here, $f(P)$ is formed by concatenating the decimal representations of the elements of $P$ in order.
+Let $A = (A_1, A_2, \ldots, A_N)$ be a permutation of $(1, 2, \ldots, N)$.
+Let $S_i$ be the string representation of $A_i$.
+Then $f(A)$ is the integer represented by the string $S_1 S_2 \ldots S_N$.
+We need to compute $\sum_{P} f(P) \pmod{998244353}$.
+
+Let's denote the decimal representation of $i$ as $D(i)$.
+The value of $f(P)$ can be written as:
+$f(P) = \sum_{i=1}^N A_i \times 10^{L(P_{i+1}) + \ldots + L(P_N)}$, where $L(x)$ is the number of digits in $x$.
+Actually, it's easier to think about the contribution of each element $A_i$ to the total sum.
+The element $A_i$ contributes $A_i \times 10^{\text{length of the suffix}}$.
+The suffix consists of $A_{i+1}, \ldots, A_N$.
+So, $f(P) = \sum_{i=1}^N A_i \times 10^{\sum_{j=i+1}^N L(A_j)}$.
+
+We need to sum this over all permutations $P$.
+Let $S = \sum_{P} f(P) = \sum_{P} \sum_{i=1}^N A_i \times 10^{\sum_{j=i+1}^N L(A_j)}$.
+We can swap the summations:
+$S = \sum_{i=1}^N \sum_{P} A_i \times 10^{\sum_{j=i+1}^N L(A_j)}$.
+
+Let's fix the position $i$ in the permutation $P$. The element at position $i$ is some value $v \in \{1, \ldots, N\}$.
+For a fixed $i$, we sum over all permutations where $P_i = v$.
+The term contributed by $v$ is $v \times 10^{\sum_{j=i+1}^N L(P_j)}$.
+The sum over all permutations where $P_i = v$ is:
+$\sum_{P: P_i=v} v \times 10^{\sum_{j=i+1}^N L(P_j)} = v \times \sum_{P: P_i=v} 10^{\sum_{j=i+1}^N L(P_j)}$.
+
+Let's analyze the term $\sum_{P: P_i=v} 10^{\sum_{j=i+1}^N L(P_j)}$.
+The indices $j$ range from $i+1$ to $N$. There are $N-i$ such indices.
+The set of values $\{P_1, \ldots, P_N\}$ is $\{1, \ldots, N\}$.
+If $P_i = v$, then the remaining values $\{P_1, \ldots, P_{i-1}, P_{i+1}, \ldots, P_N\}$ are $\{1, \ldots, N\} \setminus \{v\}$.
+The term $10^{\sum_{j=i+1}^N L(P_j)}$ depends only on the values at positions $i+1, \ldots, N$.
+The values at positions $1, \ldots, i-1$ do not affect the exponent.
+However, the set of values available for positions $1, \ldots, i-1$ and $i+1, \ldots, N$ is fixed (it's $\{1, \ldots, N\} \setminus \{v\}$).
+The number of ways to arrange the remaining $N-1$ values into the $N-1$ positions is $(N-1)!$.
+For any specific arrangement of the remaining values, the exponent is $\sum_{j=i+1}^N L(P_j)$.
+Wait, the exponent depends on which values are placed at positions $i+1, \ldots, N$.
+Let $K = N-i$. We are choosing $","
+
+<think>
+The problem asks us to calculate the sum of $f(P)$ over all permutations $P$ of the sequence $(1, 2, \ldots, N)$, modulo 998244353.
+Here, $f(P)$ is formed by concatenating the decimal representations of the elements of $P$ in order.
+Let $A = (A_1, A_2, \ldots, A_N)$ be a permutation of $(1, 2, \ldots, N)$.
+Let $S_i$ be the string representation of $A_i$.
+Then $f(A)$ is the integer represented by the string $S_1 S_2 \ldots S_N$.
+We need to compute $\sum_{P} f(P) \pmod{998244353}$.
+
+Let's denote the decimal representation of $i$ as $D(i)$.
+The value of $f(P)$ can be written as:
+$f(P) = \sum_{i=1}^N A_i \times 10^{L(P_{i+1}) + \ldots + L(P_N)}$, where $L(x)$ is the number of digits in $x$.
+Actually, it's easier to think about the contribution of each element $A_i$ to the total sum.
+The element $A_i$ contributes $A_i \times 10^{\text{length of the suffix}}$.
+The suffix consists of $A_{i+1}, \ldots, A_N$.
+So, $f(P) = \sum_{i=1}^N A_i \times 10^{\sum_{j=i+1}^N L(A_j)}$.
+
+We need to sum this over all permutations $P$.
+Let $S = \sum_{P} f(P) = \sum_{P} \sum_{i=1}^N A_i \times 10^{\sum_{j=i+1}^N L(A_j)}$.
+We can swap the summations:
+$S = \sum_{i=1}^N \sum_{P} A_i \times 10^{\sum_{j=i+1}^N L(A_j)}$.
+
+Let's fix the position $i$ in the permutation $P$. The element at position $i$ is some value $v \in \{1, \ldots, N\}$.
+For a fixed $i$, we sum over all permutations where $P_i = v$.
+The term contributed by $v$ is $v \times 10^{\sum_{j=i+1}^N L(P_j)}$.
+The sum over all permutations where $P_i = v$ is:
+$\sum_{P: P_i=v} v \times 10^{\sum_{j=i+1}^N L(P_j)} = v \times \sum_{P: P_i=v} 10^{\sum_{j=i+1}^N L(P_j)}$.
+
+Let's analyze the term $\sum_{P: P_i=v} 10^{\sum_{j=i+1}^N L(P_j)}$.
+The indices $j$ range from $i+1$ to $N$. There are $N-i$ such indices.
+The set of values $\{P_1, \ldots, P_N\}$ is $\{1, \ldots, N\}$.
+If $P_i = v$, then the remaining values $\{P_1, \ldots, P_{i-1}, P_{i+1}, \ldots, P_N\}$ are $\{1, \ldots, N\} \setminus \{v\}$.
+The term $10^{\sum_{j=i+1}^N L(P_j)}$ depends only on the values at positions $i+1, \ldots, N$.
+The values at positions $1, \ldots, i-1$ do not affect the exponent.
+However, the set of values available for positions $1, \ldots, i-1$ and $i+1, \ldots, N$ is fixed (it's $\{1, \ldots, N\} \setminus \{v\}$).
+The number of ways to arrange the remaining $N-1$ values into the $N-1$ positions is $(N-1)!$.
+For any specific arrangement of the remaining values, the exponent is $\sum_{j=i+1}^N L(P_j)$.
+Wait, the exponent depends on which values are placed at positions $i+1, \ldots, N$.
+Let $K = N-i$. We are choosing $","<think>
+The problem asks us to calculate the sum of $f(P)$ over all permutations $P$ of the sequence $(1, 2, \ldots, N)$, modulo 998244353.
+Here, $f(P)$ is formed by concatenating the decimal representations of the elements of $P$ in order.
+Let $A = (A_1, A_2, \ldots, A_N)$ be a permutation of $(1, 2, \ldots, N)$.
+Let $S_i$ be the string representation of $A_i$.
+Then $f(A)$ is the integer represented by the string $S_1 S_2 \ldots S_N$.
+We need to compute $\sum_{P} f(P) \pmod{998244353}$.
+
+Let's denote the decimal representation of $i$ as $D(i)$.
+The value of $f(P)$ can be written as:
+$f(P) = \sum_{i=1}^N A_i \times 10^{L(P_{i+1}) + \ldots + L(P_N)}$, where $L(x)$ is the number of digits in $x$.
+Actually, it's easier to think about the contribution of each element $A_i$ to the total sum.
+The element $A_i$ contributes $A_i \times 10^{\text{length of the suffix}}$.
+The suffix consists of $A_{i+1}, \ldots, A_N$.
+So, $f(P) = \sum_{i=1}^N A_i \times 10^{\sum_{j=i+1}^N L(A_j)}$.
+
+We need to sum this over all permutations $P$.
+Let $S = \sum_{P} f(P) = \sum_{P} \sum_{i=1}^N A_i \times 10^{\sum_{j=i+1}^N L(A_j)}$.
+We can swap the summations:
+$S = \sum_{i=1}^N \sum_{P} A_i \times 10^{\sum_{j=i+1}^N L(A_j)}$.
+
+Let's fix the position $i$ in the permutation $P$. The element at position $i$ is some value $v \in \{1, \ldots, N\}$.
+For a fixed $i$, we sum over all permutations where $P_i = v$.
+The term contributed by $v$ is $v \times 10^{\sum_{j=i+1}^N L(P_j)}$.
+The sum over all permutations where $P_i = v$ is:
+$\sum_{P: P_i=v} v \times 10^{\sum_{j=i+1}^N L(P_j)} = v \times \sum_{P: P_i=v} 10^{\sum_{j=i+1}^N L(P_j)}$.
+
+Let's analyze the term $\sum_{P: P_i=v} 10^{\sum_{j=i+1}^N L(P_j)}$.
+The indices $j$ range from $i+1$ to $N$. There are $N-i$ such indices.
+The set of values $\{P_1, \ldots, P_N\}$ is $\{1, \ldots, N\}$.
+If $P_i = v$, then the remaining values $\{P_1, \ldots, P_{i-1}, P_{i+1}, \ldots, P_N\}$ are $\{1, \ldots, N\} \setminus \{v\}$.
+The term $10^{\sum_{j=i+1}^N L(P_j)}$ depends only on the values at positions $i+1, \ldots, N$.
+The values at positions $1, \ldots, i-1$ do not affect the exponent.
+However, the set of values available for positions $1, \ldots, i-1$ and $i+1, \ldots, N$ is fixed (it's $\{1, \ldots, N\} \setminus \{v\}$).
+The number of ways to arrange the remaining $N-1$ values into the $N-1$ positions is $(N-1)!$.
+For any specific arrangement of the remaining values, the exponent is $\sum_{j=i+1}^N L(P_j)$.
+Wait, the exponent depends on which values are placed at positions $i+1, \ldots, N$.
+Let $K = N-i$. We are choosing $",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.16952243656702204,-0.3435784442646429,0.42,328,33,42,91.400390625,91.3984375,91.400390625,0.001953125,34,0.020313534996687976,3424,2104,0.6144859813084113,0.7282671272308578,333504
+subtree_prefetching_MH,Qwen/Qwen3.5-4B,"You are given an integer sequence A=(A_1,A_2,A_3,A_4,A_5) obtained by permuting (1,2,3,4,5).
+Determine whether A can be sorted in ascending order by performing exactly one operation of swapping two adjacent elements in A.
+
+Input
+
+The input is given from Standard Input in the following format:
+A_1 A_2 A_3 A_4 A_5
+
+Output
+
+If A can be sorted in ascending order by exactly one operation, print Yes; otherwise, print No.
+
+Constraints
+
+
+- A is an integer sequence of length 5 obtained by permuting (1,2,3,4,5).
+
+Sample Input 1
+
+1 2 4 3 5
+
+Sample Output 1
+
+Yes
+
+By swapping A_3 and A_4, A becomes (1,2,3,4,5), so it can be sorted in ascending order. Therefore, print Yes.
+
+Sample Input 2
+
+5 3 2 4 1
+
+Sample Output 2
+
+No
+
+No matter what operation is performed, it is impossible to sort A in ascending order.
+
+Sample Input 3
+
+1 2 3 4 5
+
+Sample Output 3
+
+No
+
+You must perform exactly one operation.
+
+Sample Input 4
+
+2 1 3 4 5
+
+Sample Output 4
+
+Yes",abc390_a,"<think>
+The user wants a Python program to solve a specific problem.
+
+**Problem Statement:**
+Given a permutation of $(1, 2, 3, 4, 5)$, determine if it can be sorted into $(1, 2, 3, 4, 5)$ by swapping exactly two adjacent elements.
+
+**Input:**
+A single line containing 5 integers separated by spaces.
+
+**Output:**
+""Yes"" if possible, ""No"" otherwise.
+
+**Constraints:**
+The input is always a permutation of 1 to 5.
+
+**Logic:**
+1.  Read the input sequence $A$.
+2.  The target sequence is $T = (1, 2, 3, 4, 5)$.
+3.  We need to check if there exists an index $i$ ($0 \le i < 4$) such that swapping $A[i]$ and $A[i+1]$ results in $T$.
+4.  Alternatively, we can iterate through all possible adjacent swaps, perform the swap, check if the resulting sequence is sorted, and if so, print ""Yes"". If we check all 4 possible swaps and none result in a sorted sequence, print ""No"".
+5.  Wait, there is a specific case mentioned in Sample 3: `1 2 3 4 5`. The output is `No`. This implies that if the sequence is *already* sorted, we cannot perform the operation to keep it sorted (since we must perform *exactly* one operation). Swapping adjacent elements in a sorted sequence of distinct elements will always result in an unsorted sequence.
+    *   Let's check Sample 3: Input `1 2 3 4 5`. Output `No`.
+    *   If we swap 1 and 2, we get `2 1 3 4 5` (unsorted).
+    *   So, the condition is strictly: Is there a swap that makes it sorted?
+    *   If the input is already sorted, any swap makes it unsorted. So the answer is No.
+    *   If the input is unsorted, we need to check if *any* single adjacent swap makes it sorted.
+
+**Algorithm:**
+1.  Read the list of integers $A$.
+2.  Define the target list $T = [1, 2, 3, 4, 5]$.
+3.  Iterate $i$ from 0 to 3 (inclusive).
+    a. Create a copy of $A$, say $A'$.
+    b. Swap $A'[i]$ and $A'[i+1]$.
+    c. Check if $A'$ equals $T$.
+    d. If yes, print ""Yes"" and terminate.
+4.  If the loop finishes without finding a match, print ""No"".
+
+**Edge Cases:**
+- Input is already sorted: The loop will check swaps.
+  - Swap(0,1) -> `2 1 3 4 5` != `1 2 3 4 5`
+  - Swap(1,2) -> `1 3 2 4 5` != `1 2 3 4 5`
+  - ...
+  - None will match. Output ""No"". Correct.
+- Input is `2 1 3 4 5`.
+  - Swap(0,1) -> `1 2 3 4 5` == `T`. Output ""Yes"". Correct.
+- Input is `1 2 4 3 5`.
+  - Swap(2,3) -> `1 2 3 4 5` == `T`. Output ""Yes"". Correct.
+- Input is `5 3 2 4 1`.
+  - Swap(0,1) -> `3 5 2 4 1` (No)
+  - Swap(1,2) -> `5 2 3 4 1` (No)
+  - Swap(2,3) -> `5 3 4 2 1` (No)
+  - Swap(3,4) -> `5 3 2 1 4` (No)
+  - Output ""No"". Correct.
+
+**Alternative Logic:**
+Count the number of inversions.
+For a permutation to be sorted by one adjacent swap, it must have exactly 1 inversion.
+Wait, let's verify.
+- `1 2 3 4 5`: 0 inversions.
+- `2 1 3 4 5`: 1 inversion (2,1).
+- `1 3 2 4 5`: 1 inversion (3","
+
+<think>
+The user wants a Python program to solve a specific problem.
+
+**Problem Statement:**
+Given a permutation of $(1, 2, 3, 4, 5)$, determine if it can be sorted into $(1, 2, 3, 4, 5)$ by swapping exactly two adjacent elements.
+
+**Input:**
+A single line containing 5 integers separated by spaces.
+
+**Output:**
+""Yes"" if possible, ""No"" otherwise.
+
+**Constraints:**
+The input is always a permutation of 1 to 5.
+
+**Logic:**
+1.  Read the input sequence $A$.
+2.  The target sequence is $T = (1, 2, 3, 4, 5)$.
+3.  We need to check if there exists an index $i$ ($0 \le i < 4$) such that swapping $A[i]$ and $A[i+1]$ results in $T$.
+4.  Alternatively, we can iterate through all possible adjacent swaps, perform the swap, check if the resulting sequence is sorted, and if so, print ""Yes"". If we check all 4 possible swaps and none result in a sorted sequence, print ""No"".
+5.  Wait, there is a specific case mentioned in Sample 3: `1 2 3 4 5`. The output is `No`. This implies that if the sequence is *already* sorted, we cannot perform the operation to keep it sorted (since we must perform *exactly* one operation). Swapping adjacent elements in a sorted sequence of distinct elements will always result in an unsorted sequence.
+    *   Let's check Sample 3: Input `1 2 3 4 5`. Output `No`.
+    *   If we swap 1 and 2, we get `2 1 3 4 5` (unsorted).
+    *   So, the condition is strictly: Is there a swap that makes it sorted?
+    *   If the input is already sorted, any swap makes it unsorted. So the answer is No.
+    *   If the input is unsorted, we need to check if *any* single adjacent swap makes it sorted.
+
+**Algorithm:**
+1.  Read the list of integers $A$.
+2.  Define the target list $T = [1, 2, 3, 4, 5]$.
+3.  Iterate $i$ from 0 to 3 (inclusive).
+    a. Create a copy of $A$, say $A'$.
+    b. Swap $A'[i]$ and $A'[i+1]$.
+    c. Check if $A'$ equals $T$.
+    d. If yes, print ""Yes"" and terminate.
+4.  If the loop finishes without finding a match, print ""No"".
+
+**Edge Cases:**
+- Input is already sorted: The loop will check swaps.
+  - Swap(0,1) -> `2 1 3 4 5` != `1 2 3 4 5`
+  - Swap(1,2) -> `1 3 2 4 5` != `1 2 3 4 5`
+  - ...
+  - None will match. Output ""No"". Correct.
+- Input is `2 1 3 4 5`.
+  - Swap(0,1) -> `1 2 3 4 5` == `T`. Output ""Yes"". Correct.
+- Input is `1 2 4 3 5`.
+  - Swap(2,3) -> `1 2 3 4 5` == `T`. Output ""Yes"". Correct.
+- Input is `5 3 2 4 1`.
+  - Swap(0,1) -> `3 5 2 4 1` (No)
+  - Swap(1,2) -> `5 2 3 4 1` (No)
+  - Swap(2,3) -> `5 3 4 2 1` (No)
+  - Swap(3,4) -> `5 3 2 1 4` (No)
+  - Output ""No"". Correct.
+
+**Alternative Logic:**
+Count the number of inversions.
+For a permutation to be sorted by one adjacent swap, it must have exactly 1 inversion.
+Wait, let's verify.
+- `1 2 3 4 5`: 0 inversions.
+- `2 1 3 4 5`: 1 inversion (2,1).
+- `1 3 2 4 5`: 1 inversion (3","<think>
+The user wants a Python program to solve a specific problem.
+
+**Problem Statement:**
+Given a permutation of $(1, 2, 3, 4, 5)$, determine if it can be sorted into $(1, 2, 3, 4, 5)$ by swapping exactly two adjacent elements.
+
+**Input:**
+A single line containing 5 integers separated by spaces.
+
+**Output:**
+""Yes"" if possible, ""No"" otherwise.
+
+**Constraints:**
+The input is always a permutation of 1 to 5.
+
+**Logic:**
+1.  Read the input sequence $A$.
+2.  The target sequence is $T = (1, 2, 3, 4, 5)$.
+3.  We need to check if there exists an index $i$ ($0 \le i < 4$) such that swapping $A[i]$ and $A[i+1]$ results in $T$.
+4.  Alternatively, we can iterate through all possible adjacent swaps, perform the swap, check if the resulting sequence is sorted, and if so, print ""Yes"". If we check all 4 possible swaps and none result in a sorted sequence, print ""No"".
+5.  Wait, there is a specific case mentioned in Sample 3: `1 2 3 4 5`. The output is `No`. This implies that if the sequence is *already* sorted, we cannot perform the operation to keep it sorted (since we must perform *exactly* one operation). Swapping adjacent elements in a sorted sequence of distinct elements will always result in an unsorted sequence.
+    *   Let's check Sample 3: Input `1 2 3 4 5`. Output `No`.
+    *   If we swap 1 and 2, we get `2 1 3 4 5` (unsorted).
+    *   So, the condition is strictly: Is there a swap that makes it sorted?
+    *   If the input is already sorted, any swap makes it unsorted. So the answer is No.
+    *   If the input is unsorted, we need to check if *any* single adjacent swap makes it sorted.
+
+**Algorithm:**
+1.  Read the list of integers $A$.
+2.  Define the target list $T = [1, 2, 3, 4, 5]$.
+3.  Iterate $i$ from 0 to 3 (inclusive).
+    a. Create a copy of $A$, say $A'$.
+    b. Swap $A'[i]$ and $A'[i+1]$.
+    c. Check if $A'$ equals $T$.
+    d. If yes, print ""Yes"" and terminate.
+4.  If the loop finishes without finding a match, print ""No"".
+
+**Edge Cases:**
+- Input is already sorted: The loop will check swaps.
+  - Swap(0,1) -> `2 1 3 4 5` != `1 2 3 4 5`
+  - Swap(1,2) -> `1 3 2 4 5` != `1 2 3 4 5`
+  - ...
+  - None will match. Output ""No"". Correct.
+- Input is `2 1 3 4 5`.
+  - Swap(0,1) -> `1 2 3 4 5` == `T`. Output ""Yes"". Correct.
+- Input is `1 2 4 3 5`.
+  - Swap(2,3) -> `1 2 3 4 5` == `T`. Output ""Yes"". Correct.
+- Input is `5 3 2 4 1`.
+  - Swap(0,1) -> `3 5 2 4 1` (No)
+  - Swap(1,2) -> `5 2 3 4 1` (No)
+  - Swap(2,3) -> `5 3 4 2 1` (No)
+  - Swap(3,4) -> `5 3 2 1 4` (No)
+  - Output ""No"". Correct.
+
+**Alternative Logic:**
+Count the number of inversions.
+For a permutation to be sorted by one adjacent swap, it must have exactly 1 inversion.
+Wait, let's verify.
+- `1 2 3 4 5`: 0 inversions.
+- `2 1 3 4 5`: 1 inversion (2,1).
+- `1 3 2 4 5`: 1 inversion (3",False,Code is incorrect.,4.0,100,10,False,accept_first,entropy,4.0,1,1024,0.25,const,,auto,1024,-0.16632421785146023,-0.3334273534237665,0.21,266,27,21,91.400390625,91.3984375,91.400390625,0.001953125,28,0.01943033782291892,1968,908,0.4613821138211382,0.7381307853090475,221034

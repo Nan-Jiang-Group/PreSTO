@@ -1,0 +1,3840 @@
+method,base_llm,question,correct_answer,pred_answer,completion,prediction,is_correct,justification,alpha,mcmc_steps,cut_dist_type,acceptance_ratio,prefix_cache_hit_rate,prefix_cache_queried_tokens,prefix_cache_hit_tokens,engine_generate_calls
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"Among the 81 integers that appear in the 9-by-9 multiplication table, find the sum of those that are not X.
+
+There is a grid of size 9 by 9.
+Each cell of the grid contains an integer: the cell at the i-th row from the top and the j-th column from the left contains i \times j.
+You are given an integer X. Among the 81 integers written in this grid, find the sum of those that are not X. If the same value appears in multiple cells, add it for each cell.
+
+Input
+
+The input is given from Standard Input in the following format:
+X
+
+Output
+
+Print the sum of the integers that are not X among the 81 integers written in the grid.
+
+Constraints
+
+
+- X is an integer between 1 and 81, inclusive.
+
+Sample Input 1
+
+1
+
+Sample Output 1
+
+2024
+
+The only cell with 1 in the grid is the cell at the 1st row from the top and 1st column from the left. Summing all integers that are not 1 yields 2024.
+
+Sample Input 2
+
+11
+
+Sample Output 2
+
+2025
+
+There is no cell containing 11 in the grid. Thus, the answer is 2025, the sum of all 81 integers.
+
+Sample Input 3
+
+24
+
+Sample Output 3
+
+1929",abc387_b,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: Among the 81 integers that appear in the 9-by-9 multiplication table, find the sum of those that are not X.
+
+There is a grid of size 9 by 9.
+Each cell of the grid contains an integer: the cell at the i-th row from the top and the j-th column from the left contains i \times j.
+You are given an integer X. Among the 81 integers written in this grid, find the sum of those that are not X. If the same value appears in multiple cells, add it for each cell.
+
+Input
+
+The input is given from Standard Input in the following format:
+X
+
+Output
+
+Print the sum of the integers that are not X among the 81 integers written in the grid.
+
+Constraints
+
+
+- X is an integer between 1 and 81, inclusive.
+
+Sample Input 1
+
+1
+
+Sample Output 1
+
+2024
+
+The only cell with 1 in the grid is the cell at the 1st row from the top and 1st column from the left. Summing all integers that are not 1 yields 2024.
+
+Sample Input 2
+
+11
+
+Sample Output 2
+
+2025
+
+There is no cell containing 11 in the grid. Thus, the answer is 2025, the sum of all 81 integers.
+
+Sample Input 3
+
+24
+
+Sample Output 3
+
+1929
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The user wants a Python program to solve a specific problem.
+
+**Problem Statement:**
+Calculate the sum of all integers in a 9x9 multiplication table that are *not* equal to a given integer $X$.
+The grid is defined such that the cell at row $i$ and column $j$ contains $i \times j$.
+The indices $i$ and $j$ range from 1 to 9.
+The total number of cells is $9 \times 9 = 81$.
+If a value appears multiple times, it is counted multiple times.
+
+**Input:**
+An integer $X$ ($1 \le X \le 81$).
+
+**Output:**
+The sum of values in the grid excluding instances of $X$.
+
+**Algorithm:**
+1.  Read the integer $X$ from standard input.
+2.  Initialize a variable `total_sum` to 0.
+3.  Iterate through rows $i$ from 1 to 9.
+4.  Iterate through columns $j$ from 1 to 9.
+5.  Calculate the product $val = i \times j$.
+6.  If $val \neq X$, add $val$ to `total_sum`.
+7.  Print `total_sum`.
+
+**Alternative Algorithm:**
+1.  Calculate the sum of all integers in the 9x9 multiplication table.
+    The sum is $\sum_{i=1}^9 \sum_{j=1}^9 (i \times j) = \sum_{i=1}^9 i \times \sum_{j=1}^9 j = (\sum_{i=1}^9 i)^2$.
+    $\sum_{i=1}^9 i = \frac{9 \times 10}{2} = 45$.
+    So the total sum is $45^2 = 2025$.
+2.  Count how many times $X$ appears in the table.
+    $X$ appears $k$ times where $k$ is the number of pairs $(i, j)$ such that $i \times j = X$ with $1 \le i, j \le 9$.
+    Since $i \times j = X$, $i$ must be a divisor of $X$. Also $i \le 9$ and $j = X/i \le 9$.
+    So we need to count divisors $d$ of $X$ such that $d \le 9$ and $X/d \le 9$.
+3.  Subtract $k \times X$ from the total sum.
+    Result = $2025 - k \times X$.
+
+Let's check Sample 1: $X=1$.
+Total sum = 2025.
+Occurrences of 1: $(1,1)$. Count = 1.
+Result = $2025 - 1 \times 1 = 2024$. Matches sample output.
+
+Sample 2: $X=11$.
+Total sum = 2025.
+Occurrences of 11: Divisors of 11 are 1, 11.
+If $i=1$, $j=11$ (out of bounds).
+If $i=11$, $j=1$ (out of bounds).
+Count = 0.
+Result = $2025 - 0 = 2025$. Matches sample output.
+
+Sample 3: $X=24$.
+Total sum = 2025.
+Occurrences of 24:
+Pairs $(i, j)$ such that $i \times j = 24$ and $1 \le i, j \le 9$.
+Divisors of 24: 1, 2, 3, 4, 6, 8, 12, 24.
+Valid $i$:
+$i=1 \implies j=24$ (No)
+$i=2 \implies j=12$ (No)
+$i=3 \implies j=8$ (Yes) -> (3, 8)
+$i=4 \implies j=6$ (Yes) -> (4, 6)
+$i=6 \implies j=4$ (Yes) -> (6, 4)
+$i=8 \implies j=3$ (Yes) -> (8, 3)
+$i=12 \implies j=2$ (No)
+Count = 4.
+Result = $2025 - 4 \times 24 = 2025 - 96 = 1929$. Matches",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.24,0.7261931718117091,238482,173184,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"You are given positive integers N, M, and a sequence A = (A_1, A_2, \dots, A_N) of length N, each element being an integer between 1 and N, inclusive.
+Find the number, modulo 998244353, of sequences x = (x_1, x_2, \dots, x_N) of length N, each element being an integer between 1 and M, inclusive, that satisfy the following condition:
+
+- x_i \leq x_{A_i} for every i (1 \leq i \leq N).
+
+Input
+
+The input is given from Standard Input in the following format:
+N M
+A_1 A_2 \dots A_N
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 1 \leq N, M \leq 2025
+- 1 \leq A_i \leq N
+- All input values are integers.
+
+Sample Input 1
+
+3 3
+2 1 1
+
+Sample Output 1
+
+6
+
+The sequences x=(1,1,1),(2,2,1),(2,2,2),(3,3,1),(3,3,2),(3,3,3) satisfy the condition.
+
+Sample Input 2
+
+4 9
+1 1 1 1
+
+Sample Output 2
+
+2025
+
+Sample Input 3
+
+10 5
+9 4 5 5 4 2 1 5 7 2
+
+Sample Output 3
+
+10010",abc387_f,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: You are given positive integers N, M, and a sequence A = (A_1, A_2, \dots, A_N) of length N, each element being an integer between 1 and N, inclusive.
+Find the number, modulo 998244353, of sequences x = (x_1, x_2, \dots, x_N) of length N, each element being an integer between 1 and M, inclusive, that satisfy the following condition:
+
+- x_i \leq x_{A_i} for every i (1 \leq i \leq N).
+
+Input
+
+The input is given from Standard Input in the following format:
+N M
+A_1 A_2 \dots A_N
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 1 \leq N, M \leq 2025
+- 1 \leq A_i \leq N
+- All input values are integers.
+
+Sample Input 1
+
+3 3
+2 1 1
+
+Sample Output 1
+
+6
+
+The sequences x=(1,1,1),(2,2,1),(2,2,2),(3,3,1),(3,3,2),(3,3,3) satisfy the condition.
+
+Sample Input 2
+
+4 9
+1 1 1 1
+
+Sample Output 2
+
+2025
+
+Sample Input 3
+
+10 5
+9 4 5 5 4 2 1 5 7 2
+
+Sample Output 3
+
+10010
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The problem asks us to find the number of sequences $x = (x_1, x_2, \dots, x_N)$ such that $1 \le x_i \le M$ for all $i$, and $x_i \le x_{A_i}$ for all $i=1, \dots, N$. We need to output the answer modulo 998244353.
+
+Let's analyze the condition $x_i \le x_{A_i}$. This looks like a dependency structure. We can view the indices $1, \dots, N$ as nodes in a directed graph. For each $i$, there is a directed edge from $i$ to $A_i$. The condition is that the value assigned to node $i$ must be less than or equal to the value assigned to node $A_i$.
+
+Let's consider the structure of this graph. Each node $i$ has exactly one outgoing edge to $A_i$. This means the graph is a collection of functional components. Each component consists of a cycle with some trees rooted on the cycle nodes, where edges are directed towards the cycle.
+Wait, let's recheck the direction. The condition is $x_i \le x_{A_i}$. So if we have an edge $i \to A_i$, the value at $i$ is constrained by the value at $A_i$. This means information flows from $A_i$ to $i$ in terms of constraints, or rather, the value at $i$ depends on the value at $A_i$.
+Actually, it's simpler to think about the graph where edges are $i \to A_i$.
+Since each node has out-degree 1, the graph is a collection of components. Each component contains exactly one cycle.
+Let's trace the path starting from any node $i$: $i \to A_i \to A_{A_i} \to \dots$. Since there are finite nodes, this path must eventually enter a cycle.
+Let's denote the graph $G$ with vertices $V = \{1, \dots, N\}$ and edges $E = \{(i, A_i) \mid 1 \le i \le N\}$.
+The condition is $x_i \le x_{A_i}$ for all $(i, A_i) \in E$.
+This implies that if we have a path $v_1 \to v_2 \to \dots \to v_k$, then $x_{v_1} \le x_{v_2} \le \dots \le x_{v_k}$.
+In particular, if there is a cycle $c_1 \to c_2 \to \dots \to c_k \to c_1$, then $x_{c_1} \le x_{c_2} \le \dots \le x_{c_k} \le x_{c_1}$, which implies $x_{c_1} = x_{c_2} = \dots = x_{c_k}$.
+So, all nodes on a cycle must have the same value.
+Furthermore, any node $u$ that can reach a cycle $C$ (i.e., there is a path from $u$ to some node in $C$) must satisfy $x_u \le x_{v}$ for any $v$ on the path from $u$ to $C$. Specifically, if $u$ reaches $v \in C$, then $x_u \le x_v$. Since all nodes in $C$ have the same value, say $val(C)$, then $x_u \le val(C)$.
+Wait, let's look at the edges again. The edge is $i \to A_i$. The condition is $x_i \le x_{A_i}$.
+So if $i \to j$, then $x_i \le x_j$.
+If we have a cycle $c_1 \to c_2 \to \dots \to c_k \to c_1$, then $x_{c_1} \le x_{c_2} \le \dots \le x_{c_k} \le x_{c_1}$, so $x_{c_1} = x_{c_2} = \dots = x_{c_k}$.
+If a node $u$ is not on a cycle, it must eventually reach a cycle. Let the path be $u \to v_1 \to v_2 \dots \to v_m \in C$. Then $x_u \le x_{v_1} \le \dots \le x_{v_m}$. Since $x_{v_m} = \dots = x_{c_1}$, we have $x_u \le x_{c_1}$.
+So, for each component, the values",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.14,0.7535800872797802,247480,186496,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"You are given two positive integers A and B.
+Output the square of A + B.
+
+Input
+
+The input is given from Standard Input in the following format:
+A B
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 1 \leq A,B \leq 2025
+- All input values are integers.
+
+Sample Input 1
+
+20 25
+
+Sample Output 1
+
+2025
+
+(20+25)^2=2025.
+
+Sample Input 2
+
+30 25
+
+Sample Output 2
+
+3025
+
+Sample Input 3
+
+45 11
+
+Sample Output 3
+
+3136
+
+Sample Input 4
+
+2025 1111
+
+Sample Output 4
+
+9834496",abc387_a,"import sys
+
+# Read all input from standard input
+input_str = sys.stdin.read().split()
+
+# Parse integers A and B
+A = int(input_str[0])
+B = int(input_str[1])
+
+# Compute the square of the sum
+result = (A + B) ** 2
+
+# Output the result
+print(result)","You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: You are given two positive integers A and B.
+Output the square of A + B.
+
+Input
+
+The input is given from Standard Input in the following format:
+A B
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 1 \leq A,B \leq 2025
+- All input values are integers.
+
+Sample Input 1
+
+20 25
+
+Sample Output 1
+
+2025
+
+(20+25)^2=2025.
+
+Sample Input 2
+
+30 25
+
+Sample Output 2
+
+3025
+
+Sample Input 3
+
+45 11
+
+Sample Output 3
+
+3136
+
+Sample Input 4
+
+2025 1111
+
+Sample Output 4
+
+9834496
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The user wants a Python program to solve a simple arithmetic problem.
+The problem asks to calculate $(A + B)^2$ given two positive integers $A$ and $B$.
+
+Input format:
+A B (space-separated)
+
+Output format:
+The calculated value.
+
+Constraints:
+$1 \leq A, B \leq 2025$
+
+Steps:
+1. Read the input line from standard input.
+2. Split the input string into two parts.
+3. Convert the parts to integers $A$ and $B$.
+4. Compute $(A + B)^2$.
+5. Print the result.
+
+Example 1:
+Input: 20 25
+Calculation: $(20 + 25)^2 = 45^2 = 2025$
+Output: 2025
+
+Example 2:
+Input: 30 25
+Calculation: $(30 + 25)^2 = 55^2 = 3025$
+Output: 3025
+
+Implementation details:
+Use `input().split()` to get the strings.
+Use `map(int, ...)` to convert to integers.
+Unpack into variables or access by index.
+Calculate and print.
+
+Code structure:
+```python
+import sys
+
+def main():
+    # Read from stdin
+    line = sys.stdin.read().split()
+    if not line:
+        return
+    a = int(line[0])
+    b = int(line[1])
+    
+    # Calculate
+    result = (a + b) ** 2
+    
+    # Print to stdout
+    print(result)
+
+if __name__ == '__main__':
+    main()
+```
+Or simpler:
+```python
+a, b = map(int, input().split())
+print((a + b) ** 2)
+```
+The constraints are small enough that integer overflow isn't an issue in Python (which handles arbitrary precision integers anyway).
+
+Let's double check the constraints. $A, B \le 2025$. Max sum is 4050. Square is $\approx 1.6 \times 10^7$, fits easily in standard integer types.
+
+The prompt requires the code to be enclosed in delimiters.
+
+```python
+import sys
+
+# Read input from stdin
+input_data = sys.stdin.read().split()
+
+if input_data:
+    A = int(input_data[0])
+    B = int(input_data[1])
+
+    # Calculate the square of A + B
+    result = (A + B) ** 2
+
+    # Print the result to stdout
+    print(result)
+```
+Using `input()` is standard for competitive programming unless large I/O is expected, which isn't the case here.
+`a, b = map(int, input().split())` is the most pythonic way for a single line input.
+
+Let's write the solution.
+
+```python
+import sys
+
+def solve():
+    # Reading input from stdin
+    # The input format is ""A B""
+    try:
+        line = sys.stdin.read().strip()
+        if not line:
+            return
+        parts = line.split()
+        if len(parts) >= 2:
+            A = int(parts[0])
+            B = int(parts[1])
+            
+            # Calculating (A + B)^2
+            ans = (A + B) ** 2
+            
+            # Printing the result
+            print(ans)
+    except Exception:
+        pass
+
+if __name__ == ""__main__"":
+    solve()
+```
+Actually, simpler is better.
+
+```python
+import sys
+
+# Read all input from standard input
+input_str = sys.stdin.read().split()
+
+# Parse integers A and B
+A = int(input_str[0])
+B = int(input_str[1])
+
+# Compute the square of the sum
+result = (A + B) ** 2
+
+# Output the result
+print(result)
+```
+This handles potential trailing newlines or spaces robustly.
+
+Final check on requirements:
+- Read from stdin.
+- Solve problem.
+- Write to stdout.
+- Enclose in delimiters.
+
+The code looks correct.
+
+```python
+import sys
+
+def main():
+    # Read the input line containing A and B
+    input_data = sys.stdin.read().split()
+    
+    if len(input_data) >= 2:
+        A = int(input_data[0])
+        B = int(input_data[1])
+        
+        # Calculate (A + B)^2
+        result = (A + B) ** 2
+        
+        # Print the result
+        print(result)
+
+if __name__","import sys
+
+# Read all input from standard input
+input_str = sys.stdin.read().split()
+
+# Parse integers A and B
+A = int(input_str[0])
+B = int(input_str[1])
+
+# Compute the square of the sum
+result = (A + B) ** 2
+
+# Output the result
+print(result)",True,,4.0,100,uniform,0.17,0.7148186837785405,214432,153280,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"A positive integer not less than 10 whose top digit (the most significant digit) in decimal representation is strictly larger than every other digit in that number is called a Snake number.
+For example, 31 and 201 are Snake numbers, but 35 and 202 are not.
+Find how many Snake numbers exist between L and R, inclusive.
+
+Input
+
+The input is given from Standard Input in the following format:
+L R
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 10 \leq L \leq R \leq 10^{18}
+- All input values are integers.
+
+Sample Input 1
+
+97 210
+
+Sample Output 1
+
+6
+
+The Snake numbers between 97 and 210, inclusive, are 97, 98, 100, 200, 201, and 210: there are six.
+
+Sample Input 2
+
+1000 9999
+
+Sample Output 2
+
+2025
+
+Sample Input 3
+
+252509054433933519 760713016476190692
+
+Sample Output 3
+
+221852052834757",abc387_c,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: A positive integer not less than 10 whose top digit (the most significant digit) in decimal representation is strictly larger than every other digit in that number is called a Snake number.
+For example, 31 and 201 are Snake numbers, but 35 and 202 are not.
+Find how many Snake numbers exist between L and R, inclusive.
+
+Input
+
+The input is given from Standard Input in the following format:
+L R
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 10 \leq L \leq R \leq 10^{18}
+- All input values are integers.
+
+Sample Input 1
+
+97 210
+
+Sample Output 1
+
+6
+
+The Snake numbers between 97 and 210, inclusive, are 97, 98, 100, 200, 201, and 210: there are six.
+
+Sample Input 2
+
+1000 9999
+
+Sample Output 2
+
+2025
+
+Sample Input 3
+
+252509054433933519 760713016476190692
+
+Sample Output 3
+
+221852052834757
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The problem asks us to count the number of ""Snake numbers"" in a given range $[L, R]$.
+A Snake number is defined as a positive integer $\ge 10$ such that its most significant digit (MSD) is strictly larger than all other digits in the number.
+The constraints are $10 \le L \le R \le 10^{18}$.
+
+Let $N$ be a number. Let $d_k d_{k-1} \dots d_1 d_0$ be its decimal representation, where $d_k$ is the MSD.
+The condition is $d_k > d_i$ for all $i < k$.
+Since $d_k$ is the MSD, $d_k \in \{1, \dots, 9\}$.
+The other digits $d_i \in \{0, \dots, 9\}$.
+The condition implies that all digits $d_i$ (for $i < k$) must be strictly less than $d_k$.
+Also, since $d_k$ is the MSD, it cannot be 0.
+So, for a fixed MSD $d_k$, the other digits can be any digit from $0$ to $d_k - 1$.
+
+Let's denote $f(N)$ as the count of Snake numbers in the range $[1, N]$.
+Then the answer for the range $[L, R]$ is $f(R) - f(L-1)$.
+So the problem reduces to implementing a function `count_snake(N)` that counts Snake numbers $\le N$.
+
+Let's analyze the properties of Snake numbers.
+A Snake number is determined by its length and its digits.
+Let the length of the number be $len$. The MSD is at position $len-1$ (0-indexed from right) or simply the first digit.
+Let the MSD be $d$. Then $d \in \{1, \dots, 9\}$.
+The remaining $len-1$ digits must be in $\{0, \dots, d-1\}$.
+There are $d$ choices for each of the remaining $len-1$ digits.
+So, for a fixed length $len$ and a fixed MSD $d$, there are $d^{len-1}$ such numbers.
+However, we need to be careful with the range $[1, N]$.
+The numbers can have different lengths.
+If $N$ has length $len$, we can count all Snake numbers with length strictly less than $len$, and then count Snake numbers with length equal to $len$ that are $\le N$.
+
+Let's break down `count_snake(N)`:
+1. Convert $N$ to string $S$. Let $L_S$ be the length of $S$.
+2. Iterate through lengths $l$ from 2 to $L_S - 1$.
+   For a length $l$, the MSD can be any digit $d \in \{1, \dots, 9\}$.
+   However, the condition is that MSD $> $ all other digits.
+   So for a specific $d$, the other $l-1$ digits can be chosen from $\{0, \dots, d-1\}$.
+   The number of such choices is $d^{l-1}$.
+   So for a fixed length $l$, the total count is $\sum_{d=1}^{9} d^{l-1}$.
+   Wait, is it just $\sum_{d=1}^{9} d^{l-1}$?
+   Let's check.
+   If length is 2, MSD $d$. Other digit $x \in \{0, \dots, d-1\}$.
+   Number is $10d + x$.
+   $d=1 \implies x=0 \implies 10$. (1 number)
+   $d=2 \implies x \in \{0, 1\} \implies 20, 21$. (2 numbers)
+   ...
+   $d=9 \implies x \in \{0, \dots, 8\} \implies 90, \dots, 98$. (9 numbers)
+   Total for length 2 is $1+2+\dots+9 = 45$.
+   Formula $\sum_{d=1}^{9} d^{2-1} = \sum_{d=1}^{9} d = 45$. Correct.
+   
+   So for any length $l < L_S$, the contribution is $\sum_{d=1}^{9} d^{l-1}$.
+   
+3. Now consider numbers with length",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.11,0.7380493078667882,235865,174080,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"On a certain planet, there are N aliens, all of whom are minors.
+The i-th alien currently has A_i stones, and will become an adult exactly i years later.
+When someone becomes an adult on this planet, every adult who has at least one stone gives exactly one stone as a congratulatory gift to the alien who has just become an adult.
+Find how many stones each alien will have after N years.
+Assume that no new aliens will be born in the future.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+A_1 A_2 \ldots A_N
+
+Output
+
+Let B_i be the number of stones owned by the i-th alien after N years. Print B_1, B_2, \ldots, B_N in this order, separated by spaces.
+
+Constraints
+
+
+- 1 \leq N \leq 5 \times 10^5
+- 0 \leq A_i \leq 5 \times 10^5
+- All input values are integers.
+
+Sample Input 1
+
+4
+5 0 9 3
+
+Sample Output 1
+
+2 0 10 5
+
+Let C_i be the number of stones that the i-th alien has at a given time.
+Initially, (C_1, C_2, C_3, C_4) = (5, 0, 9, 3).
+After 1 year, (C_1, C_2, C_3, C_4) = (5, 0, 9, 3).
+After 2 years, (C_1, C_2, C_3, C_4) = (4, 1, 9, 3).
+After 3 years, (C_1, C_2, C_3, C_4) = (3, 0, 11, 3).
+After 4 years, (C_1, C_2, C_3, C_4) = (2, 0, 10, 5).
+
+Sample Input 2
+
+5
+4 6 7 2 5
+
+Sample Output 2
+
+0 4 7 4 9
+
+Sample Input 3
+
+10
+2 9 1 2 0 4 6 7 1 5
+
+Sample Output 3
+
+0 2 0 0 0 4 7 10 4 10",abc388_d,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: On a certain planet, there are N aliens, all of whom are minors.
+The i-th alien currently has A_i stones, and will become an adult exactly i years later.
+When someone becomes an adult on this planet, every adult who has at least one stone gives exactly one stone as a congratulatory gift to the alien who has just become an adult.
+Find how many stones each alien will have after N years.
+Assume that no new aliens will be born in the future.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+A_1 A_2 \ldots A_N
+
+Output
+
+Let B_i be the number of stones owned by the i-th alien after N years. Print B_1, B_2, \ldots, B_N in this order, separated by spaces.
+
+Constraints
+
+
+- 1 \leq N \leq 5 \times 10^5
+- 0 \leq A_i \leq 5 \times 10^5
+- All input values are integers.
+
+Sample Input 1
+
+4
+5 0 9 3
+
+Sample Output 1
+
+2 0 10 5
+
+Let C_i be the number of stones that the i-th alien has at a given time.
+Initially, (C_1, C_2, C_3, C_4) = (5, 0, 9, 3).
+After 1 year, (C_1, C_2, C_3, C_4) = (5, 0, 9, 3).
+After 2 years, (C_1, C_2, C_3, C_4) = (4, 1, 9, 3).
+After 3 years, (C_1, C_2, C_3, C_4) = (3, 0, 11, 3).
+After 4 years, (C_1, C_2, C_3, C_4) = (2, 0, 10, 5).
+
+Sample Input 2
+
+5
+4 6 7 2 5
+
+Sample Output 2
+
+0 4 7 4 9
+
+Sample Input 3
+
+10
+2 9 1 2 0 4 6 7 1 5
+
+Sample Output 3
+
+0 2 0 0 0 4 7 10 4 10
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The problem asks us to simulate a process involving $N$ aliens.
+We are given $N$ aliens, indexed $1$ to $N$.
+The $i$-th alien starts with $A_i$ stones.
+The $i$-th alien becomes an adult exactly $i$ years later.
+When an alien becomes an adult (at year $i$), every adult who has at least one stone gives exactly one stone to the newly adult alien.
+We need to find the number of stones each alien has after $N$ years.
+The constraints are $N \le 5 \times 10^5$ and $A_i \le 5 \times 10^5$.
+
+Let's break down the events.
+Time $t$ goes from 1 to $N$.
+At year $t$, the $t$-th alien becomes an adult.
+Before year $t$, the $t$-th alien was a minor.
+When the $t$-th alien becomes an adult, they receive stones from all currently existing adults who have $\ge 1$ stone.
+Who are the ""currently existing adults""?
+The problem says ""every adult who has at least one stone"".
+Initially, no one is an adult.
+At year 1, alien 1 becomes an adult.
+Who are the adults? Just alien 1.
+Does alien 1 give a stone to themselves? The problem says ""gives ... to the alien who has just become an adult"". Usually, this implies distinct entities, but let's check the wording carefully.
+""When someone becomes an adult ... every adult who has at least one stone gives exactly one stone ... to the alien who has just become an adult.""
+If the newly adult is considered an adult *after* the event, they wouldn't give to themselves. If they are considered an adult *before* the event (which is impossible since they just became one), they would.
+However, usually in such problems, the set of givers are the adults who were already adults before the event.
+Let's check Sample 1.
+$N=4$, $A = [5, 0, 9, 3]$.
+Initially: $C = [5, 0, 9, 3]$.
+Year 1: Alien 1 becomes adult.
+Adults before year 1: None.
+So Alien 1 receives 0 stones.
+Wait, let's look at the sample explanation.
+""After 1 year, (C_1, C_2, C_3, C_4) = (5, 0, 9, 3).""
+This implies Alien 1 received 0 stones.
+Wait, if Alien 1 receives 0 stones, then Alien 1 has 5 stones.
+""After 2 years, (C_1, C_2, C_3, C_4) = (4, 1, 9, 3).""
+At year 2, Alien 2 becomes adult.
+Adults present: Alien 1.
+Alien 1 has 5 stones ($\ge 1$). So Alien 1 gives 1 stone to Alien 2.
+Alien 1's stones decrease by 1: $5 \to 4$.
+Alien 2's stones increase by 1: $0 \to 1$.
+This matches the sample explanation.
+""After 3 years, (C_1, C_2, C_3, C_4) = (3, 0, 11, 3).""
+At year 3, Alien 3 becomes adult.
+Adults present: Alien 1, Alien 2.
+Alien 1 has 4 stones ($\ge 1$). Gives 1.
+Alien 2 has 1 stone ($\ge 1$). Gives 1.
+Alien 3 receives $1+1=2$ stones.
+Alien 1: $4 \to 3$.
+Alien 2: $1 \to 0$.
+Alien 3: $9 \to 11$.
+Matches sample.
+""After 4 years, (C_1, C_2, C_3, C_4) = (2, 0, 10, 5).""
+At year 4, Alien 4 becomes adult.
+Adults present: Alien 1, Alien 2, Alien 3.
+Alien 1 has 3 stones ($\ge 1$). Gives 1.
+Alien 2 has 0 stones ($< 1$). Gives 0.
+Alien 3 has 11 stones ($\ge 1$). Gives 1.
+Alien 4 receives $1+0+",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.24,0.757081161895112,282263,213696,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"There are N snakes.
+Initially, the thickness of the i-th snake is T_i, and its length is L_i.
+The weight of a snake is defined as the product of its thickness and length.
+For each integer k satisfying 1 \leq k \leq D, find the weight of the heaviest snake when every snake's length has increased by k.
+
+Input
+
+The input is given from Standard Input in the following format:
+N D
+T_1 L_1
+T_2 L_2
+\vdots
+T_N L_N
+
+Output
+
+Print D lines. The k-th line should contain the weight of the heaviest snake when every snake's length has increased by k.
+
+Constraints
+
+
+- 1 \leq N, D \leq 100
+- 1 \leq T_i, L_i \leq 100
+- All input values are integers.
+
+Sample Input 1
+
+4 3
+3 3
+5 1
+2 4
+1 10
+
+Sample Output 1
+
+12
+15
+20
+
+When every snake’s length has increased by 1, the snakes' weights become 12, 10, 10, 11, so print 12 on the first line.
+When every snake’s length has increased by 2, the snakes' weights become 15, 15, 12, 12, so print 15 on the second line.
+When every snake’s length has increased by 3, the snakes' weights become 18, 20, 14, 13, so print 20 on the third line.
+
+Sample Input 2
+
+1 4
+100 100
+
+Sample Output 2
+
+10100
+10200
+10300
+10400",abc388_b,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: There are N snakes.
+Initially, the thickness of the i-th snake is T_i, and its length is L_i.
+The weight of a snake is defined as the product of its thickness and length.
+For each integer k satisfying 1 \leq k \leq D, find the weight of the heaviest snake when every snake's length has increased by k.
+
+Input
+
+The input is given from Standard Input in the following format:
+N D
+T_1 L_1
+T_2 L_2
+\vdots
+T_N L_N
+
+Output
+
+Print D lines. The k-th line should contain the weight of the heaviest snake when every snake's length has increased by k.
+
+Constraints
+
+
+- 1 \leq N, D \leq 100
+- 1 \leq T_i, L_i \leq 100
+- All input values are integers.
+
+Sample Input 1
+
+4 3
+3 3
+5 1
+2 4
+1 10
+
+Sample Output 1
+
+12
+15
+20
+
+When every snake’s length has increased by 1, the snakes' weights become 12, 10, 10, 11, so print 12 on the first line.
+When every snake’s length has increased by 2, the snakes' weights become 15, 15, 12, 12, so print 15 on the second line.
+When every snake’s length has increased by 3, the snakes' weights become 18, 20, 14, 13, so print 20 on the third line.
+
+Sample Input 2
+
+1 4
+100 100
+
+Sample Output 2
+
+10100
+10200
+10300
+10400
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The user wants a Python program to solve a specific problem.
+
+**Problem Statement:**
+There are $N$ snakes.
+Each snake $i$ has an initial thickness $T_i$ and initial length $L_i$.
+The weight of a snake is $T_i \times \text{length}$.
+For each integer $k$ from $1$ to $D$, we need to calculate the maximum weight among all snakes when every snake's length is increased by $k$.
+The new length for snake $i$ becomes $L_i + k$.
+The new weight for snake $i$ becomes $T_i \times (L_i + k)$.
+We need to find $\max_{i} (T_i \times (L_i + k))$ for each $k \in \{1, \dots, D\}$.
+
+**Input Format:**
+Line 1: $N$ $D$
+Lines 2 to $N+1$: $T_i$ $L_i$
+
+**Constraints:**
+$1 \leq N, D \leq 100$
+$1 \leq T_i, L_i \leq 100$
+
+**Algorithm:**
+1. Read $N$ and $D$.
+2. Read the $N$ pairs of $(T_i, L_i)$. Store them in a list.
+3. Iterate $k$ from $1$ to $D$.
+4. For each $k$, iterate through all snakes.
+5. Calculate the weight $W_i = T_i \times (L_i + k)$.
+6. Find the maximum weight among all snakes for the current $k$.
+7. Print the maximum weight.
+
+**Complexity:**
+Outer loop runs $D$ times.
+Inner loop runs $N$ times.
+Total operations: $O(N \times D)$.
+Given constraints $N, D \leq 100$, total operations $\approx 10^4$, which is well within the time limit for Python.
+
+**Example Walkthrough (Sample 1):**
+Input:
+4 3
+3 3
+5 1
+2 4
+1 10
+
+Snakes:
+1: $T=3, L=3$
+2: $T=5, L=1$
+3: $T=2, L=4$
+4: $T=1, L=10$
+
+$k=1$:
+1: $3 \times (3+1) = 3 \times 4 = 12$
+2: $5 \times (1+1) = 5 \times 2 = 10$
+3: $2 \times (4+1) = 2 \times 5 = 10$
+4: $1 \times (10+1) = 1 \times 11 = 11$
+Max is 12.
+
+$k=2$:
+1: $3 \times (3+2) = 3 \times 5 = 15$
+2: $5 \times (1+2) = 5 \times 3 = 15$
+3: $2 \times (4+2) = 2 \times 6 = 12$
+4: $1 \times (10+2) = 1 \times 12 = 12$
+Max is 15.
+
+$k=3$:
+1: $3 \times (3+3) = 3 \times 6 = 18$
+2: $5 \times (1+3) = 5 \times 4 = 20$
+3: $2 \times (4+3) = 2 \times 7 = 14$
+4: $1 \times (10+3) = 1 \times 13 = 13$
+Max is 20.
+
+Output matches sample output.
+
+**Implementation Details:**
+- Use `sys.stdin.read` or `input()` to get data.
+- Parse integers.
+- Loop and print.
+
+```python
+import sys
+
+def solve():
+    # Read all input from stdin
+    input_data = sys.stdin.read().split()
+    
+    if not input_data:
+        return
+
+    iterator = iter(input_data)
+    
+    try:
+        N = int(next(iterator))
+        D = int(next(iterator))
+        
+        snakes = []
+        for _ in range(N):
+            T = int(next(iterator))
+            L = int(next(iterator))
+            snakes.append((T, L))
+            
+        for k in range(1, D + 1):
+            max_weight = 0
+            for",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.25,0.7431146020498054,257683,191488,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"There are N mochi (rice cakes), arranged in ascending order of size.
+The size of the i-th mochi (1\leq i\leq N) is A_i.
+Given two mochi A and B, with sizes a and b respectively, you can make one kagamimochi (a stacked rice cake) by placing mochi A on top of mochi B if and only if a is at most half of b.
+You are given Q integer pairs. Let (L_i, R_i) be the i-th pair (1\leq i\leq Q), and solve the following problem for each i:
+
+Using only the R_i - L_i + 1 mochi from the L_i-th to the R_i-th, how many kagamimochi can you make simultaneously?  
+More precisely, find the maximum non-negative integer K such that:
+
+- Out of the R_i - L_i + 1 mochi from the L_i-th to the R_i-th, choose 2K mochi and form K pairs. For each pair, place one mochi on top of the other, to make K kagamimochi.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+A_1 A_2 \dotsc A_N
+Q
+L_1 R_1
+L_2 R_2
+\vdots
+L_Q R_Q
+
+Output
+
+Print Q lines. The i-th line (1\leq i\leq Q) should contain the answer to the i-th query.
+
+Constraints
+
+
+- 2 \leq N \leq 2 \times 10^5
+- 1 \leq A_i \leq 10^9 \ (1 \leq i \leq N)
+- A_i \leq A_{i+1} \ (1 \leq i < N)
+- 1 \leq Q \leq 2 \times 10^5
+- 1 \leq L_i < R_i \leq N \ (1 \leq i \leq Q)
+- All input values are integers.
+
+Sample Input 1
+
+11
+1 1 2 3 4 4 7 10 11 12 20
+5
+2 5
+3 8
+7 11
+1 2
+1 11
+
+Sample Output 1
+
+2
+3
+1
+0
+5
+
+The answers to each query are as follows. One possible way to make the kagamimochi is given for each query.
+
+- The mochi sizes are (1, 2, 3, 4). You can make the two kagamimochi (1,3) and (2,4).
+- The mochi sizes are (2, 3, 4, 4, 7, 10). You can make the three kagamimochi (2,4), (3,7), and (4,10).
+- The mochi sizes are (7, 10, 11, 12, 20). You can make one kagamimochi (10,20).
+- The mochi sizes are (1, 1). You cannot make any kagamimochi.
+- The mochi sizes are (1, 1, 2, 3, 4, 4, 7, 10, 11, 12, 20). You can make five kagamimochi (1,2), (1,3), (4,10), (4,11), and (7,20).
+
+Hence, print 2, 3, 1, 0, 5 in this order.
+
+Sample Input 2
+
+24
+127 148 170 174 258 311 331 414 416 436 517 523 532 587 591 638 660 748 760 776 837 857 972 984
+15
+7 11
+8 9
+8 13
+12 15
+9 23
+1 17
+8 12
+1 5
+6 17
+3 7
+12 19
+13 18
+7 22
+1 12
+14 15
+
+Sample Output 2
+
+0
+0
+0
+0
+2
+6
+0
+1
+1
+0
+0
+0
+3
+5
+0",abc388_g,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: There are N mochi (rice cakes), arranged in ascending order of size.
+The size of the i-th mochi (1\leq i\leq N) is A_i.
+Given two mochi A and B, with sizes a and b respectively, you can make one kagamimochi (a stacked rice cake) by placing mochi A on top of mochi B if and only if a is at most half of b.
+You are given Q integer pairs. Let (L_i, R_i) be the i-th pair (1\leq i\leq Q), and solve the following problem for each i:
+
+Using only the R_i - L_i + 1 mochi from the L_i-th to the R_i-th, how many kagamimochi can you make simultaneously?  
+More precisely, find the maximum non-negative integer K such that:
+
+- Out of the R_i - L_i + 1 mochi from the L_i-th to the R_i-th, choose 2K mochi and form K pairs. For each pair, place one mochi on top of the other, to make K kagamimochi.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+A_1 A_2 \dotsc A_N
+Q
+L_1 R_1
+L_2 R_2
+\vdots
+L_Q R_Q
+
+Output
+
+Print Q lines. The i-th line (1\leq i\leq Q) should contain the answer to the i-th query.
+
+Constraints
+
+
+- 2 \leq N \leq 2 \times 10^5
+- 1 \leq A_i \leq 10^9 \ (1 \leq i \leq N)
+- A_i \leq A_{i+1} \ (1 \leq i < N)
+- 1 \leq Q \leq 2 \times 10^5
+- 1 \leq L_i < R_i \leq N \ (1 \leq i \leq Q)
+- All input values are integers.
+
+Sample Input 1
+
+11
+1 1 2 3 4 4 7 10 11 12 20
+5
+2 5
+3 8
+7 11
+1 2
+1 11
+
+Sample Output 1
+
+2
+3
+1
+0
+5
+
+The answers to each query are as follows. One possible way to make the kagamimochi is given for each query.
+
+- The mochi sizes are (1, 2, 3, 4). You can make the two kagamimochi (1,3) and (2,4).
+- The mochi sizes are (2, 3, 4, 4, 7, 10). You can make the three kagamimochi (2,4), (3,7), and (4,10).
+- The mochi sizes are (7, 10, 11, 12, 20). You can make one kagamimochi (10,20).
+- The mochi sizes are (1, 1). You cannot make any kagamimochi.
+- The mochi sizes are (1, 1, 2, 3, 4, 4, 7, 10, 11, 12, 20). You can make five kagamimochi (1,2), (1,3), (4,10), (4,11), and (7,20).
+
+Hence, print 2, 3, 1, 0, 5 in this order.
+
+Sample Input 2
+
+24
+127 148 170 174 258 311 331 414 416 436 517 523 532 587 591 638 660 748 760 776 837 857 972 984
+15
+7 11
+8 9
+8 13
+12 15
+9 23
+1 17
+8 12
+1 5
+6 17
+3 7
+12 19
+13 18
+7 22
+1 12
+14 15
+
+Sample Output 2
+
+0
+0
+0
+0
+2
+6
+0
+1
+1
+0
+0
+0
+3
+5
+0
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The problem asks us to find the maximum number of pairs $(A, B)$ we can form from a given subarray of mochi sizes such that for each pair, $A \le B/2$. The mochi are given in ascending order of size. We have $Q$ queries, each specifying a range $[L, R]$.
+
+Let the subarray of mochi sizes be $S = [A_L, A_{L+1}, \dots, A_R]$. Since the original array $A$ is sorted, $S$ is also sorted.
+We want to select $2K$ mochi from $S$ and partition them into $K$ pairs $(x_i, y_i)$ such that $x_i \le y_i/2$. To maximize $K$, we should intuitively try to pair the smallest available mochi with the smallest possible larger mochi that satisfies the condition, or perhaps the largest available mochi with the smallest possible mochi that satisfies the condition.
+
+Let's look at the condition $x \le y/2$, which is equivalent to $2x \le y$.
+Since the array is sorted, if we pick a pair $(x, y)$ with $x \le y$, then $x$ must be smaller than $y$.
+Consider the greedy strategy. To maximize the number of pairs, we should try to use the smallest elements as the ""top"" mochi (the ones on top, $x$) because they are the easiest to satisfy the condition $2x \le y$. Specifically, if we have a set of available mochi, picking the smallest one as $x$ gives us the best chance to find a $y$ such that $2x \le y$.
+
+Let's refine this greedy approach. Suppose we have a sorted list of available mochi. We want to form pairs $(x, y)$ such that $2x \le y$.
+If we pick the smallest element $x$ from the list, we need to find a $y$ in the remaining list such that $2x \le y$. To ""save"" larger elements for potentially larger $x$'s (which are harder to satisfy), we should pick the smallest valid $y$.
+Wait, is that correct?
+Let's trace. Suppose we have mochi sizes: 1, 2, 3, 4, 10.
+Smallest is 1. We need $y \ge 2$. The smallest available $y \ge 2$ is 2. Pair (1, 2). Remaining: 3, 4, 10.
+Next smallest is 3. Need $y \ge 6$. Smallest available $y \ge 6$ is 10. Pair (3, 10). Remaining: 4.
+Total pairs: 2.
+Is this optimal?
+Alternative: Pair (1, 3) -> remaining 2, 4, 10. Next smallest 2, need $y \ge 4$. Smallest is 4. Pair (2, 4). Remaining 10. Total 2.
+Alternative: Pair (1, 4) -> remaining 2, 3, 10. Next smallest 2, need $y \ge 4$. Smallest is 10. Pair (2, 10). Remaining 3. Total 2.
+Alternative: Pair (2, 10) -> remaining 1, 3, 4. Next smallest 1, need $y \ge 2$. Smallest is 3. Pair (1, 3). Remaining 4. Total 2.
+It seems 2 is the max.
+
+Let's try another example. 1, 1, 2, 3, 4, 4, 7, 10, 11, 12, 20.
+Range 1-11 (all).
+Smallest is 1. Need $y \ge 2$. Smallest available $\ge 2$ is 2. Pair (1, 2).
+Remaining: 1, 3, 4, 4, 7, 10, 11, 12, 20.
+Smallest is 1. Need $y \ge 2$. Smallest available $\ge 2$ is 3. Pair (1, 3).
+Remaining: 4, 4, 7, 10, 11, 12, 20.
+Smallest is 4. Need $y \ge 8$. Smallest available $\ge 8$ is 10. Pair (4, 10).
+Remaining: 4, 7, 11, 12,",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.18,0.8302309655730561,385512,320064,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"There are N mochi (rice cakes) arranged in ascending order of size.
+The size of the i-th mochi (1 \leq i \leq N) is A_i.
+Given two mochi A and B, with sizes a and b respectively, you can make one kagamimochi (a stacked rice cake) by placing mochi A on top of mochi B if and only if a is at most half of b.
+You choose two mochi out of the N mochi, and place one on top of the other to form one kagamimochi.
+Find how many different kinds of kagamimochi can be made.
+Two kagamimochi are distinguished if at least one of the mochi is different, even if the sizes of the mochi are the same.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+A_1 A_2 \cdots A_N
+
+Output
+
+Print the number of different kinds of kagamimochi that can be made.
+
+Constraints
+
+
+- 2 \leq N \leq 5 \times 10^5
+- 1 \leq A_i \leq 10^9 \ (1 \leq i \leq N)
+- A_i \leq A_{i+1} \ (1 \leq i < N)
+- All input values are integers.
+
+Sample Input 1
+
+6
+2 3 4 4 7 10
+
+Sample Output 1
+
+8
+
+The sizes of the given mochi are as follows:
+
+In this case, you can make the following eight kinds of kagamimochi:
+
+Note that there are two kinds of kagamimochi where a mochi of size 4 is topped by a mochi of size 2, and two kinds where a mochi of size 10 is topped by a mochi of size 4.
+
+Sample Input 2
+
+3
+387 388 389
+
+Sample Output 2
+
+0
+
+It is possible that you cannot make any kagamimochi.
+
+Sample Input 3
+
+32
+1 2 4 5 8 10 12 16 19 25 33 40 50 64 87 101 149 175 202 211 278 314 355 405 412 420 442 481 512 582 600 641
+
+Sample Output 3
+
+388",abc388_c,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: There are N mochi (rice cakes) arranged in ascending order of size.
+The size of the i-th mochi (1 \leq i \leq N) is A_i.
+Given two mochi A and B, with sizes a and b respectively, you can make one kagamimochi (a stacked rice cake) by placing mochi A on top of mochi B if and only if a is at most half of b.
+You choose two mochi out of the N mochi, and place one on top of the other to form one kagamimochi.
+Find how many different kinds of kagamimochi can be made.
+Two kagamimochi are distinguished if at least one of the mochi is different, even if the sizes of the mochi are the same.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+A_1 A_2 \cdots A_N
+
+Output
+
+Print the number of different kinds of kagamimochi that can be made.
+
+Constraints
+
+
+- 2 \leq N \leq 5 \times 10^5
+- 1 \leq A_i \leq 10^9 \ (1 \leq i \leq N)
+- A_i \leq A_{i+1} \ (1 \leq i < N)
+- All input values are integers.
+
+Sample Input 1
+
+6
+2 3 4 4 7 10
+
+Sample Output 1
+
+8
+
+The sizes of the given mochi are as follows:
+
+In this case, you can make the following eight kinds of kagamimochi:
+
+Note that there are two kinds of kagamimochi where a mochi of size 4 is topped by a mochi of size 2, and two kinds where a mochi of size 10 is topped by a mochi of size 4.
+
+Sample Input 2
+
+3
+387 388 389
+
+Sample Output 2
+
+0
+
+It is possible that you cannot make any kagamimochi.
+
+Sample Input 3
+
+32
+1 2 4 5 8 10 12 16 19 25 33 40 50 64 87 101 149 175 202 211 278 314 355 405 412 420 442 481 512 582 600 641
+
+Sample Output 3
+
+388
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The problem asks us to find the number of different pairs of mochi $(A_i, A_j)$ such that we can form a kagamimochi by placing $A_i$ on top of $A_j$. The condition for placing $A_i$ on top of $A_j$ is $A_i \le \frac{1}{2} A_j$.
+The input gives us $N$ mochi with sizes $A_1, A_2, \dots, A_N$.
+The mochi are arranged in ascending order of size, so $A_1 \le A_2 \le \dots \le A_N$.
+We need to count the number of pairs $(i, j)$ such that $1 \le i, j \le N$ and $A_i \le \frac{1}{2} A_j$.
+Wait, the problem says ""You choose two mochi out of the N mochi"". Does this mean distinct indices?
+""Two kagamimochi are distinguished if at least one of the mochi is different, even if the sizes of the mochi are the same.""
+This implies we are looking for pairs of indices $(i, j)$ with $i \neq j$? Or just pairs of mochi?
+Let's re-read carefully.
+""You choose two mochi out of the N mochi, and place one on top of the other to form one kagamimochi.""
+Usually, ""choose two mochi"" implies distinct physical items. So $i \neq j$.
+However, the condition is $A_i \le \frac{1}{2} A_j$. Since $A_i$ are sorted, if $A_i \le \frac{1}{2} A_j$, then $A_i < A_j$ (unless $A_i=0$ which is not allowed as $A_i \ge 1$). Thus $i < j$ must hold.
+So we are looking for the number of pairs $(i, j)$ such that $1 \le i < j \le N$ and $A_i \le \frac{1}{2} A_j$.
+Wait, the sample explanation says: ""Note that there are two kinds of kagamimochi where a mochi of size 4 is topped by a mochi of size 2, and two kinds where a mochi of size 10 is topped by a mochi of size 4.""
+Let's look at Sample 1.
+$N=6$, $A = [2, 3, 4, 4, 7, 10]$.
+Pairs $(A_i, A_j)$ with $A_i \le A_j / 2$.
+Let's list valid pairs $(i, j)$ with $i < j$.
+$A_1 = 2$.
+$A_2 = 3$: $2 \le 3/2 = 1.5$ False.
+$A_3 = 4$: $2 \le 4/2 = 2$ True. Pair (2, 4) (indices 1, 3).
+$A_4 = 4$: $2 \le 4/2 = 2$ True. Pair (2, 4) (indices 1, 4).
+$A_5 = 7$: $2 \le 7/2 = 3.5$ True. Pair (2, 7) (indices 1, 5).
+$A_6 = 10$: $2 \le 10/2 = 5$ True. Pair (2, 10) (indices 1, 6).
+
+$A_2 = 3$.
+$A_3 = 4$: $3 \le 4/2 = 2$ False.
+$A_4 = 4$: $3 \le 2$ False.
+$A_5 = 7$: $3 \le 3.5$ True. Pair (3, 7) (indices 2, 5).
+$A_6 = 10$: $3 \le 5$ True. Pair (3, 10) (indices 2, 6).
+
+$A_3 = 4$.
+$A_4 = 4$: $4 \le 2$ False.
+$A_5 = 7$: $4 \le 3.5$ False.
+$A_6 = 10$: $4 \le 5$ True. Pair (4, 10) (indices 3, 6).
+
+$A_4 = 4$.
+$A_5 = 7$: $4 \le 3.5$ False.
+$A_6 = ",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.26,0.7555275586166573,287333,217088,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"You are given a string S. Here, the first character of S is an uppercase English letter, and the second and subsequent characters are lowercase English letters.
+Print the string formed by concatenating the first character of S and UPC in this order.
+
+Input
+
+The input is given from Standard Input in the following format:
+S
+
+Output
+
+Print the string formed by concatenating the first character of S and UPC in this order.
+
+Constraints
+
+
+- S is a string of length between 1 and 100, inclusive.
+- The first character of S is an uppercase English letter.
+- The second and subsequent characters of S are lowercase English letters.
+
+Sample Input 1
+
+Kyoto
+
+Sample Output 1
+
+KUPC
+
+The first character of Kyoto is K, so concatenate K and UPC, and print KUPC.
+
+Sample Input 2
+
+Tohoku
+
+Sample Output 2
+
+TUPC",abc388_a,"import sys
+
+# Read all input from stdin
+input_data = sys.stdin.read().split()
+
+if input_data:
+    S = input_data[0]
+    # Print the first character concatenated with ""UPC""
+    print(S[0] + ""UPC"")","You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: You are given a string S. Here, the first character of S is an uppercase English letter, and the second and subsequent characters are lowercase English letters.
+Print the string formed by concatenating the first character of S and UPC in this order.
+
+Input
+
+The input is given from Standard Input in the following format:
+S
+
+Output
+
+Print the string formed by concatenating the first character of S and UPC in this order.
+
+Constraints
+
+
+- S is a string of length between 1 and 100, inclusive.
+- The first character of S is an uppercase English letter.
+- The second and subsequent characters of S are lowercase English letters.
+
+Sample Input 1
+
+Kyoto
+
+Sample Output 1
+
+KUPC
+
+The first character of Kyoto is K, so concatenate K and UPC, and print KUPC.
+
+Sample Input 2
+
+Tohoku
+
+Sample Output 2
+
+TUPC
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The user wants a Python program to solve a simple string manipulation problem.
+
+**Problem Statement:**
+Given a string $S$ where the first character is uppercase and the rest are lowercase.
+The task is to print the first character of $S$ followed by the string ""UPC"".
+
+**Input Format:**
+A single string $S$.
+
+**Output Format:**
+A string consisting of the first character of $S$ concatenated with ""UPC"".
+
+**Constraints:**
+- Length of $S$ is between 1 and 100.
+- First char is uppercase.
+- Subsequent chars are lowercase.
+
+**Examples:**
+1. Input: `Kyoto` -> Output: `KUPC`
+2. Input: `Tohoku` -> Output: `TUPC`
+
+**Algorithm:**
+1. Read the string $S$ from standard input.
+2. Extract the first character of $S$. In Python, this is `S[0]`.
+3. Concatenate this character with the string literal `""UPC""`.
+4. Print the resulting string.
+
+**Implementation Details:**
+- Use `input()` to read the string.
+- Use string slicing or indexing to get the first character.
+- Use `print()` to output the result.
+
+**Drafting the code:**
+```python
+S = input()
+print(S[0] + ""UPC"")
+```
+
+Let's double check constraints and edge cases.
+- Length 1: If $S$ is ""A"", output should be ""AUPC"". The code `S[0] + ""UPC""` works.
+- Length 100: Works fine.
+- Input reading: `input()` reads a line. The problem says ""S is a string"". Usually, in competitive programming contexts, `input()` is sufficient.
+
+The prompt asks to enclose the code within specific delimiters.
+
+```python
+import sys
+
+def solve():
+    # Read S from stdin
+    S = sys.stdin.read().strip()
+    
+    # Check if S is empty just in case, though constraints say length >= 1
+    if not S:
+        return
+
+    # Extract first character
+    first_char = S[0]
+    
+    # Concatenate with ""UPC""
+    result = first_char + ""UPC""
+    
+    # Print to stdout
+    print(result)
+
+if __name__ == '__main__':
+    solve()
+```
+Or simply:
+```python
+S = input()
+print(S[0] + ""UPC"")
+```
+The simple version is robust enough for the given constraints. `input()` reads the line without the trailing newline. `strip()` might be safer if there's whitespace, but usually standard inputs are clean. The problem statement says ""S is a string"", implying no spaces inside.
+
+Let's stick to the simplest correct solution.
+
+```python
+S = input()
+print(S[0] + ""UPC"")
+```
+Wait, sometimes `input()` might raise EOFError if the input is empty, but constraints say length >= 1.
+Sometimes there might be trailing whitespace. `input().strip()` is safer.
+
+Let's refine slightly to be safe against trailing newlines/spaces which sometimes occur in test files.
+```python
+S = input().strip()
+print(S[0] + ""UPC"")
+```
+This looks good.
+
+One detail: ""Read the inputs from stdin solve the problem and write the answer to stdout"".
+Standard Python `input()` reads from stdin and `print()` writes to stdout.
+
+Final check of the prompt requirements:
+- ""Enclose your code within delimiters as follows.""
+- ""Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.""
+
+Code structure:
+```python
+S = input()
+print(S[0] + ""UPC"")
+```
+This is sufficient.
+
+Let's verify Sample 1:
+Input: Kyoto
+S = ""Kyoto""
+S[0] = 'K'
+Output: KUPC. Correct.
+
+Sample 2:
+Input: Tohoku
+S = ""Tohoku""
+S[0] = 'T'
+Output: TUPC. Correct.
+
+I will provide the solution now.
+
+```python
+import sys
+
+# Read all input from stdin
+input_data = sys.stdin.read().split()
+
+if input_data:
+    S = input_data[0]
+    # Print the first character concatenated with ""UPC""
+    print(S[0] + ""UPC"")
+```
+Using `sys.stdin.read().split()` handles potential surrounding whitespace better than `input()` in some environments, though `input()` is usually fine. Given the simplicity,","import sys
+
+# Read all input from stdin
+input_data = sys.stdin.read().split()
+
+if input_data:
+    S = input_data[0]
+    # Print the first character concatenated with ""UPC""
+    print(S[0] + ""UPC"")",True,,4.0,100,uniform,0.11,0.7205589007542933,215566,155328,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"There are N squares arranged in a row, labeled 1, 2, \ldots, N from left to right.
+You are given M pairs of integers (L_1, R_1), \ldots, (L_M, R_M).
+A square j is defined to be bad if and only if there exists some i such that L_i \leq j \leq R_i.
+Determine whether you can move from square 1 to square N by repeatedly performing the following action:
+
+- Let your current square be x. Choose an integer i that satisfies all of the following conditions, and move to square x + i.
+- A \leq i \leq B
+- x + i \leq N
+- Square x + i is not bad.
+
+Input
+
+The input is given from Standard Input in the following format:
+N M A B
+L_1 R_1
+L_2 R_2
+\vdots
+L_M R_M
+
+Output
+
+If it is possible to reach square N by repeating the action described in the problem statement, print Yes. Otherwise, print No.
+
+Constraints
+
+
+- 2 \leq N \leq 10^{12}
+- 0 \leq M \leq 2 \times 10^4
+- 1 \leq A \leq B \leq 20
+- 1 < L_i \leq R_i < N \ (1 \leq i \leq M)
+- R_i < L_{i+1} \ (1 \leq i \leq M - 1)
+- All input values are integers.
+
+Sample Input 1
+
+24 2 3 5
+7 8
+17 20
+
+Sample Output 1
+
+Yes
+
+You can move to square N in this way: 1 \to 6 \to 9 \to 12 \to 16 \to 21 \to 24.
+
+Sample Input 2
+
+30 1 5 8
+4 24
+
+Sample Output 2
+
+No
+
+Sample Input 3
+
+100 4 10 11
+16 18
+39 42
+50 55
+93 99
+
+Sample Output 3
+
+Yes",abc388_f,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: There are N squares arranged in a row, labeled 1, 2, \ldots, N from left to right.
+You are given M pairs of integers (L_1, R_1), \ldots, (L_M, R_M).
+A square j is defined to be bad if and only if there exists some i such that L_i \leq j \leq R_i.
+Determine whether you can move from square 1 to square N by repeatedly performing the following action:
+
+- Let your current square be x. Choose an integer i that satisfies all of the following conditions, and move to square x + i.
+- A \leq i \leq B
+- x + i \leq N
+- Square x + i is not bad.
+
+Input
+
+The input is given from Standard Input in the following format:
+N M A B
+L_1 R_1
+L_2 R_2
+\vdots
+L_M R_M
+
+Output
+
+If it is possible to reach square N by repeating the action described in the problem statement, print Yes. Otherwise, print No.
+
+Constraints
+
+
+- 2 \leq N \leq 10^{12}
+- 0 \leq M \leq 2 \times 10^4
+- 1 \leq A \leq B \leq 20
+- 1 < L_i \leq R_i < N \ (1 \leq i \leq M)
+- R_i < L_{i+1} \ (1 \leq i \leq M - 1)
+- All input values are integers.
+
+Sample Input 1
+
+24 2 3 5
+7 8
+17 20
+
+Sample Output 1
+
+Yes
+
+You can move to square N in this way: 1 \to 6 \to 9 \to 12 \to 16 \to 21 \to 24.
+
+Sample Input 2
+
+30 1 5 8
+4 24
+
+Sample Output 2
+
+No
+
+Sample Input 3
+
+100 4 10 11
+16 18
+39 42
+50 55
+93 99
+
+Sample Output 3
+
+Yes
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The problem asks whether we can travel from square 1 to square $N$ in a row of $N$ squares. We are given $M$ intervals $[L_i, R_i]$. A square $j$ is ""bad"" if it falls into any of these intervals.
+We can move from square $x$ to $x+i$ if:
+1. $A \le i \le B$
+2. $x+i \le N$
+3. Square $x+i$ is not bad.
+
+The constraints are:
+$N \le 10^{12}$
+$M \le 2 \times 10^4$
+$1 \le A \le B \le 20$
+The intervals are disjoint and sorted: $R_i < L_{i+1}$.
+Also $1 < L_i \le R_i < N$. This means square 1 is never bad, and square $N$ is never bad.
+
+Since $N$ is very large ($10^{12}$), we cannot simulate the process square by square or use a standard BFS/DP on the array of size $N$. However, $M$ is relatively small ($2 \times 10^4$) and the step size $B$ is very small ($B \le 20$). The ""bad"" squares are sparse. Most squares are ""good"".
+
+Let's analyze the movement. We start at 1. We want to reach $N$.
+The condition is that the *destination* square must be good. The starting square is 1, which is good.
+We can think of this as finding a path $1 = x_0, x_1, \dots, x_k = N$ such that $x_{j+1} - x_j \in [A, B]$ and $x_{j+1}$ is not bad.
+
+Since $B$ is small, the ""reachability"" from a square $x$ depends on the squares in $[x+A, x+B]$. If all squares in $[x+A, x+B]$ are bad, we are stuck. If there is at least one good square in that range, we can potentially move there.
+However, since we want to reach $N$, and the intervals of bad squares are contiguous blocks, we can view the problem as navigating through the gaps between bad intervals.
+
+Let the bad intervals be $[L_1, R_1], [L_2, R_2], \dots, [L_M, R_M]$.
+These intervals partition the range $[1, N]$ into segments of good squares.
+The segments are:
+$[1, L_1-1]$
+$[R_1+1, L_2-1]$
+$[R_2+1, L_3-1]$
+...
+$[R_M+1, N]$
+
+Note that $L_1 > 1$ and $R_M < N$, so these segments are non-empty?
+Wait, the constraints say $1 < L_i \le R_i < N$.
+So $L_1 \ge 2$, meaning $[1, L_1-1]$ contains at least square 1.
+$R_M \le N-1$, so $[R_M+1, N]$ contains at least square $N$.
+Also $R_i < L_{i+1}$, so there is at least one good square between $R_i$ and $L_{i+1}$? No, $R_i < L_{i+1}$ implies $R_i + 1 \le L_{i+1}$.
+If $R_i + 1 = L_{i+1}$, the interval $[R_i+1, L_{i+1}-1]$ is empty.
+So the ""gaps"" between bad intervals might be empty.
+
+Let's denote the good segments as $G_0, G_1, \dots, G_M$.
+$G_0 = [1, L_1-1]$
+$G_1 = [R_1+1, L_2-1]$
+...
+$G_k = [R_k+1, L_{k+1}-1]$
+...
+$G_M = [R_M+1, N]$
+
+We start at 1, which is in $G_0$. We want to reach $N$, which is in $G_M$.
+To move from a square $x$ in $G_k$ to a square $y$ in $G_{k+1}$, we need $y - x \in [A, B]$.
+Since $G_k$ and $G_{k+1}$ are separated by the bad interval $[L_{",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.14,0.758757663855387,277928,210880,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"There are N mochi (rice cakes), arranged in ascending order of size.
+The size of the i-th mochi (1\leq i\leq N) is A_i.
+Given two mochi A and B, with sizes a and b respectively, you can make one kagamimochi (a stacked rice cake) by placing mochi A on top of mochi B if and only if a is at most half of b.
+Find how many kagamimochi can be made simultaneously.
+More precisely, find the maximum non-negative integer K for which the following is possible:
+
+- From the N mochi, choose 2K of them to form K pairs. For each pair, place one mochi on top of the other, to make K kagamimochi.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+A_1 A_2 \dotsc A_N
+
+Output
+
+Print the maximum K such that K kagamimochi can be made simultaneously.
+
+Constraints
+
+
+- 2 \leq N \leq 5 \times 10^5
+- 1 \leq A_i \leq 10^9 \ (1 \leq i \leq N)
+- A_i \leq A_{i+1} \ (1 \leq i < N)
+- All input values are integers.
+
+Sample Input 1
+
+6
+2 3 4 4 7 10
+
+Sample Output 1
+
+3
+
+The sizes of the given mochi are as follows:
+
+In this case, you can make the following three kagamimochi simultaneously:
+
+It is not possible to make four or more kagamimochi from six mochi, so print 3.
+
+Sample Input 2
+
+3
+387 388 389
+
+Sample Output 2
+
+0
+
+It is possible that you cannot make any kagamimochi.
+
+Sample Input 3
+
+24
+307 321 330 339 349 392 422 430 477 481 488 537 541 571 575 602 614 660 669 678 712 723 785 792
+
+Sample Output 3
+
+6",abc388_e,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: There are N mochi (rice cakes), arranged in ascending order of size.
+The size of the i-th mochi (1\leq i\leq N) is A_i.
+Given two mochi A and B, with sizes a and b respectively, you can make one kagamimochi (a stacked rice cake) by placing mochi A on top of mochi B if and only if a is at most half of b.
+Find how many kagamimochi can be made simultaneously.
+More precisely, find the maximum non-negative integer K for which the following is possible:
+
+- From the N mochi, choose 2K of them to form K pairs. For each pair, place one mochi on top of the other, to make K kagamimochi.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+A_1 A_2 \dotsc A_N
+
+Output
+
+Print the maximum K such that K kagamimochi can be made simultaneously.
+
+Constraints
+
+
+- 2 \leq N \leq 5 \times 10^5
+- 1 \leq A_i \leq 10^9 \ (1 \leq i \leq N)
+- A_i \leq A_{i+1} \ (1 \leq i < N)
+- All input values are integers.
+
+Sample Input 1
+
+6
+2 3 4 4 7 10
+
+Sample Output 1
+
+3
+
+The sizes of the given mochi are as follows:
+
+In this case, you can make the following three kagamimochi simultaneously:
+
+It is not possible to make four or more kagamimochi from six mochi, so print 3.
+
+Sample Input 2
+
+3
+387 388 389
+
+Sample Output 2
+
+0
+
+It is possible that you cannot make any kagamimochi.
+
+Sample Input 3
+
+24
+307 321 330 339 349 392 422 430 477 481 488 537 541 571 575 602 614 660 669 678 712 723 785 792
+
+Sample Output 3
+
+6
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The problem asks us to find the maximum number of pairs $(A, B)$ we can form from a given set of $N$ mochi sizes $A_1, A_2, \dots, A_N$ such that for each pair, the size of the top mochi $A$ is at most half the size of the bottom mochi $B$ (i.e., $A \le B/2$ or $2A \le B$). We are given that the input array $A$ is sorted in ascending order.
+
+Let's denote the chosen pairs as $(a_1, b_1), (a_2, b_2), \dots, (a_K, b_K)$.
+The condition is $a_i \le b_i / 2$ for all $i=1 \dots K$.
+The sets $\{a_1, \dots, a_K\}$ and $\{b_1, \dots, b_K\}$ must be disjoint subsets of the original array $A$.
+We want to maximize $K$.
+
+Since the array $A$ is sorted, let's consider the properties of the optimal solution.
+Intuitively, to maximize the number of pairs, we should try to pair smaller elements with larger elements.
+Specifically, if we pick a set of elements to be the ""tops"" (smaller elements) and a set of elements to be the ""bottoms"" (larger elements), we want to match them such that the condition holds.
+Since $A$ is sorted, if we decide to use a specific set of indices for tops and bottoms, it is generally optimal to match the smallest available top with the smallest available bottom that satisfies the condition, or perhaps the largest available top with the smallest available bottom?
+Actually, let's look at the structure. We are selecting $2K$ distinct elements. $K$ will be the tops, $K$ will be the bottoms.
+Since $a \le b/2$, we must have $a < b$.
+So, in any valid pair, the top element must be strictly smaller than the bottom element.
+This implies that if we sort the chosen $2K$ elements, the smallest $K$ elements must be the tops and the largest $K$ elements must be the bottoms?
+Let's check this hypothesis.
+Suppose we have a valid set of pairs. Let the tops be $T = \{t_1, \dots, t_K\}$ and bottoms be $B = \{b_1, \dots, b_K\}$.
+We know $t_i \le b_i / 2$ for some matching.
+If we sort $T$ as $t_{(1)} \le t_{(2)} \le \dots \le t_{(K)}$ and $B$ as $b_{(1)} \le b_{(2)} \le \dots \le b_{(K)}$, does it hold that $t_{(i)} \le b_{(i)} / 2$ for all $i$?
+Not necessarily. For example, suppose we have tops $\{2, 10\}$ and bottoms $\{5, 25\}$.
+Pairs could be $(2, 5)$ and $(10, 25)$. $2 \le 2.5$ (ok), $10 \le 12.5$ (ok).
+Here $T=\{2, 10\}$, $B=\{5, 25\}$. Sorted $T$: $2, 10$. Sorted $B$: $5, 25$.
+$2 \le 5/2$ (ok), $10 \le 25/2$ (ok).
+What if we had tops $\{2, 10\}$ and bottoms $\{15, 25\}$?
+Pairs $(2, 15)$ and $(10, 25)$. $2 \le 7.5$, $10 \le 12.5$.
+Sorted $T$: $2, 10$. Sorted $B$: $15, 25$.
+$2 \le 7.5$, $10 \le 12.5$.
+What if we had tops $\{10, 20\}$ and bottoms $\{25, 50\}$?
+Pairs $(10, 25)$ and $(20, 50)$. $10 \le 12.5$, $20 \le 25$.
+Sorted $T$: $10, 20$. Sorted $B$: $25, 50$.
+$10 \le 12.5$, $2",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.13,0.7608955806892633,281605,214272,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"On the two-dimensional coordinate plane, there is an infinite tiling of 1 \times 1 squares.
+Consider drawing a circle of radius R centered at the center of one of these squares. How many of these squares are completely contained inside the circle?
+More precisely, find the number of integer pairs (i,j) such that all four points (i+0.5,j+0.5), (i+0.5,j-0.5), (i-0.5,j+0.5), and (i-0.5,j-0.5) are at a distance of at most R from the origin.
+
+Input
+
+The input is given from Standard Input in the following format:
+R
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 1 \leq R \leq 10^{6}
+- All input values are integers.
+
+Sample Input 1
+
+2
+
+Sample Output 1
+
+5
+
+There are a total of five squares completely contained in the circle: the square whose center matches the circle’s center, plus the four squares adjacent to it.
+
+Sample Input 2
+
+4
+
+Sample Output 2
+
+37
+
+Sample Input 3
+
+26
+
+Sample Output 3
+
+2025",abc389_d,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: On the two-dimensional coordinate plane, there is an infinite tiling of 1 \times 1 squares.
+Consider drawing a circle of radius R centered at the center of one of these squares. How many of these squares are completely contained inside the circle?
+More precisely, find the number of integer pairs (i,j) such that all four points (i+0.5,j+0.5), (i+0.5,j-0.5), (i-0.5,j+0.5), and (i-0.5,j-0.5) are at a distance of at most R from the origin.
+
+Input
+
+The input is given from Standard Input in the following format:
+R
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 1 \leq R \leq 10^{6}
+- All input values are integers.
+
+Sample Input 1
+
+2
+
+Sample Output 1
+
+5
+
+There are a total of five squares completely contained in the circle: the square whose center matches the circle’s center, plus the four squares adjacent to it.
+
+Sample Input 2
+
+4
+
+Sample Output 2
+
+37
+
+Sample Input 3
+
+26
+
+Sample Output 3
+
+2025
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The problem asks us to find the number of $1 \times 1$ squares in an infinite grid that are completely contained inside a circle of radius $R$ centered at the origin $(0,0)$.
+The grid is formed by squares. Let's clarify the coordinate system.
+The problem statement says: ""Consider drawing a circle of radius $R$ centered at the center of one of these squares.""
+Let the center of the circle be at $(0,0)$.
+The squares are defined by integer coordinates. Specifically, a square is identified by the pair $(i, j)$ where $i, j \in \mathbb{Z}$.
+The vertices of the square corresponding to $(i, j)$ are given as $(i+0.5, j+0.5)$, $(i+0.5, j-0.5)$, $(i-0.5, j+0.5)$, and $(i-0.5, j-0.5)$.
+Wait, let's check the vertices.
+If the center of the square is $(i, j)$, then the vertices are $(i \pm 0.5, j \pm 0.5)$.
+The problem asks for the number of integer pairs $(i, j)$ such that *all four points* are at a distance of at most $R$ from the origin.
+The distance from the origin $(0,0)$ to a point $(x, y)$ is $\sqrt{x^2 + y^2}$.
+The condition ""distance of at most $R$"" means $x^2 + y^2 \le R^2$.
+The four vertices of the square $(i, j)$ are:
+$P_1 = (i+0.5, j+0.5)$
+$P_2 = (i+0.5, j-0.5)$
+$P_3 = (i-0.5, j+0.5)$
+$P_4 = (i-0.5, j-0.5)$
+
+For the square to be completely inside the circle, all four vertices must be inside or on the boundary of the circle.
+Let's check the distance squared for each vertex.
+$d_1^2 = (i+0.5)^2 + (j+0.5)^2$
+$d_2^2 = (i+0.5)^2 + (j-0.5)^2$
+$d_3^2 = (i-0.5)^2 + (j+0.5)^2$
+$d_4^2 = (i-0.5)^2 + (j-0.5)^2$
+
+Notice that $(i+0.5)^2 = i^2 + i + 0.25$ and $(i-0.5)^2 = i^2 - i + 0.25$.
+Also $(j+0.5)^2 = j^2 + j + 0.25$ and $(j-0.5)^2 = j^2 - j + 0.25$.
+So,
+$d_1^2 = i^2 + i + 0.25 + j^2 + j + 0.25 = i^2 + j^2 + i + j + 0.5$
+$d_2^2 = i^2 + i + 0.25 + j^2 - j + 0.25 = i^2 + j^2 + i - j + 0.5$
+$d_3^2 = i^2 - i + 0.25 + j^2 + j + 0.25 = i^2 + j^2 - i + j + 0.5$
+$d_4^2 = i^2 - i + 0.25 + j^2 - j + 0.25 = i^2 + j^2 - i - j + 0.5$
+
+We need all these four values to be $\le R^2$.
+Let $S = i^2 + j^2$.
+The conditions are:
+1. $S + i + j + 0.5 \le R^2$
+2. $S + i - j + 0.5 \le R^2$
+3. $S - i + j + 0.5 \le R^2$
+4. $S - i - j + 0.5 \le R^2$
+
+These can be rewritten as:
+1. $i^2 + j^2 + i + j \le R^2 - 0.5$
+2. $i^2 + j^2 + i - j \",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.15,0.7496008549155515,234877,176064,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"You are given an integer X not less than 2.
+Find the positive integer N such that N! = X.
+Here, N! denotes the factorial of N, and it is guaranteed that there is exactly one such N.
+
+Input
+
+The input is given from Standard Input in the following format:
+X
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 2 \leq X \leq 3 \times 10^{18}
+- There is exactly one positive integer N such that N!=X.
+- All input values are integers.
+
+Sample Input 1
+
+6
+
+Sample Output 1
+
+3
+
+From 3!=3\times2\times1=6, print 3.
+
+Sample Input 2
+
+2432902008176640000
+
+Sample Output 2
+
+20
+
+From 20!=2432902008176640000, print 20.",abc389_b,"import sys
+
+def solve():
+    # Read X from standard input
+    try:
+        input_str = sys.stdin.read().strip()
+        if not input_str:
+            return
+        X = int(input_str)
+    except ValueError:
+        return
+
+    n = 1
+    factorial = 1
+    
+    # We need to find N such that N! = X.
+    # Since X >= 2, N >= 2.
+    # We can iterate n starting from 2.
+    
+    while factorial < X:
+        n += 1
+        factorial *= n
+        
+    print(n)
+
+if __name__ == '__main__':
+    solve()","You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: You are given an integer X not less than 2.
+Find the positive integer N such that N! = X.
+Here, N! denotes the factorial of N, and it is guaranteed that there is exactly one such N.
+
+Input
+
+The input is given from Standard Input in the following format:
+X
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 2 \leq X \leq 3 \times 10^{18}
+- There is exactly one positive integer N such that N!=X.
+- All input values are integers.
+
+Sample Input 1
+
+6
+
+Sample Output 1
+
+3
+
+From 3!=3\times2\times1=6, print 3.
+
+Sample Input 2
+
+2432902008176640000
+
+Sample Output 2
+
+20
+
+From 20!=2432902008176640000, print 20.
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The user wants a Python program to solve the following problem:
+Given an integer $X$ ($2 \le X \le 3 \times 10^{18}$), find the positive integer $N$ such that $N! = X$.
+It is guaranteed that such an $N$ exists and is unique.
+
+Constraints:
+$X$ can be up to $3 \times 10^{18}$.
+$N!$ grows very fast.
+$1! = 1$
+$2! = 2$
+...
+$20! \approx 2.4 \times 10^{18}$
+$21! \approx 5.1 \times 10^{19}$
+
+Since $X \le 3 \times 10^{18}$, the maximum possible value for $N$ is 20.
+This suggests that we can simply iterate through integers starting from 1 (or 2) and calculate their factorials until we reach or exceed $X$. Since the maximum $N$ is small (20), this approach is extremely efficient.
+
+Algorithm:
+1. Read $X$ from standard input.
+2. Initialize a variable `current_factorial` to 1.
+3. Initialize a variable `n` to 1.
+4. Loop while `current_factorial` < $X$:
+    a. Increment `n` by 1.
+    b. Update `current_factorial` by multiplying it by `n`.
+5. Once the loop terminates, check if `current_factorial` equals $X$. The problem guarantees it will.
+6. Print `n`.
+
+Let's double check the constraints and edge cases.
+$X \ge 2$.
+If $X=2$, loop starts:
+`current_factorial` = 1, `n` = 1.
+Loop condition `1 < 2` is true.
+`n` becomes 2.
+`current_factorial` becomes $1 \times 2 = 2$.
+Loop condition `2 < 2` is false.
+Print `n` (which is 2). Correct.
+
+If $X=6$:
+`current_factorial` = 1, `n` = 1.
+Loop `1 < 6`:
+`n` = 2, `current_factorial` = 2.
+Loop `2 < 6`:
+`n` = 3, `current_factorial` = 6.
+Loop `6 < 6`: False.
+Print 3. Correct.
+
+If $X$ is large, say $20!$:
+The loop will run until `n` reaches 20.
+Since $20! \approx 2.4 \times 10^{18}$, it fits within a 64-bit integer. Python handles arbitrarily large integers automatically, so overflow is not an issue.
+
+Complexity:
+The loop runs at most 20 times. This is $O(1)$ effectively.
+Time complexity is negligible.
+Space complexity is $O(1)$.
+
+Alternative approach:
+Since $N$ is small, we could precompute factorials or use binary search, but linear scan is sufficient and simpler.
+
+Let's write the code.
+
+```python
+import sys
+
+def solve():
+    # Read X from standard input
+    try:
+        input_str = sys.stdin.read().strip()
+        if not input_str:
+            return
+        X = int(input_str)
+    except ValueError:
+        return
+
+    n = 1
+    factorial = 1
+    
+    # We need to find N such that N! = X.
+    # Since X >= 2, N >= 2.
+    # We can iterate n starting from 2.
+    
+    while factorial < X:
+        n += 1
+        factorial *= n
+        
+    print(n)
+
+if __name__ == '__main__':
+    solve()
+```
+
+Wait, `sys.stdin.read()` might read everything including newlines. `strip()` handles that.
+Is it possible for $X$ to be larger than $20!$?
+The constraint says $X \le 3 \times 10^{18}$.
+$20! = 2,432,902,008,176,640,000 \approx 2.43 \times 10^{18}$.
+$21! = 51,090,942,171,709,440,000 \approx 5.1 \times 10^{19}$.
+So $X$","import sys
+
+def solve():
+    # Read X from standard input
+    try:
+        input_str = sys.stdin.read().strip()
+        if not input_str:
+            return
+        X = int(input_str)
+    except ValueError:
+        return
+
+    n = 1
+    factorial = 1
+    
+    # We need to find N such that N! = X.
+    # Since X >= 2, N >= 2.
+    # We can iterate n starting from 2.
+    
+    while factorial < X:
+        n += 1
+        factorial *= n
+        
+    print(n)
+
+if __name__ == '__main__':
+    solve()",True,,4.0,100,uniform,0.18,0.7365618865793648,223134,164352,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"You are given a 3-character string S, where the first character is a digit, the second character is the character x, and the third character is a digit.
+Find the product of the two numbers in S.
+
+Input
+
+The input is given from Standard Input in the following format:
+S
+
+Output
+
+Print the answer as an integer.
+
+Constraints
+
+
+- S is a 3-character string where the first character is an integer between 1 and 9, inclusive, the second character is the character x, and the third character is an integer between 1 and 9, inclusive.
+
+Sample Input 1
+
+3x8
+
+Sample Output 1
+
+24
+
+From 3 \times 8 = 24, print 24.
+
+Sample Input 2
+
+9x9
+
+Sample Output 2
+
+81
+
+From 9 \times 9 = 81, print 81.",abc389_a,"import sys
+
+# Read the input string S from standard input
+S = sys.stdin.read().strip()
+
+# Extract the first and third characters, convert them to integers
+# S[0] is the first digit
+# S[2] is the second digit
+# The middle character S[1] is 'x' and is ignored for calculation
+a = int(S[0])
+b = int(S[2])
+
+# Calculate the product
+result = a * b
+
+# Print the result to standard output
+print(result)","You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: You are given a 3-character string S, where the first character is a digit, the second character is the character x, and the third character is a digit.
+Find the product of the two numbers in S.
+
+Input
+
+The input is given from Standard Input in the following format:
+S
+
+Output
+
+Print the answer as an integer.
+
+Constraints
+
+
+- S is a 3-character string where the first character is an integer between 1 and 9, inclusive, the second character is the character x, and the third character is an integer between 1 and 9, inclusive.
+
+Sample Input 1
+
+3x8
+
+Sample Output 1
+
+24
+
+From 3 \times 8 = 24, print 24.
+
+Sample Input 2
+
+9x9
+
+Sample Output 2
+
+81
+
+From 9 \times 9 = 81, print 81.
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The user wants a Python program to solve a simple problem.
+The input is a string $S$ of length 3.
+$S[0]$ is a digit (1-9).
+$S[1]$ is 'x'.
+$S[2]$ is a digit (1-9).
+The goal is to calculate the product of the digit at $S[0]$ and the digit at $S[2]$.
+The output should be the integer result.
+
+Steps:
+1. Read the string $S$ from standard input.
+2. Extract the first character, convert it to an integer. Let's call it $a$.
+3. Extract the third character, convert it to an integer. Let's call it $b$.
+4. Calculate $a \times b$.
+5. Print the result.
+
+Example 1:
+Input: ""3x8""
+$a = 3$, $b = 8$
+Result: 24
+
+Example 2:
+Input: ""9x9""
+$a = 9$, $b = 9$
+Result: 81
+
+Implementation details:
+- Use `input()` to read the string.
+- Use slicing `S[0]` and `S[2]` to get the characters.
+- Use `int()` to convert characters to integers.
+- Print the product.
+
+Code structure:
+```python
+S = input()
+a = int(S[0])
+b = int(S[2])
+print(a * b)
+```
+
+Double check constraints:
+- S is 3 chars.
+- First and third are digits 1-9.
+- Middle is 'x'.
+This matches the logic.
+
+The prompt requires the code to be enclosed in triple backticks with python language identifier.
+
+```python
+import sys
+
+def main():
+    s = sys.stdin.read().strip()
+    if not s:
+        return
+    # The input format guarantees S is 3 characters
+    # S[0] is the first digit
+    # S[1] is 'x'
+    # S[2] is the second digit
+    num1 = int(s[0])
+    num2 = int(s[2])
+    print(num1 * num2)
+
+if __name__ == '__main__':
+    main()
+```
+Or simpler:
+```python
+S = input()
+print(int(S[0]) * int(S[2]))
+```
+The simpler version is sufficient and standard for competitive programming tasks unless EOF handling is tricky, but `input()` is standard.
+
+Let's write the code.
+
+```python
+S = input()
+print(int(S[0]) * int(S[2]))
+```
+This looks correct.
+
+One edge case: trailing newlines or whitespace. `input()` usually strips the trailing newline, but `sys.stdin.read().strip()` is safer if there's weird input formatting, though `input()` is generally fine for single line inputs. Given the problem statement ""The input is given from Standard Input in the following format: S"", `input()` is perfectly adequate.
+
+Final check of the prompt requirements:
+- ""Read the inputs from stdin""
+- ""solve the problem""
+- ""write the answer to stdout""
+- ""Enclose your code within delimiters""
+
+The code:
+```python
+S = input()
+print(int(S[0]) * int(S[2]))
+```
+This is robust enough.
+
+Let's verify Sample 1:
+Input: 3x8
+S = ""3x8""
+S[0] = '3' -> 3
+S[2] = '8' -> 8
+3 * 8 = 24
+Output: 24. Correct.
+
+Sample 2:
+Input: 9x9
+S = ""9x9""
+S[0] = '9' -> 9
+S[2] = '9' -> 9
+9 * 9 = 81
+Output: 81. Correct.
+
+I will provide the solution now.
+
+```python
+import sys
+
+# Read the input string S from standard input
+S = sys.stdin.read().strip()
+
+# Extract the first and third characters, convert them to integers
+# S[0] is the first digit
+# S[2] is the second digit
+# The middle character S[1] is 'x' and is ignored for calculation
+a = int(S[0])
+b = int(S[2])
+
+# Calculate the product
+result = a * b
+
+# Print the result to standard output
+print(result)
+```
+Using `sys.stdin.read().strip()` handles potential surrounding whitespace better than `input()` in some environments, though `input()` is","import sys
+
+# Read the input string S from standard input
+S = sys.stdin.read().strip()
+
+# Extract the first and third characters, convert them to integers
+# S[0] is the first digit
+# S[2] is the second digit
+# The middle character S[1] is 'x' and is ignored for calculation
+a = int(S[0])
+b = int(S[2])
+
+# Calculate the product
+result = a * b
+
+# Print the result to standard output
+print(result)",True,,4.0,100,uniform,0.1,0.6862724603529042,210482,144448,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"You are given a positive even integer N and a prime number P.
+For M = N-1, \ldots, \frac{N(N-1)}{2}, solve the following problem.
+How many undirected connected simple graphs with N vertices labeled from 1 to N and M edges satisfy this: the number of vertices whose shortest distance from vertex 1 is even is equal to the number of vertices whose shortest distance from vertex 1 is odd? Find this number modulo P.
+
+Input
+
+The input is given from Standard Input in the following format:
+N P
+
+Output
+
+For M = N-1, \ldots, \frac{N(N-1)}{2}, output the answers in order, separated by spaces, on a single line.
+
+Constraints
+
+
+- 2 \leq N \leq 30
+- 10^8 \leq P \leq 10^9
+- N is even.
+- P is prime.
+- All input values are integers.
+
+Sample Input 1
+
+4 998244353
+
+Sample Output 1
+
+12 9 3 0
+
+With four vertices and three edges, there are 12 simple connected undirected graphs satisfying the condition.
+With four vertices and four edges, there are 9 such graphs.
+With four vertices and five edges, there are 3 such graphs.
+With four vertices and six edges, there are 0 such graphs.
+
+Sample Input 2
+
+6 924844033
+
+Sample Output 2
+
+810 2100 3060 3030 2230 1210 450 100 10 0 0
+
+Sample Input 3
+
+10 433416647
+
+Sample Output 3
+
+49218750 419111280 321937732 107111441 372416570 351559278 312484809 334285827 317777667 211471846 58741385 422156135 323887465 54923551 121645733 94354149 346849276 72744827 385773306 163421544 351691775 59915863 430096957 166653801 346330874 185052506 245426328 47501118 7422030 899640 79380 4536 126 0 0 0 0
+
+Remember to find the number of such graphs modulo P.",abc389_g,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: You are given a positive even integer N and a prime number P.
+For M = N-1, \ldots, \frac{N(N-1)}{2}, solve the following problem.
+How many undirected connected simple graphs with N vertices labeled from 1 to N and M edges satisfy this: the number of vertices whose shortest distance from vertex 1 is even is equal to the number of vertices whose shortest distance from vertex 1 is odd? Find this number modulo P.
+
+Input
+
+The input is given from Standard Input in the following format:
+N P
+
+Output
+
+For M = N-1, \ldots, \frac{N(N-1)}{2}, output the answers in order, separated by spaces, on a single line.
+
+Constraints
+
+
+- 2 \leq N \leq 30
+- 10^8 \leq P \leq 10^9
+- N is even.
+- P is prime.
+- All input values are integers.
+
+Sample Input 1
+
+4 998244353
+
+Sample Output 1
+
+12 9 3 0
+
+With four vertices and three edges, there are 12 simple connected undirected graphs satisfying the condition.
+With four vertices and four edges, there are 9 such graphs.
+With four vertices and five edges, there are 3 such graphs.
+With four vertices and six edges, there are 0 such graphs.
+
+Sample Input 2
+
+6 924844033
+
+Sample Output 2
+
+810 2100 3060 3030 2230 1210 450 100 10 0 0
+
+Sample Input 3
+
+10 433416647
+
+Sample Output 3
+
+49218750 419111280 321937732 107111441 372416570 351559278 312484809 334285827 317777667 211471846 58741385 422156135 323887465 54923551 121645733 94354149 346849276 72744827 385773306 163421544 351691775 59915863 430096957 166653801 346330874 185052506 245426328 47501118 7422030 899640 79380 4536 126 0 0 0 0
+
+Remember to find the number of such graphs modulo P.
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The problem asks us to find the number of undirected connected simple graphs with $N$ vertices and $M$ edges, such that the number of vertices at an even shortest distance from vertex 1 is equal to the number of vertices at an odd shortest distance from vertex 1. We need to output this count modulo $P$ for all $M$ from $N-1$ to $\frac{N(N-1)}{2}$. The constraints are $N \le 30$ and $P$ is a large prime.
+
+Let $d(v)$ be the shortest distance from vertex 1 to vertex $v$ in the graph. We are interested in the condition:
+$|\{v \mid d(v) \text{ is even}\}| = |\{v \mid d(v) \text{ is odd}\}|$.
+Since there are $N$ vertices in total, and vertex 1 is at distance 0 (even), let $E$ be the set of vertices with even distance and $O$ be the set of vertices with odd distance.
+The condition is $|E| = |O|$. Since $|E| + |O| = N$ and $N$ is even, this implies $|E| = |O| = N/2$.
+Also, $1 \in E$, so $1$ is always counted in $E$.
+
+Let's analyze the structure of such graphs.
+If a graph is connected, the shortest path distances are well-defined.
+Consider the bipartite nature of the graph. If a graph is bipartite, vertices can be partitioned into two sets $V_0$ and $V_1$ such that all edges connect a vertex in $V_0$ to a vertex in $V_1$.
+If the graph is bipartite, then the shortest path distance from vertex 1 to any vertex $v$ has the same parity as the distance in the bipartite partition. Specifically, if $1 \in V_0$, then for any $v \in V_0$, $d(v)$ is even, and for any $v \in V_1$, $d(v)$ is odd.
+In this case, the condition $|E| = |O|$ becomes $|V_0| = |V_1| = N/2$.
+However, the graph doesn't have to be bipartite. If the graph contains an odd cycle, the shortest path distances might not strictly follow the bipartition parity.
+Wait, let's look closer.
+Let $d(v)$ be the shortest distance from 1.
+The condition is that exactly $N/2$ vertices have even $d(v)$ and $N/2$ vertices have odd $d(v)$.
+Let $S_{even} = \{v \mid d(v) \text{ is even}\}$ and $S_{odd} = \{v \mid d(v) \text{ is odd}\}$.
+We require $|S_{even}| = |S_{odd}| = N/2$.
+Note that $1 \in S_{even}$.
+
+Let's consider the edges. An edge $(u, v)$ exists.
+If $u, v \in S_{even}$, then $d(u)$ is even, $d(v)$ is even. The edge connects two even-distance vertices.
+If $u, v \in S_{odd}$, then $d(u)$ is odd, $d(v)$ is odd. The edge connects two odd-distance vertices.
+If $u \in S_{even}, v \in S_{odd}$, then $d(u)$ is even, $d(v)$ is odd. The edge connects an even-distance vertex to an odd-distance vertex.
+
+If the graph is bipartite, then there are no edges within $S_{even}$ and no edges within $S_{odd}$. All edges must be between $S_{even}$ and $S_{odd}$.
+If the graph is not bipartite, there must be at least one edge within $S_{even}$ or within $S_{odd}$.
+However, if there is an edge within $S_{even}$, say $(u, v)$ with $u, v \in S_{even}$, then $d(v) \le d(u) + 1$. Since $d(u)$ is even, $d(u)+1$ is odd. So $d(v)$ could be odd? No, $v \in S_{even}$ means $d(v)$ is even.
+Wait, if $u, v \in S_{even}$, then $d(u)$ is even and $d(v)$ is even. The edge $(u, v)$ implies $d(v) \le d(u) + 1$. Since $d(v)$ is",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.07,0.7975606258067333,320738,255808,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"Takahashi plans to participate in N AtCoder contests.
+In the i-th contest (1 \leq i \leq N), if his rating is between L_i and R_i (inclusive), his rating increases by 1.
+You are given Q queries in the following format:
+
+- An integer X is given. Assuming that Takahashi's initial rating is X, determine his rating after participating in all N contests.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+L_1 R_1
+L_2 R_2
+\vdots
+L_N R_N
+Q
+\text{query}_1
+\text{query}_2
+\vdots
+\text{query}_Q
+
+Here, \text{query}_i is the i-th query in the form:
+X
+
+Output
+
+Print Q lines. The i-th line should contain the answer to the i-th query.
+
+Constraints
+
+
+- 1 \leq N \leq 2 \times 10^5
+- 1 \leq L_i \leq R_i \leq 5 \times 10^5 (1 \leq i \leq N)
+- 1 \leq Q \leq 3 \times 10^5
+- For each query, 1 \leq X \leq 5 \times 10^5.
+- All input values are integers.
+
+Sample Input 1
+
+5
+1 5
+1 3
+3 6
+2 4
+4 7
+3
+3
+2
+5
+
+Sample Output 1
+
+6
+6
+8
+
+For the 1st query, the rating changes as follows:
+
+- In the 1st contest, the rating is between 1 and 5, so it increases by 1, becoming 4.  
+- In the 2nd contest, the rating is not between 1 and 3, so it remains 4.  
+- In the 3rd contest, the rating is between 3 and 6, so it increases by 1, becoming 5.  
+- In the 4th contest, the rating is not between 2 and 4, so it remains 5.  
+- In the 5th contest, the rating is between 4 and 7, so it increases by 1, becoming 6.
+
+For the 2nd query, the rating increases in the 1st, 2nd, 3rd, and 5th contests, ending at 6.
+For the 3rd query, the rating increases in the 1st, 3rd, and 5th contests, ending at 8.
+
+Sample Input 2
+
+10
+1 1999
+1 1999
+1200 2399
+1 1999
+1 1999
+1 1999
+2000 500000
+1 1999
+1 1999
+1600 2799
+7
+1
+1995
+2000
+2399
+500000
+2799
+1000
+
+Sample Output 2
+
+8
+2002
+2003
+2402
+500001
+2800
+1007
+
+Sample Input 3
+
+15
+260522 414575
+436426 479445
+148772 190081
+190629 433447
+47202 203497
+394325 407775
+304784 463982
+302156 468417
+131932 235902
+78537 395728
+223857 330739
+286918 329211
+39679 238506
+63340 186568
+160016 361868
+10
+287940
+296263
+224593
+101449
+336991
+390310
+323355
+177068
+11431
+8580
+
+Sample Output 3
+
+287946
+296269
+224599
+101453
+336997
+390315
+323363
+177075
+11431
+8580",abc389_f,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: Takahashi plans to participate in N AtCoder contests.
+In the i-th contest (1 \leq i \leq N), if his rating is between L_i and R_i (inclusive), his rating increases by 1.
+You are given Q queries in the following format:
+
+- An integer X is given. Assuming that Takahashi's initial rating is X, determine his rating after participating in all N contests.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+L_1 R_1
+L_2 R_2
+\vdots
+L_N R_N
+Q
+\text{query}_1
+\text{query}_2
+\vdots
+\text{query}_Q
+
+Here, \text{query}_i is the i-th query in the form:
+X
+
+Output
+
+Print Q lines. The i-th line should contain the answer to the i-th query.
+
+Constraints
+
+
+- 1 \leq N \leq 2 \times 10^5
+- 1 \leq L_i \leq R_i \leq 5 \times 10^5 (1 \leq i \leq N)
+- 1 \leq Q \leq 3 \times 10^5
+- For each query, 1 \leq X \leq 5 \times 10^5.
+- All input values are integers.
+
+Sample Input 1
+
+5
+1 5
+1 3
+3 6
+2 4
+4 7
+3
+3
+2
+5
+
+Sample Output 1
+
+6
+6
+8
+
+For the 1st query, the rating changes as follows:
+
+- In the 1st contest, the rating is between 1 and 5, so it increases by 1, becoming 4.  
+- In the 2nd contest, the rating is not between 1 and 3, so it remains 4.  
+- In the 3rd contest, the rating is between 3 and 6, so it increases by 1, becoming 5.  
+- In the 4th contest, the rating is not between 2 and 4, so it remains 5.  
+- In the 5th contest, the rating is between 4 and 7, so it increases by 1, becoming 6.
+
+For the 2nd query, the rating increases in the 1st, 2nd, 3rd, and 5th contests, ending at 6.
+For the 3rd query, the rating increases in the 1st, 3rd, and 5th contests, ending at 8.
+
+Sample Input 2
+
+10
+1 1999
+1 1999
+1200 2399
+1 1999
+1 1999
+1 1999
+2000 500000
+1 1999
+1 1999
+1600 2799
+7
+1
+1995
+2000
+2399
+500000
+2799
+1000
+
+Sample Output 2
+
+8
+2002
+2003
+2402
+500001
+2800
+1007
+
+Sample Input 3
+
+15
+260522 414575
+436426 479445
+148772 190081
+190629 433447
+47202 203497
+394325 407775
+304784 463982
+302156 468417
+131932 235902
+78537 395728
+223857 330739
+286918 329211
+39679 238506
+63340 186568
+160016 361868
+10
+287940
+296263
+224593
+101449
+336991
+390310
+323355
+177068
+11431
+8580
+
+Sample Output 3
+
+287946
+296269
+224599
+101453
+336997
+390315
+323363
+177075
+11431
+8580
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The problem asks us to calculate the final rating of Takahashi after participating in $N$ contests, given an initial rating $X$.
+For each contest $i$, if the current rating is in the range $[L_i, R_i]$, the rating increases by 1. Otherwise, it stays the same.
+We are given $N$ pairs of $(L_i, R_i)$ and $Q$ queries, each with a different initial rating $X$.
+Constraints: $N \le 2 \times 10^5$, $Q \le 3 \times 10^5$, and $L_i, R_i, X \le 5 \times 10^5$.
+
+Let's analyze the process for a single query with initial rating $X$.
+The rating changes in each contest. If the rating is $r$ at the start of contest $i$, it becomes $r+1$ if $L_i \le r \le R_i$, else $r$.
+Since the rating only increases, the condition $L_i \le r \le R_i$ might be satisfied or not depending on the current rating.
+However, notice that the rating increases by at most 1 per contest. The maximum possible increase is $N$.
+The maximum value of $R_i$ is $5 \times 10^5$. The maximum initial $X$ is $5 \times 10^5$.
+The maximum final rating would be around $5 \times 10^5 + 2 \times 10^5 = 7 \times 10^5$.
+Wait, actually, the condition is checked against the *current* rating.
+Let's trace the sample 1.
+Contests: $[1, 5], [1, 3], [3, 6], [2, 4], [4, 7]$.
+Query $X=3$.
+Start: 3.
+1. $[1, 5]$. $1 \le 3 \le 5$. Yes. Rating becomes 4.
+2. $[1, 3]$. $1 \le 4 \le 3$. No. Rating stays 4.
+3. $[3, 6]$. $3 \le 4 \le 6$. Yes. Rating becomes 5.
+4. $[2, 4]$. $2 \le 5 \le 4$. No. Rating stays 5.
+5. $[4, 7]$. $4 \le 5 \le 7$. Yes. Rating becomes 6.
+Final: 6.
+
+Query $X=2$.
+Start: 2.
+1. $[1, 5]$. $1 \le 2 \le 5$. Yes. Rating becomes 3.
+2. $[1, 3]$. $1 \le 3 \le 3$. Yes. Rating becomes 4.
+3. $[3, 6]$. $3 \le 4 \le 6$. Yes. Rating becomes 5.
+4. $[2, 4]$. $2 \le 5 \le 4$. No. Rating stays 5.
+5. $[4, 7]$. $4 \le 5 \le 7$. Yes. Rating becomes 6.
+Final: 6.
+
+Query $X=5$.
+Start: 5.
+1. $[1, 5]$. $1 \le 5 \le 5$. Yes. Rating becomes 6.
+2. $[1, 3]$. $1 \le 6 \le 3$. No. Rating stays 6.
+3. $[3, 6]$. $3 \le 6 \le 6$. Yes. Rating becomes 7.
+4. $[2, 4]$. $2 \le 7 \le 4$. No. Rating stays 7.
+5. $[4, 7]$. $4 \le 7 \le 7$. Yes. Rating becomes 8.
+Final: 8.
+
+The constraints on $L_i, R_i$ and $X$ are up to $5 \times 10^5$. $N$ is up to $2 \times 10^5$.
+A naive simulation for each query would take $O(N)$ time per query, leading to $O(NQ)$ total time.
+$2 \times 10^5 \times 3 \times 10^5 = 6 \times 10^{10}$, which is too slow (time limit usually 2s, $\approx 10^8$ ops).",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.05,0.8279496189313771,392449,324928,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"There are N types of products, each having 10^{100} units in stock.
+You can buy any non-negative number of units of each product. To buy k units of the i-th product, it costs k^2 P_i yen.
+If your total purchase cost is at most M yen, what is the maximum number of units you can buy in total?
+
+Input
+
+The input is given from Standard Input in the following format:
+N M
+P_1 \ldots P_N
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 1 \leq N \leq 2 \times 10^{5}
+- 1 \leq M \leq 10^{18}
+- 1 \leq P_i \leq 2 \times 10^{9}
+- All input values are integers.
+
+Sample Input 1
+
+3 9
+4 1 9
+
+Sample Output 1
+
+3
+
+If you buy one unit of the 1st product and two units of the 2nd product, the total purchase cost is 1^2 \times 4 + 2^2 \times 1 = 8. It is impossible to buy four or more units in total with a total cost of at most 9 yen, so the answer is 3.
+
+Sample Input 2
+
+10 1000
+2 15 6 5 12 1 7 9 17 2
+
+Sample Output 2
+
+53",abc389_e,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: There are N types of products, each having 10^{100} units in stock.
+You can buy any non-negative number of units of each product. To buy k units of the i-th product, it costs k^2 P_i yen.
+If your total purchase cost is at most M yen, what is the maximum number of units you can buy in total?
+
+Input
+
+The input is given from Standard Input in the following format:
+N M
+P_1 \ldots P_N
+
+Output
+
+Print the answer.
+
+Constraints
+
+
+- 1 \leq N \leq 2 \times 10^{5}
+- 1 \leq M \leq 10^{18}
+- 1 \leq P_i \leq 2 \times 10^{9}
+- All input values are integers.
+
+Sample Input 1
+
+3 9
+4 1 9
+
+Sample Output 1
+
+3
+
+If you buy one unit of the 1st product and two units of the 2nd product, the total purchase cost is 1^2 \times 4 + 2^2 \times 1 = 8. It is impossible to buy four or more units in total with a total cost of at most 9 yen, so the answer is 3.
+
+Sample Input 2
+
+10 1000
+2 15 6 5 12 1 7 9 17 2
+
+Sample Output 2
+
+53
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The problem asks us to find the maximum total number of units we can buy given a budget $M$ and $N$ types of products.
+For each product $i$, the cost to buy $k$ units is $k^2 P_i$.
+We want to maximize $\sum k_i$ subject to $\sum k_i^2 P_i \le M$, where $k_i \ge 0$ are integers.
+The constraints are $N \le 2 \times 10^5$, $M \le 10^{18}$, and $P_i \le 2 \times 10^9$.
+
+Let $K = \sum k_i$ be the total number of units.
+We want to maximize $K$.
+Since the cost function for each product is convex ($k^2 P_i$), to maximize the total units for a fixed cost, we should prioritize buying units from products with smaller $P_i$.
+Specifically, if we decide to buy a total of $K$ units, how should we distribute them among the products to minimize the cost?
+The cost function is $\sum k_i^2 P_i$.
+Consider the continuous relaxation where $k_i$ can be real numbers. To minimize $\sum k_i^2 P_i$ subject to $\sum k_i = K$, we use Lagrange multipliers.
+$L = \sum k_i^2 P_i - \lambda (\sum k_i - K)$.
+$\frac{\partial L}{\partial k_i} = 2 k_i P_i - \lambda = 0 \implies k_i = \frac{\lambda}{2 P_i}$.
+So $k_i \propto \frac{1}{P_i}$.
+This means we should buy more units from products with smaller $P_i$.
+Specifically, if we fix the total number of units $K$, the optimal strategy is to buy units from the product with the smallest $P_i$ first, then the next smallest, and so on.
+Wait, let's verify this.
+Suppose we have two products with costs $P_1$ and $P_2$ where $P_1 < P_2$.
+If we buy $x$ units of product 1 and $y$ units of product 2, the cost is $x^2 P_1 + y^2 P_2$.
+Suppose we have a total of $K$ units, so $x+y=K$.
+We want to minimize $x^2 P_1 + (K-x)^2 P_2$.
+$f(x) = x^2 P_1 + (K^2 - 2Kx + x^2) P_2 = x^2(P_1+P_2) - 2K P_2 x + K^2 P_2$.
+This is a parabola opening upwards. The minimum is at $x = \frac{2K P_2}{2(P_1+P_2)} = \frac{K P_2}{P_1+P_2}$.
+Since $P_1 < P_2$, $P_1+P_2 > 2P_1$, so $\frac{P_2}{P_1+P_2} > \frac{P_2}{2P_2} = 1/2$.
+So we should buy more than half of the units from product 2? That contradicts the intuition that we should buy from cheaper products.
+Let's re-evaluate.
+The cost is $k^2 P_i$. The marginal cost of the $k$-th unit of product $i$ is roughly $(k^2 - (k-1)^2) P_i = (2k-1) P_i$.
+The marginal cost increases as we buy more units of the same product.
+To minimize total cost for a fixed total number of units $K$, we should always pick the unit with the smallest marginal cost available.
+The marginal cost of the 1st unit of product $i$ is $1^2 P_i - 0^2 P_i = P_i$.
+The marginal cost of the 2nd unit of product $i$ is $2^2 P_i - 1^2 P_i = 3 P_i$.
+The marginal cost of the $k$-th unit of product $i$ is $k^2 P_i - (k-1)^2 P_i = (2k-1) P_i$.
+So, for each product $i$, we have a sequence of marginal costs: $P_i, 3P_i, 5P_i, \dots, (2k-1)P_i, \dots$.
+To minimize the total cost for a total of $K$ units, we should",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.11,0.7590289487049263,246125,186816,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"There are N foods, each containing exactly one of vitamins 1, 2, and 3.
+Specifically, eating the i-th food gives you A_i units of vitamin V_i, and C_i calories.
+Takahashi can choose any subset of these N foods as long as the total calorie consumption does not exceed X.
+Find the maximum possible value of this: the minimum intake among vitamins 1, 2, and 3.
+
+Input
+
+The input is given from Standard Input in the following format:
+N X
+V_1 A_1 C_1
+V_2 A_2 C_2
+\vdots
+V_N A_N C_N
+
+Output
+
+Print the maximum possible value of ""the minimum intake among vitamins 1, 2, and 3"" when the total calories consumed is at most X.
+
+Constraints
+
+
+- 1 \leq N \leq 5000
+- 1 \leq X \leq 5000
+- 1 \leq V_i \leq 3
+- 1 \leq A_i \leq 2 \times 10^5
+- 1 \leq C_i \leq X
+- All input values are integers.
+
+Sample Input 1
+
+5 25
+1 8 5
+2 3 5
+2 7 10
+3 2 5
+3 3 10
+
+Sample Output 1
+
+3
+
+Each food provides the following if eaten:
+
+- 1st food: 8 units of vitamin 1, and 5 calories
+- 2nd food: 3 units of vitamin 2, and 5 calories
+- 3rd food: 7 units of vitamin 2, and 10 calories
+- 4th food: 2 units of vitamin 3, and 5 calories
+- 5th food: 3 units of vitamin 3, and 10 calories
+
+Eating the 1st, 2nd, 4th, and 5th foods gives 8 units of vitamin 1, 3 units of vitamin 2, 5 units of vitamin 3, and 25 calories.
+In this case, the minimum among the three vitamin intakes is 3 (vitamin 2).
+It is impossible to get 4 or more units of each vitamin without exceeding 25 calories, so the answer is 3.
+
+Sample Input 2
+
+2 5000
+1 200000 1
+2 200000 1
+
+Sample Output 2
+
+0",abc390_e,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: There are N foods, each containing exactly one of vitamins 1, 2, and 3.
+Specifically, eating the i-th food gives you A_i units of vitamin V_i, and C_i calories.
+Takahashi can choose any subset of these N foods as long as the total calorie consumption does not exceed X.
+Find the maximum possible value of this: the minimum intake among vitamins 1, 2, and 3.
+
+Input
+
+The input is given from Standard Input in the following format:
+N X
+V_1 A_1 C_1
+V_2 A_2 C_2
+\vdots
+V_N A_N C_N
+
+Output
+
+Print the maximum possible value of ""the minimum intake among vitamins 1, 2, and 3"" when the total calories consumed is at most X.
+
+Constraints
+
+
+- 1 \leq N \leq 5000
+- 1 \leq X \leq 5000
+- 1 \leq V_i \leq 3
+- 1 \leq A_i \leq 2 \times 10^5
+- 1 \leq C_i \leq X
+- All input values are integers.
+
+Sample Input 1
+
+5 25
+1 8 5
+2 3 5
+2 7 10
+3 2 5
+3 3 10
+
+Sample Output 1
+
+3
+
+Each food provides the following if eaten:
+
+- 1st food: 8 units of vitamin 1, and 5 calories
+- 2nd food: 3 units of vitamin 2, and 5 calories
+- 3rd food: 7 units of vitamin 2, and 10 calories
+- 4th food: 2 units of vitamin 3, and 5 calories
+- 5th food: 3 units of vitamin 3, and 10 calories
+
+Eating the 1st, 2nd, 4th, and 5th foods gives 8 units of vitamin 1, 3 units of vitamin 2, 5 units of vitamin 3, and 25 calories.
+In this case, the minimum among the three vitamin intakes is 3 (vitamin 2).
+It is impossible to get 4 or more units of each vitamin without exceeding 25 calories, so the answer is 3.
+
+Sample Input 2
+
+2 5000
+1 200000 1
+2 200000 1
+
+Sample Output 2
+
+0
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The problem asks us to select a subset of $N$ foods such that the total calories consumed is at most $X$. We want to maximize the minimum total intake among the three vitamins (1, 2, and 3).
+
+Let $S$ be the subset of chosen foods.
+Let $V_i \in \{1, 2, 3\}$ be the vitamin type of the $i$-th food.
+Let $A_i$ be the amount of vitamin provided by the $i$-th food.
+Let $C_i$ be the calories of the $i$-th food.
+
+We want to maximize $\min(\sum_{i \in S, V_i=1} A_i, \sum_{i \in S, V_i=2} A_i, \sum_{i \in S, V_i=3} A_i)$ subject to $\sum_{i \in S} C_i \le X$.
+
+Constraints:
+$N \le 5000$
+$X \le 5000$
+$A_i \le 2 \times 10^5$
+$C_i \le X$
+
+Since $N$ and $X$ are relatively small (up to 5000), this suggests a dynamic programming approach. The values of $A_i$ can be large, so we cannot use them directly as DP states. However, we are looking for the maximum possible minimum value.
+
+Let the target minimum value be $K$. If we can achieve a minimum intake of at least $K$ for all three vitamins within calorie limit $X$, then we can achieve a minimum intake of at least $K-1$. This monotonicity suggests we could binary search on the answer $K$.
+The maximum possible value for $K$ is bounded by the sum of all $A_i$ for a specific vitamin type, or simply the maximum possible $A_i$ sum. Since $N \le 5000$ and $A_i \le 2 \times 10^5$, the sum can be up to $10^9$. Binary search would take $O(\log(\sum A_i))$ steps. Inside the check function, we need to determine if it's possible to get at least $K$ for each vitamin with total calories $\le X$.
+
+Let's analyze the check function for a fixed $K$.
+We need to select a subset of foods such that:
+1. $\sum_{i \in S} C_i \le X$
+2. $\sum_{i \in S, V_i=1} A_i \ge K$
+3. $\sum_{i \in S, V_i=2} A_i \ge K$
+4. $\sum_{i \in S, V_i=3} A_i \ge K$
+
+This looks like a variation of the knapsack problem. We have 3 constraints on the ""values"" (vitamin amounts) and 1 constraint on ""weight"" (calories).
+Specifically, we want to minimize calories used to satisfy the vitamin constraints. If the minimum calories used is $\le X$, then $K$ is achievable.
+
+Let's group foods by vitamin type.
+Group 1: foods with $V_i = 1$.
+Group 2: foods with $V_i = 2$.
+Group 3: foods with $V_i = 3$.
+
+Suppose we decide to pick a subset of foods from Group 1, Group 2, and Group 3.
+Let $S_1 \subseteq \text{Group 1}$, $S_2 \subseteq \text{Group 2}$, $S_3 \subseteq \text{Group 3}$.
+We need $\sum_{i \in S_1} A_i \ge K$, $\sum_{i \in S_2} A_i \ge K$, $\sum_{i \in S_3} A_i \ge K$.
+And $\sum_{i \in S_1} C_i + \sum_{i \in S_2} C_i + \sum_{i \in S_3} C_i \le X$.
+
+This is equivalent to:
+Minimize $\sum_{i \in S_1} C_i + \sum_{i \in S_2} C_i + \sum_{i \in S_3} C_i$ subject to $\sum_{i \in S_1} A_i \ge K$, $\sum_{i \in S_2} A_i \ge K$, $\sum_{i \in S_3} A_i \ge K$.
+
+Since the groups are independent in terms of which foods they contain, we can solve the subproblem for each group separately?
+Wait, the constraints are coupled",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.15,0.7801643759928172,289580,225920,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"You are given a positive integer N.
+For an integer sequence A=(A_1,A_2,\ldots,A_N) of length N. Let f(A) be the integer obtained as follows:
+
+- Let S be an empty string.
+- For i=1,2,\ldots,N in this order:
+- Let T be the decimal representation of A_i without leading zeros.
+- Append T to the end of S.
+
+
+- Interpret S as a decimal integer, and let that be f(A).
+
+For example, if A=(1,20,34), then f(A)=12034.
+There are N! permutations P of (1,2,\ldots,N). Find the sum, modulo 998244353, of f(P) over all such permutations P.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+
+Output
+
+Print the sum, modulo 998244353, of f(P) over all permutations P of (1,2,\ldots,N).
+
+Constraints
+
+
+- 1 \le N \le 2 \times 10^5
+- All input values are integers.
+
+Sample Input 1
+
+3
+
+Sample Output 1
+
+1332
+
+The six permutations of (1,2,3) are (1,2,3), (1,3,2), (2,1,3), (2,3,1), (3,1,2), (3,2,1). Their f(P) values are 123,132,213,231,312,321. Therefore, print 123+132+213+231+312+321 = 1332.
+
+Sample Input 2
+
+390
+
+Sample Output 2
+
+727611652
+
+Print the sum modulo 998244353.
+
+Sample Input 3
+
+79223
+
+Sample Output 3
+
+184895744",abc390_g,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: You are given a positive integer N.
+For an integer sequence A=(A_1,A_2,\ldots,A_N) of length N. Let f(A) be the integer obtained as follows:
+
+- Let S be an empty string.
+- For i=1,2,\ldots,N in this order:
+- Let T be the decimal representation of A_i without leading zeros.
+- Append T to the end of S.
+
+
+- Interpret S as a decimal integer, and let that be f(A).
+
+For example, if A=(1,20,34), then f(A)=12034.
+There are N! permutations P of (1,2,\ldots,N). Find the sum, modulo 998244353, of f(P) over all such permutations P.
+
+Input
+
+The input is given from Standard Input in the following format:
+N
+
+Output
+
+Print the sum, modulo 998244353, of f(P) over all permutations P of (1,2,\ldots,N).
+
+Constraints
+
+
+- 1 \le N \le 2 \times 10^5
+- All input values are integers.
+
+Sample Input 1
+
+3
+
+Sample Output 1
+
+1332
+
+The six permutations of (1,2,3) are (1,2,3), (1,3,2), (2,1,3), (2,3,1), (3,1,2), (3,2,1). Their f(P) values are 123,132,213,231,312,321. Therefore, print 123+132+213+231+312+321 = 1332.
+
+Sample Input 2
+
+390
+
+Sample Output 2
+
+727611652
+
+Print the sum modulo 998244353.
+
+Sample Input 3
+
+79223
+
+Sample Output 3
+
+184895744
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The problem asks us to calculate the sum of $f(P)$ over all $N!$ permutations $P$ of the sequence $(1, 2, \ldots, N)$, modulo 998244353.
+The function $f(A)$ constructs a number by concatenating the decimal representations of the elements of $A$.
+Let $A = (A_1, A_2, \ldots, A_N)$. Then $f(A) = \sum_{i=1}^N A_i \cdot 10^{L_{i+1} + \dots + L_N}$, where $L_i$ is the number of digits in $A_i$. Wait, actually, let's look at the structure.
+If $A = (A_1, A_2, \ldots, A_N)$, then $f(A)$ is formed by concatenating $A_1, A_2, \ldots, A_N$.
+So $f(A) = A_1 \cdot 10^{L_2 + \dots + L_N} + A_2 \cdot 10^{L_3 + \dots + L_N} + \dots + A_N \cdot 10^0$.
+Here $L_i$ is the number of digits of $A_i$.
+We need to sum $f(P)$ over all permutations $P$ of $(1, 2, \ldots, N)$.
+Let $S$ be the set $\{1, 2, \ldots, N\}$. A permutation $P$ is an ordering of elements from $S$.
+The total sum is $\sum_{P} f(P) = \sum_{P} \sum_{i=1}^N P_i \cdot 10^{\sum_{j=i+1}^N L(P_j)}$.
+We can swap the summations:
+Total Sum $= \sum_{i=1}^N \sum_{P} P_i \cdot 10^{\sum_{j=i+1}^N L(P_j)}$.
+
+Let's analyze the contribution of a specific element $x \in \{1, \ldots, N\}$ to the total sum.
+Suppose $x$ is placed at position $i$ in the permutation $P$. Then $P_i = x$.
+The term contributed by $x$ is $x \cdot 10^{\sum_{j=i+1}^N L(P_j)}$.
+The exponent depends on the lengths of the elements placed at positions $i+1, \ldots, N$.
+The elements at positions $i+1, \ldots, N$ are a subset of $S \setminus \{x\}$ of size $N-i$.
+Let $k = N-i$ be the number of elements following $x$.
+The sum of lengths of these $k$ elements is $\sum_{j=i+1}^N L(P_j)$.
+Let $L(y)$ denote the number of digits of integer $y$.
+The value $L(y)$ depends on $y$.
+For $y \in \{1, \ldots, N\}$, $L(y)$ is:
+- 1 if $1 \le y \le 9$
+- 2 if $10 \le y \le 99$
+- ...
+- $d$ if $10^{d-1} \le y \le 10^d - 1$.
+
+Let's group the numbers $1, \ldots, N$ by their number of digits.
+Let $C_d$ be the count of numbers in $\{1, \ldots, N\}$ that have exactly $d$ digits.
+The maximum number of digits is $D = \lfloor \log_{10} N \rfloor + 1$.
+$C_d = \min(N, 10^d - 1) - 10^{d-1} + 1$ for $d \ge 1$.
+Actually, since $N$ is up to $2 \times 10^5$, $D$ is small (at most 6).
+Specifically:
+$C_1 = 9$ (numbers 1-9)
+$C_2 = 90$ (numbers 10-99)
+$C_3 = 900$ (numbers 100-999)
+$C_4 = 9000$ (numbers 1000-9999)
+$C_5 = 90000$ (numbers 10000-99999)
+",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.14,0.7863629401080986,274194,215616,202
+power_sampling_mcmc,Qwen/Qwen3.5-9B,"You are given an integer sequence A=(A_1,A_2,A_3,A_4,A_5) obtained by permuting (1,2,3,4,5).
+Determine whether A can be sorted in ascending order by performing exactly one operation of swapping two adjacent elements in A.
+
+Input
+
+The input is given from Standard Input in the following format:
+A_1 A_2 A_3 A_4 A_5
+
+Output
+
+If A can be sorted in ascending order by exactly one operation, print Yes; otherwise, print No.
+
+Constraints
+
+
+- A is an integer sequence of length 5 obtained by permuting (1,2,3,4,5).
+
+Sample Input 1
+
+1 2 4 3 5
+
+Sample Output 1
+
+Yes
+
+By swapping A_3 and A_4, A becomes (1,2,3,4,5), so it can be sorted in ascending order. Therefore, print Yes.
+
+Sample Input 2
+
+5 3 2 4 1
+
+Sample Output 2
+
+No
+
+No matter what operation is performed, it is impossible to sort A in ascending order.
+
+Sample Input 3
+
+1 2 3 4 5
+
+Sample Output 3
+
+No
+
+You must perform exactly one operation.
+
+Sample Input 4
+
+2 1 3 4 5
+
+Sample Output 4
+
+Yes",abc390_a,# YOUR CODE HERE,"You will be given a question (problem specification) and will generate a correct Python program that matches the specification and passes all tests. You will NOT return anything except for the program.
+
+Question: You are given an integer sequence A=(A_1,A_2,A_3,A_4,A_5) obtained by permuting (1,2,3,4,5).
+Determine whether A can be sorted in ascending order by performing exactly one operation of swapping two adjacent elements in A.
+
+Input
+
+The input is given from Standard Input in the following format:
+A_1 A_2 A_3 A_4 A_5
+
+Output
+
+If A can be sorted in ascending order by exactly one operation, print Yes; otherwise, print No.
+
+Constraints
+
+
+- A is an integer sequence of length 5 obtained by permuting (1,2,3,4,5).
+
+Sample Input 1
+
+1 2 4 3 5
+
+Sample Output 1
+
+Yes
+
+By swapping A_3 and A_4, A becomes (1,2,3,4,5), so it can be sorted in ascending order. Therefore, print Yes.
+
+Sample Input 2
+
+5 3 2 4 1
+
+Sample Output 2
+
+No
+
+No matter what operation is performed, it is impossible to sort A in ascending order.
+
+Sample Input 3
+
+1 2 3 4 5
+
+Sample Output 3
+
+No
+
+You must perform exactly one operation.
+
+Sample Input 4
+
+2 1 3 4 5
+
+Sample Output 4
+
+Yes
+
+Read the inputs from stdin solve the problem and write the answer to stdout (do not directly test on the sample inputs). Enclose your code within delimiters as follows. Ensure that when the python program runs, it reads the inputs, runs the algorithm and writes output to STDOUT.
+```python
+  # YOUR CODE HERE
+```
+
+<think>
+The user wants a Python program to solve a specific problem.
+
+**Problem Statement:**
+Given a permutation $A = (A_1, A_2, A_3, A_4, A_5)$ of $(1, 2, 3, 4, 5)$, determine if it can be sorted into ascending order $(1, 2, 3, 4, 5)$ by performing *exactly one* swap of adjacent elements.
+
+**Input:**
+A single line containing 5 integers separated by spaces.
+
+**Output:**
+""Yes"" if possible, ""No"" otherwise.
+
+**Constraints:**
+$A$ is a permutation of $(1, 2, 3, 4, 5)$.
+
+**Logic:**
+1.  Read the input sequence $A$.
+2.  Create a copy of $A$, let's call it $B$.
+3.  The target sorted sequence is $T = (1, 2, 3, 4, 5)$.
+4.  We need to check if there exists an index $i$ (from 0 to 3, assuming 0-based indexing) such that swapping $A[i]$ and $A[i+1]$ results in $T$.
+5.  Alternatively, since the length is small (5), we can just iterate through all possible adjacent swaps.
+    -   Swap indices (0, 1), (1, 2), (2, 3), (3, 4).
+    -   After each swap, check if the array equals $(1, 2, 3, 4, 5)$.
+    -   If it matches for any swap, output ""Yes"".
+    -   If we check all swaps and none result in the sorted array, output ""No"".
+6.  Wait, the problem says ""exactly one operation"".
+    -   If the array is already sorted, we *must* perform one swap. Swapping any adjacent elements in a sorted array will make it unsorted. So, if input is `1 2 3 4 5`, the answer is ""No"".
+    -   If the input is `1 2 4 3 5`, swapping 4 and 3 makes it `1 2 3 4 5`. This is ""Yes"".
+    -   If the input is `5 3 2 4 1`, no single swap sorts it. This is ""No"".
+
+**Algorithm Refinement:**
+1.  Read input list `A`.
+2.  Define target `sorted_A = [1, 2, 3, 4, 5]`.
+3.  Iterate $i$ from 0 to 3 (inclusive).
+    -   Create a temporary list `temp`.
+    -   Copy `A` to `temp`.
+    -   Swap elements at index $i$ and $i+1$ in `temp`.
+    -   Check if `temp` equals `sorted_A`.
+    -   If yes, print ""Yes"" and exit.
+4.  If the loop finishes without finding a match, print ""No"".
+
+**Example Walkthrough:**
+Sample 1: `1 2 4 3 5`
+- Swap (0,1): `2 1 4 3 5` != sorted
+- Swap (1,2): `1 4 2 3 5` != sorted
+- Swap (2,3): `1 2 3 4 5` == sorted -> Yes.
+
+Sample 3: `1 2 3 4 5`
+- Swap (0,1): `2 1 3 4 5` != sorted
+- Swap (1,2): `1 3 2 4 5` != sorted
+- Swap (2,3): `1 2 4 3 5` != sorted
+- Swap (3,4): `1 2 3 5 4` != sorted
+- Loop ends -> No.
+
+Sample 2: `5 3 2 4 1`
+- Swap (0,1): `3 5 2 4 1` != sorted
+- Swap (1,2): `5 2 3 4 1` != sorted
+- Swap (2,3): `5 3 4 2 1` != sorted
+- Swap (3,4): `5 3 2 1 4` != sorted
+- Loop ends -> No.
+
+**Implementation Details:**
+- Input reading: `A = list(map(int, input().split()))`
+- Loop range: `range(4)`
+- Swap logic: `temp = A",# YOUR CODE HERE,False,Code is incorrect.,4.0,100,uniform,0.11,0.7676023930050622,243376,186816,202
